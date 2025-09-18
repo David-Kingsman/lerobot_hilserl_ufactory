@@ -3,6 +3,8 @@
     "robot": {
         "type": "so100_follower_end_effector",
         "port": "/dev/tty.usbmodem58760431631",
+        "urdf_path": "path/to/your/robot.urdf",
+        "target_frame_name": "gripper_frame_link",
         "cameras": {
             "front": {
                 "type": "opencv",
@@ -21,14 +23,14 @@
         },
         "end_effector_bounds": {
             "min": [
-                0.26,
-                -0.06,
-                0.22
+                -1.0,
+                -1.0,
+                -1.0
             ],
             "max": [
-                0.32,
-                0.06,
-                0.35
+                1.0,
+                1.0,
+                1.0
             ]
         },
         "end_effector_step_sizes": {

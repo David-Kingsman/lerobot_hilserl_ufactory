@@ -21,6 +21,7 @@
     "policy": {
         "type": "sac",
         "n_obs_steps": 1,
+        "repo_id": "hf_username/policy_name",
         "normalization_mapping": {
             "VISUAL": "MEAN_STD",
             "STATE": "MIN_MAX",
@@ -28,7 +29,7 @@
             "ACTION": "MIN_MAX"
         },
         "input_features": {
-            "observation.images.wrist": {
+            "observation.images.side": {
                 "type": "VISUAL",
                 "shape": [
                     3,
@@ -47,22 +48,14 @@
             "observation.state": {
                 "type": "STATE",
                 "shape": [
-                    21
-                ]
-            }
-        },
-        "output_features": {
-            "action": {
-                "type": "ACTION",
-                "shape": [
-                    3
+                    15
                 ]
             }
         },
         "device": "cuda",
         "use_amp": false,
         "dataset_stats": {
-            "observation.images.wrist": {
+            "observation.images.side": {
                 "mean": [
                     0.485,
                     0.456,
@@ -136,14 +129,14 @@
             },
             "action": {
                 "min": [
-                    -1.0,
-                    -1.0,
-                    -1.0
+                    -0.03,
+                    -0.03,
+                    -0.03
                 ],
                 "max": [
-                    1.0,
-                    1.0,
-                    1.0
+                    0.03,
+                    0.03,
+                    0.03
                 ]
             }
         },
@@ -191,8 +184,8 @@
         },
         "policy_kwargs": {
             "use_tanh_squash": true,
-            "log_std_min": -5,
-            "log_std_max": 2,
+            "std_min": -5,
+            "std_max": 2,
             "init_final": 0.05
         },
         "actor_learner_config": {
@@ -210,6 +203,8 @@
         "robot": {
             "type": "so100_follower_end_effector",
             "port": "/dev/ttyACM0",
+            "urdf_path": "path/to/your/robot.urdf",
+            "target_frame_name": "gripper_frame_link",
             "cameras": {
                 "front": {
                     "type": "opencv",
@@ -228,26 +223,21 @@
             },
             "end_effector_bounds": {
                 "min": [
-                    0.26,
-                    -0.06,
-                    0.25
+                    -1.0,
+                    -1.0,
+                    -1.0
                 ],
                 "max": [
-                    0.32,
-                    0.06,
-                    0.35
+                    1.0,
+                    1.0,
+                    1.0
                 ]
-            },
-            "end_effector_step_sizes": {
-                "x": 0.02,
-                "y": 0.02,
-                "z": 0.02
             },
             "max_gripper_pos": 30
         },
         "teleop": {
-            "type": "so101_leader",
-            "port": "/dev/ttyACM1"
+            "type": "gamepad",
+            "use_gripper": true
         },
         "wrapper": {
             "display_cameras": false,
@@ -286,14 +276,14 @@
                 30.0
             ],
             "reset_time_s": 2.5,
-            "control_mode": "leader"
+            "control_mode": "gamepad"
         },
         "name": "real_robot",
         "mode": null,
-        "repo_id": "aractingi/pick_lift_cube_wrist_cam",
+        "repo_id": null,
         "dataset_root": null,
         "task": "",
-        "num_episodes": 21,
+        "num_episodes": 0,
         "episode": 0,
         "pretrained_policy_name_or_path": null,
         "device": "cuda",
@@ -319,7 +309,7 @@
             "observation.state": {
                 "type": "STATE",
                 "shape": [
-                    21
+                    15
                 ]
             },
             "action": {
@@ -330,7 +320,7 @@
             }
         },
         "features_map": {
-            "observation.images.front": "observation.images.front",
+            "observation.images.front": "observation.images.side",
             "observation.images.wrist": "observation.images.wrist",
             "observation.state": "observation.state",
             "action": "action"
