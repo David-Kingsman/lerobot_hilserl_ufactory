@@ -122,11 +122,11 @@ Screenshots of the two experiments:
 
 - Without reward classifier (baseline)
   
-  <img src="/home/zekaijin/lerobot-hilserl/media/wanb_without_reward_classifier.png" alt="without reward classifier" width="100%" />
+  ![without reward classifier](../media/wanb_without_reward_classifier.png)
 
 - With reward classifier
 
-  <img src="/home/zekaijin/lerobot-hilserl/media/wanb_with_reward_classifier.png" alt="with reward classifier" width="100%" />
+  ![with reward classifier](../media/wanb_with_reward_classifier.png)
 
 Practical tips:
 
