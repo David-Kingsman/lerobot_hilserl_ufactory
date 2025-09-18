@@ -133,6 +133,6 @@ The reward classifier will automatically provide rewards based on the visual inp
 4. **Test the classifier**:
    ```bash
    python lerobot/scripts/server/gym_manipulator.py --config_path lerobot/configs/env_config.json
-  # private usage
+   # private usage
    PYTHONPATH=/home/zekaijin/lerobot-hilserl/lerobot/src python lerobot/src/lerobot/scripts/rl/gym_manipulator.py --config_path configs/gym_hil_env.json
    ```
