@@ -24,6 +24,23 @@ pip install -e ".[hilserl]"
 - A gamepad or keyboard to control the robot
 - A Nvidia GPU
 
+## Gym-hil Overview
+
+A collection of gymnasium environments for Human-In-the-Loop (HIL) reinforcement learning, compatible with Hugging Face's LeRobot codebase.
+
+The `gym-hil` package provides environments designed for human-in-the-loop reinforcement learning. The list of environments are integrated with external devices like gamepads and keyboards, making it easy to collect demonstrations and perform interventions during learning.
+
+Currently available environments:
+- **Franka Panda Robot**: A robotic manipulation environment for Franka Panda robot based on MuJoCo
+
+**What is Human-In-the-Loop (HIL) RL?**
+
+Human-in-the-Loop (HIL) Reinforcement Learning keeps a human inside the control loop while the agent is training. During every rollout, the policy proposes an action, but the human may instantly override it for as many consecutive steps as needed; the robot then executes the human's command instead of the policy's choice. This approach improves sample efficiency and promotes safer exploration, as corrective actions pull the system out of unrecoverable or dangerous states and guide it toward high-value behaviors.
+
+<div align="center">
+  <img src="../media/hil-rl-schema.png" alt="Human-in-the-Loop RL Schema" width="70%"/>
+</div>
+
 ## Configuration
 
 To use `gym_hil` with LeRobot, you need to create a configuration file. An example is provided [here](https://huggingface.co/datasets/lerobot/config_examples/resolve/main/rl/gym_hil/env_config.json). Key configuration sections include:
@@ -142,6 +159,20 @@ PYTHONPATH=/home/zekaijin/lerobot-hilserl/lerobot/src python lerobot/src/lerobot
 ```
 
 The simulation environment provides a safe and repeatable way to develop and test your Human-In-the-Loop reinforcement learning components before deploying to real robots. 
+
+### 3.4 Demo Video
+
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=99sVWGECBas">
+    <img src="https://img.youtube.com/vi/99sVWGECBas/maxresdefault.jpg" alt="Watch the gym-hil demo video" width="480"/>
+  </a>
+  <br/>
+  <em>Click the image to watch a demo of gym-hil in action!</em>
+</div>
+
+We use [HIL-SERL](https://hil-serl.github.io/) from [LeRobot](https://github.com/huggingface/lerobot) to train this policy.
+The policy was trained for **10 minutes** with human in the loop.
+After only 10 minutes of training, the policy successfully performs the task.
 
 ## 4. Effect of the Reward Classifier on Training Stability (Simulation Evidence)
 
