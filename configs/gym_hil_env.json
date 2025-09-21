@@ -1,7 +1,7 @@
 {
     "env": {
         "name": "gym_hil",
-        "task": "PandaPickCubeKeyboard-v0",
+        "task": "PandaPickCubeGamepad-v0",
         "fps": 10,
         "features": {
             "observation.images.front": {
@@ -30,14 +30,13 @@
         "robot": null,
         "teleop": null,
         "processor": {
-            "control_mode": "keyboard"
-        },
-        "reward_classifier_pretrained_path": null
+            "control_mode": "gamepad"
+        }
     },
     "dataset": {
-        "repo_id": "DavidKINGSMAN/franka_sim_pick_lift_6",
-        "root": "/home/zekaijin/lerobot-hilserl/datasets",
-        "task": "PandaPickCubeKeyboard-v0",
+        "repo_id": "DavidKINGSMAN/sim_dataset",
+        "root": "/home/zekaijin/lerobot-hilserl/datasets/franka_sim_pick_lift",
+        "task": "PandaPickCubeGamepad-v0",
         "num_episodes_to_record": 30,
         "replay_episode": 0,
         "push_to_hub": true
