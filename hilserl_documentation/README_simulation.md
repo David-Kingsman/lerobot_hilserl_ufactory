@@ -107,7 +107,7 @@ To collect a dataset, set the mode to `record` whilst defining the repo_id and n
   },
   "dataset": {
     "repo_id": "username/sim_dataset",
-    "root": null,
+    "root": null,                  
     "task": "pick_cube",
     "num_episodes_to_record": 10,
     "replay_episode": null,
@@ -166,3 +166,37 @@ Practical tips:
 
 - If curves stabilize early (e.g., around 80k steps) with `Episodic reward = 1`, consider using that checkpoint and stopping training earlier.
 - For the classifier itself, increase the confidence threshold or reduce `number_of_steps_after_success` to avoid premature determinism and reward stretching biases.
+
+
+## Why Use Reward Classifiers Instead of Manual Success Detection?
+
+**Brief Summary**: In real robot training, using "manual success button press = 1, everything else = 0" sparse rewards is severely compromised by human reaction delays and triggering errors. The reward classifier transforms this high-latency, low-consistency signal into "per-frame, low-latency, reusable" success detection.
+
+### Key Benefits (in the context of HIL-SERL):
+
+#### 1. Eliminates Misaligned Samples from Human Delay
+- **Problem**: Manual button presses typically have 0.3–1.0s delay; at 10 Hz sampling, this creates 3–10 frames of "successful but unrewarded" false negative samples
+- **Impact**: Positive samples become severely diluted, making it difficult for even binary classifiers to learn stably, let alone RL algorithms
+- **Solution**: A trained success/failure binary classifier (based on images + proprioception) can provide instant success detection at control frequency, significantly reducing misalignment
+
+#### 2. Unified and Reusable Reward Source
+- Once trained, the classifier serves as sparse reward during online training: success → 1, otherwise → 0
+- Automatically terminates episodes (done=true), saving robot time and wear while reducing human annotation burden
+- Provides consistent reward signals across different training sessions
+
+#### 3. Offline Relabeling and Data Cleaning
+- Collected trajectories can be relabeled frame-by-frame using the same classifier
+- Removes false negative samples caused by human delay, improving data purity in the experience replay buffer
+- This capability is impossible with manual terminal labeling
+
+#### 4. Better Generalization and Consistency
+- Manual threshold/command-based "success" definitions are often inconsistent across subtle variations, lighting changes, and different operators
+- Classifiers can maintain stability across different sessions/operators through data augmentation and validation set threshold calibration
+- **HIL-SERL workflow**: Collect positive/negative samples via teleoperation → train binary reward classifier → add few demonstrations to Demo Buffer → use classifier rewards + minimal human intervention during online RL, with intervention frequency decreasing as performance improves
+
+#### 5. Engineering Efficiency
+- Unlike relying on manual "final button press" for each episode, the classifier enables long-term unattended data collection once available
+- This approach is a "first-class citizen" in the SERL/HIL-SERL codebase, ready to use out of the box
+
+### Practical Impact
+The reward classifier transforms the learning process from a high-latency, error-prone manual system to a robust, automated, and scalable solution that significantly improves sample efficiency and training stability in real robot scenarios.
