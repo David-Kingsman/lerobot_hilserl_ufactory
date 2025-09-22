@@ -1,3 +1,26 @@
 .DS_Store
+
+# Generated files
 outputs
 datasets
+
+# Cache
+.cache
+
+# Logs
+logs
+
+# Data
+data
+
+# Media
+media
+
+# Videos
+videos
+
+# Images
+images
+
+# Audios
+audios
