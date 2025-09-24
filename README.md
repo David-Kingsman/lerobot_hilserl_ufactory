@@ -311,8 +311,11 @@ Bounding the action space will reduce the redundant exploration of the agent and
 
 ```bash
 python -m lerobot.scripts.find_joint_limits \
+    --robot.type=so100_follower \
+    --robot.port=/dev/ttyACM1 \
+    --robot.id=black \
     --teleop.type=so100_leader \
-    --teleop.port=/dev/ttyACM0/ \
+    --teleop.port=/dev/ttyACM0 \
     --teleop.id=blue
 ```
 
