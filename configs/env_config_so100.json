@@ -1,133 +1,101 @@
 {
-    "type": "gym_manipulator",
-    "robot": {
-        "type": "so100_follower_end_effector",
-        "port": "/dev/tty.usbmodem58760431631",
-        "urdf_path": "path/to/your/robot.urdf",
-        "target_frame_name": "gripper_frame_link",
-        "cameras": {
-            "front": {
-                "type": "opencv",
-                "index_or_path": 0,
-                "height": 720,
-                "width": 1280,
-                "fps": 30
-            },
-            "wrist": {
-                "type": "opencv",
-                "index_or_path": 1,
-                "height": 720,
-                "width": 1280,
-                "fps": 30
+    "env": {
+        "robot": {
+            "type": "so100_follower",
+            "port": "/dev/ttyACM1",
+            "id": "black",
+            "cameras": {
+                "top": {
+                    "type": "opencv",
+                    "index_or_path": "/dev/video4" ,
+                    "height": 480,
+                    "width": 640,
+                    "fps": 30
+                },
+                "side": {
+                    "type": "opencv",
+                    "index_or_path": "/dev/video0",
+                    "height": 480,
+                    "width": 640,
+                    "fps": 30
+                }
             }
         },
-        "end_effector_bounds": {
-            "min": [
-                -1.0,
-                -1.0,
-                -1.0
-            ],
-            "max": [
-                1.0,
-                1.0,
-                1.0
-            ]
+        "teleop": {
+            "type": "gamepad",
+            "use_gripper": true
         },
-        "end_effector_step_sizes": {
-            "x": 0.025,
-            "y": 0.025,
-            "z": 0.025
-        }
-    },
-    "teleop": {
-        "type": "gamepad",
-        "use_gripper": true
-    },
-    "wrapper": {
-        "display_cameras": false,
-        "add_joint_velocity_to_observation": true,
-        "add_current_to_observation": true,
-        "add_ee_pose_to_observation": true,
-        "crop_params_dict": {
-            "observation.images.front": [
-                270,
-                170,
-                90,
-                190
-            ],
-            "observation.images.wrist": [
-                0,
-                0,
-                480,
-                640
-            ]
+        "processor": {
+            "control_mode": "gamepad",
+            "observation": {
+                "display_cameras": false,
+                "add_joint_velocity_to_observation": true,
+                "add_current_to_observation": true,
+                "add_ee_pose_to_observation": true
+            },
+            "image_preprocessing": {
+                "crop_params_dict": {
+                  "observation.images.top": [49, 189, 262, 305]
+                },
+                "resize_size": [128, 128]            
+            },
+            "gripper": {
+                "use_gripper": true,
+                "gripper_penalty": -0.02,
+                "gripper_penalty_in_reward": false
+            },
+            "reset": {
+                "fixed_reset_joint_positions": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    90.0,
+                    0.0,
+                    30.0
+                ],
+                "reset_time_s": 2.5,
+                "control_time_s": 20.0,
+                "terminate_on_success": true
+            },
+            "inverse_kinematics": {
+                "urdf_path": "/home/zekaijin/lerobot-hilserl/lerobot/src/lerobot/simulation/SO101/so101_new_calib.urdf",
+                "target_frame_name": "gripper_frame_link",
+                "end_effector_bounds": {
+                    "min": [
+                        0.195,
+                        -0.065,
+                        0.005
+                    ],
+                    "max": [
+                        0.25,
+                        0.065,
+                        0.1
+                    ]
+                },
+                "end_effector_step_sizes": {
+                    "x": 0.02,
+                    "y": 0.02,
+                    "z": 0.02
+                }
+            },
+            "reward_classifier": {
+                "pretrained_path": null,
+                "success_threshold": 0.5,
+                "success_reward": 1.0
+            },
+            "max_gripper_pos": 30
         },
-        "resize_size": [
-            128,
-            128
-        ],
-        "control_time_s": 20.0,
-        "use_gripper": true,
-        "gripper_quantization_threshold": null,
-        "gripper_penalty": -0.02,
-        "gripper_penalty_in_reward": false,
-        "fixed_reset_joint_positions": [
-            0.0,
-            0.0,
-            0.0,
-            90.0,
-            0.0,
-            5.0
-        ],
-        "reset_time_s": 2.5,
-        "control_mode": "gamepad"
+        "name": "real_robot",
+        "fps": 10
     },
-    "name": "real_robot",
+    "dataset": {
+        "repo_id": "DavidKINGSMAN/sim_dataset",
+        "root": "/home/zekaijin/lerobot-hilserl/datasets/SO100_pick_lift_cube",
+        "task": "pick_lift_cube",
+        "num_episodes_to_record": 15,
+        "replay_episode": null,
+        "push_to_hub": true
+    },
     "mode": null,
-    "repo_id": null,
-    "dataset_root": null,
-    "task": "",
-    "num_episodes": 2,
-    "episode": 0,
-    "pretrained_policy_name_or_path": null,
-    "device": "cpu",
-    "push_to_hub": true,
-    "fps": 10,
-    "features": {
-        "observation.images.front": {
-            "type": "VISUAL",
-            "shape": [
-                3,
-                128,
-                128
-            ]
-        },
-        "observation.images.wrist": {
-            "type": "VISUAL",
-            "shape": [
-                3,
-                128,
-                128
-            ]
-        },
-        "observation.state": {
-            "type": "STATE",
-            "shape": [
-                15
-            ]
-        },
-        "action": {
-            "type": "ACTION",
-            "shape": [
-                3
-            ]
-        }
-    },
-    "features_map": {
-        "observation.images.front": "observation.images.side",
-        "observation.images.wrist": "observation.images.wrist",
-        "observation.state": "observation.state",
-        "action": "action"
-    },
-    "reward_classifier_pretrained_path": null
+    "device": "cpu"
 }
