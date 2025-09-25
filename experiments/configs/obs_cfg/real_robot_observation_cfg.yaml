@@ -1,0 +1,21 @@
+ camera_ids: ["1","2"]
+ camera_names: ["webcam_1","webcam_2"]
+ camera_refs: ["webcam_1","webcam_2"]
+ camera_types:
+   "webcam_1": "webcam"
+   "webcam_2": "webcam"
+
+ img_h: 480
+ img_w: 640
+
+ camera_name_conversion:
+   "webcam_1": "agentview1"
+   "webcam_2": "agentview2"
+
+ obs_key_mapping:
+   camera_0_color: agentview_rgb
+   camera_0_depth: agentview_depth
+
+   gripper_states: gripper_states
+   joint_states: joint-states
+   ee_states: ee_states
