@@ -41,6 +41,6 @@
         "replay_episode": 0,
         "push_to_hub": true
     },
-    "mode": "record",
+    "mode": null,
     "device": "cuda"
 }
