@@ -135,9 +135,7 @@ To collect a dataset, set the mode to `record` whilst defining the repo_id and n
 ```
 
 ```bash
-python -m lerobot.scripts.rl.gym_manipulator --config_path path/to/gym_hil_env.json
-# private usage, just run in the terminal
-PYTHONPATH=/home/zekaijin/lerobot-hilserl/lerobot/src python lerobot/src/lerobot/scripts/rl/gym_manipulator.py --config_path configs/gym_hil_env.json
+python -m lerobot.scripts.rl.gym_manipulator --config_path configs/simulation/gym_hil_env.json
 ```
 
 ### 3.3 Training a Policy
@@ -145,17 +143,13 @@ PYTHONPATH=/home/zekaijin/lerobot-hilserl/lerobot/src python lerobot/src/lerobot
 To train a policy, checkout the example json in `train_gym_hil_env.json` and run the actor and learner servers:
 
 ```bash
-python -m lerobot.scripts.rl.actor --config_path path/to/train_gym_hil_env.json
-# private usage, just run in the terminal
-PYTHONPATH=/home/zekaijin/lerobot-hilserl/lerobot/src python lerobot/src/lerobot/scripts/rl/actor.py --config_path configs/train_gym_hil_env.json
+python -m lerobot.scripts.rl.gym_manipulator  --config_path configs/simulation/train_gym_hil_env.json
 ```
 
 Next, open a different terminal, run the learner server:
 
 ```bash 
-python -m lerobot.scripts.rl.learner --config_path path/to/train_gym_hil_env.json
-# private usage, just run in the terminal
-PYTHONPATH=/home/zekaijin/lerobot-hilserl/lerobot/src python lerobot/src/lerobot/scripts/rl/learner.py --config_path configs/train_gym_hil_env.json
+python -m lerobot.scripts.rl.gym_manipulator --config_path configs//simulation/train_gym_hil_env.json
 ```
 
 The simulation environment provides a safe and repeatable way to develop and test your Human-In-the-Loop reinforcement learning components before deploying to real robots. 
