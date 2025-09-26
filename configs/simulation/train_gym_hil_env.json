@@ -20,18 +20,18 @@
     },
     "dataset": {
         "repo_id": "DavidKINGSMAN/franka_sim_pick_lift_6",
-        "root": "/home/zekaijin/lerobot-hilserl/datasets",
+        "root": "/home/zekaijin/lerobot-hilserl/datasets/franka_sim_pick_lift_6",
         "use_imagenet_stats": false
     },
     "env": {
         "type": "gym_manipulator",
         "name": "gym_hil",
-        "task": "PandaPickCubeKeyboard-v0",
+        "task": "PandaPickCubeGamepad-v0",
         "fps": 10,
         "robot": null,
         "teleop": null,
         "processor": {
-            "control_mode": "keyboard",
+            "control_mode": "gamepad",
             "gripper": {
                 "use_gripper": true,
                 "gripper_penalty": -0.02,
@@ -118,7 +118,7 @@
                 "max": [0.025, 0.025, 0.025]
             }
         },
-        "repo_id": "DavidKINGSMAN/franka_sim_pick_lift_6",
+         "repo_id": "lerobot/pusht",
         "storage_device": "cpu",
         "vision_encoder_name": "helper2424/resnet10",
         "freeze_vision_encoder": true,
