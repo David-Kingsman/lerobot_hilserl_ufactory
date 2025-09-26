@@ -149,7 +149,7 @@ python -m src.lerobot.scripts.rl.actor --config_path ../configs/simulation/train
 Next, open a different terminal, run the learner server:
 
 ```bash 
-python -m lerobot.rl.learner --config_path ../configs/simulation/train_gym_hil_env.json
+python -m src.lerobot.scripts.rl.learner --config_path ../configs/simulation/train_gym_hil_env.json
 ```
 
 The simulation environment provides a safe and repeatable way to develop and test your Human-In-the-Loop reinforcement learning components before deploying to real robots. 
