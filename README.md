@@ -810,7 +810,7 @@ Create a training configuration file (example available [here](https://huggingfa
 First, start the learner server process:
 
 ```bash
-python -m lerobot.scripts.rl.learner --config_path src/lerobot/configs/train_config_hilserl_so100.json
+python src/lerobot/scripts/rl/learner.py --config_path /home/zekaijin/lerobot-hilserl/configs/ufactory/train_config_hilserl_lite6.json
 ```
 
 The learner:
