@@ -1,0 +1,202 @@
+{
+    "dataset": {
+      "repo_id": "lite6_push_cube_delta",
+      "root": "/home/zekaijin/lerobot-hilserl/experiments/arm_control_base/data/lerobot_dataset_v3_delta",
+      "streaming": false,
+      "video_backend": "pyav"
+    },
+  "env": {
+    "type": "gym_manipulator",
+    "name": "real_robot",
+    "fps": 30,
+    "features": {
+      "agent_pos": {
+        "type": "STATE",
+        "shape": [6]
+      },
+      "pixels/webcam_1": {
+        "type": "VISUAL",
+        "shape": [1080, 1920, 3]
+      },
+      "pixels/webcam_2": {
+        "type": "VISUAL", 
+        "shape": [1080, 1920, 3]
+      },
+      "action": {
+        "type": "ACTION",
+        "shape": [6]
+      }
+    },
+    "features_map": {
+      "agent_pos": "observation.state",
+      "pixels/webcam_1": "observation.images.webcam_1",
+      "pixels/webcam_2": "observation.images.webcam_2",
+      "action": "action"
+    },
+    "processor": {
+      "control_mode": "meta_quest2",
+      "observation": {
+        "add_joint_velocity_to_observation": false,
+        "add_current_to_observation": false,
+        "display_cameras": true
+      },
+      "image_preprocessing": {
+        "crop_params_dict": {
+          "observation.images.webcam_1": [28, 249, 1004, 1138],
+          "observation.images.webcam_2": [33, 278, 984, 1253]
+        },
+        "resize_size": [128, 128]
+      },
+      "gripper": {
+        "use_gripper": false,
+        "gripper_penalty": 0.0
+      },
+      "reset": {
+        "reset_time_s": 5.0,
+        "control_time_s": 20.0,
+        "terminate_on_success": true
+      },
+      "reward_classifier": null,
+      "max_gripper_pos": null
+    },
+    "robot": {
+      "type": "ufactory_lite6",
+      "ip": "192.168.1.193",
+      "cameras": {
+        "webcam_1": {
+          "type": "redis",
+          "camera_id": 0,
+          "camera_name": "webcam_1",
+          "redis_host": "localhost",
+          "redis_port": 6379,
+          "width": 1920,
+          "height": 1080,
+          "fps": 30,
+          "use_depth": false
+        },
+        "webcam_2": {
+          "type": "redis",
+          "camera_id": 1,
+          "camera_name": "webcam_2",
+          "redis_host": "localhost",
+          "redis_port": 6379,
+          "width": 1920,
+          "height": 1080,
+          "fps": 30,
+          "use_depth": false
+        }
+      }
+    },
+    "teleop": {
+      "type": "meta_quest2",
+      "use_gripper": false
+    },
+    "task": "push_cube"
+  },
+  "policy": {
+    "type": "sac",
+    "repo_id": "lite6_push_cube_delta",
+    "n_obs_steps": 1,
+    "normalization_mapping": {
+      "VISUAL": "MEAN_STD",
+      "STATE": "MIN_MAX",
+      "ENV": "MIN_MAX",
+      "ACTION": "MIN_MAX"
+    },
+    "input_features": {
+      "observation.state": {
+        "type": "STATE",
+        "shape": [6]
+      },
+      "observation.images.webcam_1": {
+        "type": "VISUAL",
+        "shape": [3, 128, 128]
+      },
+      "observation.images.webcam_2": {
+        "type": "VISUAL",
+        "shape": [3, 128, 128]
+      }
+    },
+    "output_features": {
+      "action": {
+        "type": "ACTION",
+        "shape": [6]
+      }
+    },
+    "device": "cuda",
+    "storage_device": "cpu",
+    "vision_encoder_name": "helper2424/resnet10",
+    "freeze_vision_encoder": true,
+    "image_encoder_hidden_dim": 32,
+    "shared_encoder": true,
+    "online_steps": 1000000,
+    "online_env_seed": 10000,
+    "online_buffer_capacity": 100000,
+    "offline_buffer_capacity": 100000,
+    "online_step_before_learning": 100,
+    "policy_update_freq": 1,
+    "discount": 0.97,
+    "temperature_init": 0.01,
+    "num_critics": 2,
+    "num_subsample_critics": null,
+    "critic_lr": 0.0003,
+    "actor_lr": 0.0003,
+    "temperature_lr": 0.0003,
+    "critic_target_update_weight": 0.005,
+    "utd_ratio": 2,
+    "state_encoder_hidden_dim": 256,
+    "latent_dim": 64,
+    "target_entropy": null,
+    "use_backup_entropy": true,
+    "grad_clip_norm": 10.0,
+    "num_discrete_actions": null,
+    "critic_network_kwargs": {
+      "hidden_dims": [256, 256],
+      "activate_final": true,
+      "final_activation": null
+    },
+    "actor_network_kwargs": {
+      "hidden_dims": [256, 256],
+      "activate_final": true
+    },
+    "policy_kwargs": {
+      "use_tanh_squash": true,
+      "std_min": 1e-5,
+      "std_max": 5,
+      "init_final": 0.05
+    },
+    "actor_learner_config": {
+      "learner_host": "127.0.0.1",
+      "learner_port": 50051,
+      "policy_parameters_push_frequency": 4
+    },
+    "concurrency": {
+      "actor": "threads",
+      "learner": "threads"
+    }
+  },
+  "output_dir": null,
+  "job_name": "hilserl_lite6_delta",
+  "resume": false,
+  "seed": 1000,
+  "num_workers": 4,
+  "batch_size": 8,
+  "steps": 100000,
+  "eval_freq": 20000,
+  "log_freq": 200,
+  "save_checkpoint": true,
+  "save_freq": 20000,
+  "use_policy_training_preset": true,
+  "optimizer": null,
+  "scheduler": null,
+  "eval": {
+    "n_episodes": 5,
+    "batch_size": 5,
+    "use_async_envs": false
+  },
+  "wandb": {
+    "enable": true,
+    "project": "hilserl_lite6_delta",
+    "disable_artifact": false
+  }
+}
