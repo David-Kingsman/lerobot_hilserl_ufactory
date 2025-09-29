@@ -14,18 +14,40 @@ lerobot-find-cameras opencv # or realsense for Intel Realsense cameras
 
 The output will look something like this if you have two cameras connected:
 
-```
+```bash
 --- Detected Cameras ---
 Camera #0:
-  Name: OpenCV Camera @ 0
+  Name: OpenCV Camera @ /dev/video0
   Type: OpenCV
-  Id: 0
-  Backend api: AVFOUNDATION
+  Id: /dev/video0
+  Backend api: V4L2
   Default stream profile:
-    Format: 16.0
-    Width: 1920
-    Height: 1080
-    Fps: 15.0
+    Format: 0.0
+    Width: 640
+    Height: 480
+    Fps: 30.0
+--------------------
+Camera #1:
+  Name: OpenCV Camera @ /dev/video2
+  Type: OpenCV
+  Id: /dev/video2
+  Backend api: V4L2
+  Default stream profile:
+    Format: 0.0
+    Width: 640
+    Height: 480
+    Fps: 30.0
+--------------------
+Camera #2:
+  Name: OpenCV Camera @ /dev/video4
+  Type: OpenCV
+  Id: /dev/video4
+  Backend api: V4L2
+  Default stream profile:
+    Format: 0.0
+    Width: 640
+    Height: 480
+    Fps: 30.0
 --------------------
 (more cameras ...)
 ```
@@ -33,7 +55,7 @@ Camera #0:
 > [!WARNING]
 > When using Intel RealSense cameras in `macOS`, you could get this [error](https://github.com/IntelRealSense/librealsense/issues/12307): `Error finding RealSense cameras: failed to set power state`, this can be solved by running the same command with `sudo` permissions. Note that using RealSense cameras in `macOS` is unstable.
 
-## Use Cameras
+## Use Cameras 
 
 Below are two examples, demonstrating how to work with the API.
 
@@ -41,7 +63,7 @@ Below are two examples, demonstrating how to work with the API.
 - **Color and depth capture** using an Intel RealSense camera
 
 <hfoptions id="shell_restart">
-<hfoption id="Open CV Camera">
+<hfoption id="OpenCV Camera">
 
 <!-- prettier-ignore-start -->
 ```python
@@ -177,9 +199,18 @@ v4l2-ctl --list-devices
 
 You should see an entry like:
 
-```
-VirtualCam (platform:v4l2loopback-000):
-/dev/video1
+```bash
+Logitech Webcam C930e (usb-0000:00:14.0-1):
+        /dev/video0
+        /dev/video1
+
+Web Camera: Web Camera (usb-0000:00:14.0-5):
+        /dev/video4
+        /dev/video5
+
+Web Camera: Web Camera (usb-0000:00:14.0-6):
+        /dev/video2
+        /dev/video3
 ```
 
 10. _Check the camera resolution_. Use `v4l2-ctl` to ensure that the virtual camera output resolution is `640x480`. Change `/dev/video1` to the port of your virtual camera from the output of `v4l2-ctl --list-devices`.
@@ -192,10 +223,37 @@ v4l2-ctl -d /dev/video1 --get-fmt-video
 
 You should see an entry like:
 
-```
+```bash
 >>> Format Video Capture:
 >>>	Width/Height      : 640/480
 >>>	Pixel Format      : 'YUYV' (YUYV 4:2:2)
+v4l2-ctl -d /dev/video0 --get-fmt-video
+
+>>>    Format Video Capture:
+>>>            Width/Height      : 640/480
+>>>            Pixel Format      : 'YUYV' (YUYV 4:2:2)
+>>>            Field             : None
+>>>            Bytes per Line    : 1280
+>>>            Size Image        : 614400
+>>>            Colorspace        : sRGB
+>>>            Transfer Function : Rec. 709
+>>>            YCbCr/HSV Encoding: ITU-R 601
+>>>            Quantization      : Default (maps to Limited Range)
+            Flags             : 
+
+v4l2-ctl -d /dev/video4 --get-fmt-video
+
+>>>    Format Video Capture:
+>>>            Width/Height      : 640/480
+>>>            Pixel Format      : 'YUYV' (YUYV 4:2:2)
+>>>            Field             : None
+>>>            Bytes per Line    : 1280
+>>>            Size Image        : 614400
+>>>            Colorspace        : sRGB
+>>>            Transfer Function : Rec. 709
+>>>            YCbCr/HSV Encoding: ITU-R 601
+>>>            Quantization      : Default (maps to Limited Range)
+>>>            Flags             : 
 ```
 
 Troubleshooting: If the resolution is not correct you will have to delete the Virtual Camera port and try again as it cannot be changed.
