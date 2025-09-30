@@ -304,30 +304,38 @@ Before collecting demonstrations, you need to determine the appropriate operatio
 
 This helps simplify the problem of learning on the real robot in two ways: 1) by limiting the robot's operational space to a specific region that solves the task and avoids unnecessary or unsafe exploration, and 2) by allowing training in end-effector space rather than joint space. Empirically, learning in joint space for reinforcement learning in manipulation is often a harder problem - some tasks are nearly impossible to learn in joint space but become learnable when the action space is transformed to end-effector coordinates.
 
-**Using find_joint_limits.py**
+**find_joint_limits_metaquest.py**
 
 This script helps you find the safe operational bounds for your robot's end-effector. Given that you have a follower and leader arm, you can use the script to find the bounds for the follower arm that will be applied during training.
 Bounding the action space will reduce the redundant exploration of the agent and guarantees safety.
 
+
+
 ```bash
-python -m lerobot.scripts.find_joint_limits \
-    --robot.type=so100_follower \
-    --robot.port=/dev/ttyACM1 \
-    --robot.id=black \
-    --teleop.type=so100_leader \
-    --teleop.port=/dev/ttyACM0 \
-    --teleop.id=blue
+cd experiments/arm_control_base
+python find_joint_limits_metaquest.py --robot_ip=192.168.1.193 --teleop_time_s=30
 ```
 
 **Workflow**
 
-1. Run the script and move the robot through the space that solves the task
-2. The script will record the minimum and maximum end-effector positions and the joint angles and prints them to the console, for example:
+This script will:
+1. Connect to UFactory Lite6 robot
+2. Connect to Meta Quest 2 controller
+3. Find the joint and end-effector position limits through Meta Quest 2 control
+4. Output the found limits, format same as LeRobot
+
    ```
-   Max ee position [0.2417 0.2012 0.1027]
-   Min ee position [0.1663 -0.0823 0.0336]
-   Max joint positions [-20.0, -20.0, -20.0, -20.0, -20.0, -20.0]
-   Min joint positions [50.0, 50.0, 50.0, 50.0, 50.0, 50.0]
+    UFactory Lite6 + Meta Quest 2 joint limit
+    ============================================================
+    Max ee position: [388.2588, 86.6573, 213.5001]
+    Min ee position: [185.3618, -91.9344, 110.2758]
+    Max joint pos position: [13.8942, 63.5855, 101.24, 30.9897, 42.0742, -20.4426, 0.0]
+    Min joint pos position: [-20.4989, 22.5459, 32.6588, -23.8765, 8.5189, -64.0866, 0.0]
+
+    Generated time: 2025-09-25 15:53:07
+    Control method: Meta Quest 2
+    Robot arm: UFactory Lite6
+    
    ```
 3. Use these values in the configuration of your teleoperation device (TeleoperatorConfig) under the `end_effector_bounds` field
 
@@ -335,8 +343,8 @@ python -m lerobot.scripts.find_joint_limits \
 
 ```json
 "end_effector_bounds": {
-    "max": [0.24, 0.20, 0.10],
-    "min": [0.16, -0.08, 0.03]
+    "max": [388.2588, 86.6573, 213.5001],
+    "min": [185.3618, -91.9344, 110.2758]
 }
 ```
 
@@ -471,54 +479,13 @@ To setup the gamepad, you need to set the `control_mode` to `"gamepad"` and defi
   <i>Gamepad button mapping for robot control and episode management</i>
 </p>
 
-**Setting up the SO101 leader**
-
-The SO101 leader arm has reduced gears that allows it to move and track the follower arm during exploration. Therefore, taking over is much smoother than the gearless SO100.
-
-To setup the SO101 leader, you need to set the `control_mode` to `"leader"` and define the `teleop` section in the configuration file.
-
-```json
-{
-  "env": {
-    "teleop": {
-      "type": "so101_leader",
-      "port": "/dev/tty.usbmodem585A0077921",
-      "use_degrees": true
-    },
-    "processor": {
-      "control_mode": "leader",
-      "gripper": {
-        "use_gripper": true
-      }
-    }
-  }
-}
-```
-
-In order to annotate the success/failure of the episode, **you will need** to use a keyboard to press `s` for success, `esc` for failure.
-During the online training, press `space` to take over the policy and `space` again to give the control back to the policy.
-
-<details>
-<summary><strong>Video: SO101 leader teleoperation</strong></summary>
-
-<div class="video-container">
-  <video controls width="600">
-    <source
-      src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/lerobot/so101_leader_tutorial.mp4"
-      type="video/mp4"
-    />
-  </video>
-</div>
-
-<p align="center"><i>SO101 leader teleoperation example, the leader tracks the follower, press `space` to intervene</i></p>
-</details>
 
 **Recording Demonstrations**
 
 Start the recording process, an example of the config file can be found [here](https://huggingface.co/datasets/aractingi/lerobot-example-config-files/blob/main/env_config_so100.json):
 
 ```bash
-python -m lerobot.scripts.rl.gym_manipulator --config_path src/lerobot/configs/env_config_so100.json
+python -m lerobot.scripts.rl.gym_manipulator --config_path configs/ufactory/env_config_hilserl_lite6.json   --env.teleop.use_gripper true   --env.processor.gripper.use_gripper true
 ```
 
 During recording:
