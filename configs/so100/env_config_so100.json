@@ -35,7 +35,8 @@
             },
             "image_preprocessing": {
                 "crop_params_dict": {
-                  "observation.images.top": [49, 189, 262, 305]
+                  "observation.images.top": [49, 189, 262, 305],
+                  "observation.images.side": [49, 189, 262, 305]
                 },
                 "resize_size": [128, 128]            
             },
