@@ -729,7 +729,7 @@ or set the argument in the json config file.
 Run `gym_manipulator.py` to test the model.
 
 ```bash
-python -m lerobot.scripts.rl.gym_manipulator --config_path path/to/env_config.json
+python -m lerobot.scripts.rl.gym_manipulator --config_path configs/ufactory/env_config_hilserl_lite6.json
 ```
 
 The reward classifier will automatically provide rewards based on the visual input from the robot's cameras.
@@ -775,7 +775,7 @@ Create a training configuration file (example available [here](https://huggingfa
 First, start the learner server process:
 
 ```bash
-python src/lerobot/scripts/rl/learner.py --config_path /home/zekaijin/lerobot-hilserl/configs/ufactory/train_config_hilserl_lite6.json
+python src/lerobot/scripts/rl/learner.py --config_path configs/ufactory/train_config_hilserl_lite6.json
 ```
 
 The learner:
@@ -790,7 +790,7 @@ The learner:
 In a separate terminal, start the actor process with the same configuration:
 
 ```bash
-python -m lerobot.scripts.rl.actor --config_path /home/zekaijin/lerobot-hilserl/configs/ufactory/train_config_hilserl_lite6.json
+python -m lerobot.scripts.rl.actor --config_path configs/ufactory/train_config_hilserl_lite6.json
 ```
 
 The actor:
