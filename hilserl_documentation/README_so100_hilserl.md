@@ -58,6 +58,30 @@ To install LeRobot with HIL-SERL, you need to install the `hilserl` extra.
 pip install -e ".[hilserl]"
 ```
 
+
+## SO100 Experimental Setup
+
+The following images show the SO100 experimental setup with multiple camera views:
+
+<div align="center">
+  <h4>Camera Test Overview</h4>
+  <img src="../media/camera_test.jpg" alt="SO100 Camera Test Overview" width="300"/>
+  <br/><br/>
+  
+  <h4>Camera Views</h4>
+  <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
+    <div style="margin: 10px;">
+      <img src="../media/opencv__dev_video0.png" alt="Camera 0 View" width="200"/>
+      <br/><em>Camera 1</em>
+    </div>
+    <div style="margin: 10px;">
+      <img src="../media/opencv__dev_video4.png" alt="Camera 4 View" width="200"/>
+      <br/><em>Camera 2</em>
+    </div>
+  </div>
+</div>
+
+
 ## Real Robot Training Workflow
 
 ### Understanding Configuration

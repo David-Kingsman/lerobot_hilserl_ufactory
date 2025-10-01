@@ -753,9 +753,13 @@ The reward classifier will automatically provide rewards based on the visual inp
 
 4. **Test the classifier**:
    ```bash
-   python -m lerobot.scripts.rl.gym_manipulator --configs/ufactory/env_config_hilserl_lite6.json
+   python -m lerobot.scripts.rl.gym_manipulator --config_path configs/ufactory/env_config_hilserl_lite6.json
    ```
 
+5. **(Optional) 
+   ```bash
+   lerobot-train --config_path configs/ufactory/bc_pretrain_lite6.json
+   ```
 ### Training with Actor-Learner
 
 The LeRobot system uses a distributed actor-learner architecture for training. This architecture decouples robot interactions from the learning process, allowing them to run concurrently without blocking each other. The actor server handles robot observations and actions, sending interaction data to the learner server. The learner server performs gradient descent and periodically updates the actor's policy weights. You will need to start two processes: a learner and an actor.
@@ -775,7 +779,7 @@ Create a training configuration file (example available [here](https://huggingfa
 First, start the learner server process:
 
 ```bash
-python src/lerobot/scripts/rl/learner.py --config_path configs/ufactory/train_config_hilserl_lite6.json
+python -m lerobot.scripts.rl.learner --config_path configs/ufactory/train_config_hilserl_lite6.json
 ```
 
 The learner:

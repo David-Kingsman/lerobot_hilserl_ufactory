@@ -164,6 +164,22 @@ The simulation environment provides a safe and repeatable way to develop and tes
   <em>Click the image to watch a demo of gym-hil in action!</em>
 </div>
 
+#### Local Simulation Video 
+
+If you are viewing the document in a local environment, you can directly play or download the local sample video:
+
+<div align="center">
+  <video width="640" controls>
+    <source src="../media/hilserl_simulation.mp4" type="video/mp4" />
+    Your browser does not support the video tag. You can download it instead:
+    <a href="../media/hilserl_simulation.mp4">Download hilserl_simulation.mp4</a>
+  </video>
+  <br/>
+  <a href="../media/hilserl_simulation.mp4">Download hilserl_simulation.mp4</a>
+  
+</div>
+
+
 We use [HIL-SERL](https://hil-serl.github.io/) from [LeRobot](https://github.com/huggingface/lerobot) to train this policy.
 The policy was trained for **10 minutes** with human in the loop.
 After only 10 minutes of training, the policy successfully performs the task.
