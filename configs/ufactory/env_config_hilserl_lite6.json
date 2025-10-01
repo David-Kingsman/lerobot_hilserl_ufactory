@@ -46,7 +46,7 @@
                 "gripper_penalty_in_reward": false
             },
             "reset": {
-                "fixed_reset_joint_positions": [2.3,29.7,60.9,183.0,-35.1,-218.3],
+                "fixed_reset_joint_positions": [-0.019, 0.560, 0.553, -0.047, -0.082, -0.092],
                 "reset_time_s": 2.5,
                 "control_time_s": 20.0,
                 "terminate_on_success": true
@@ -61,7 +61,7 @@
                   "end_effector_step_sizes": { "x": 0.005, "y": 0.005, "z": 0.005 }
             },
             "reward_classifier": {
-                "pretrained_path": null,
+                "pretrained_path": "/home/zekaijin/lerobot-hilserl/outputs/train/2025-10-01/12-00-39_reward-classifier/checkpoints/005000/pretrained_model",
                 "success_threshold": 0.5,
                 "success_reward": 1.0
             },
@@ -72,9 +72,9 @@
     },
     "dataset": {
         "repo_id": "DavidKINGSMAN/lite6_dataset",
-        "root": "/home/zekaijin/lerobot-hilserl/datasets/lite6_pick_push_cube",
+        "root": "/home/zekaijin/lerobot-hilserl/datasets/lite6_pick_push_cube_with_reward_classifier",
         "task": "pick_push_cube",
-        "num_episodes_to_record": 15,
+        "num_episodes_to_record": 20,
         "replay_episode": null,
         "push_to_hub": true
     },

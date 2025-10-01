@@ -1,7 +1,7 @@
 {
     "dataset": {
-        "repo_id": "zekaijin/reward_classifier_data",
-        "root": "/home/zekaijin/lerobot-hilserl/datasets/lite6_pick_push_cube"
+        "repo_id": "DavidKINGSMAN/lite6_dataset_without_reward_classifier",
+        "root": "/home/zekaijin/lerobot-hilserl/datasets/lite6_pick_push_cube_without_reward_classifier"
     },
     "policy": {
         "type": "reward_classifier",
@@ -16,7 +16,7 @@
         "device": "cuda",
         "use_amp": true,
         "input_features": {
-            "observation.images.side": {
+            "observation.images.webcam_1": {
                 "type": "VISUAL",
                 "shape": [
                     3,
@@ -24,7 +24,7 @@
                     128
                 ]
             },
-            "observation.images.front": {
+            "observation.images.webcam_2": {
                 "type": "VISUAL",
                 "shape": [
                     3,
@@ -43,8 +43,6 @@
     "save_checkpoint": true,
     "seed": 2,
     "resume": false,
-    "fps": 10,
-    "number_of_steps_after_success": 10,
     "optimizer": {
         "grad_clip_norm": 10.0
     },
