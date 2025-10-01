@@ -42,8 +42,8 @@
       },
       "image_preprocessing": {
         "crop_params_dict": {
-          "observation.images.webcam_1": [28, 249, 1004, 1138],
-          "observation.images.webcam_2": [33, 278, 984, 1253]
+          "webcam_1": [300, 500, 480, 920],
+          "webcam_2": [300, 500, 480, 920]
         },
         "resize_size": [128, 128]
       },
@@ -60,7 +60,7 @@
       "max_gripper_pos": null
     },
     "robot": {
-      "type": "ufactory_lite6",
+      "type": "lite6",
       "ip": "192.168.1.193",
       "cameras": {
         "webcam_1": {
@@ -108,11 +108,11 @@
         "type": "STATE",
         "shape": [6]
       },
-      "observation.images.webcam_1": {
+      "webcam_1": {
         "type": "VISUAL",
         "shape": [3, 128, 128]
       },
-      "observation.images.webcam_2": {
+      "webcam_2": {
         "type": "VISUAL",
         "shape": [3, 128, 128]
       }
@@ -176,7 +176,6 @@
     }
   },
   "output_dir": null,
-  "job_name": "hilserl_lite6_delta",
   "resume": false,
   "seed": 1000,
   "num_workers": 4,

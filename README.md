@@ -230,7 +230,7 @@ The action processor (`action_processor`) handles outgoing actions and human int
 
 ### Advanced Observation Processing
 
-The HIL-SERL framework supports additional observation processing features that can improve policy learning:
+The HIL-SERL framework   additional observation processing features that can improve policy learning:
 
 #### Joint Velocity Processing
 
@@ -308,8 +308,6 @@ This helps simplify the problem of learning on the real robot in two ways: 1) by
 
 This script helps you find the safe operational bounds for your robot's end-effector. Given that you have a follower and leader arm, you can use the script to find the bounds for the follower arm that will be applied during training.
 Bounding the action space will reduce the redundant exploration of the agent and guarantees safety.
-
-
 
 ```bash
 cd experiments/arm_control_base
@@ -415,12 +413,12 @@ We support using a gamepad or a keyboard or the leader arm of the robot.
 
 HIL-Serl learns actions in the end-effector space of the robot. Therefore, the teleoperation will control the end-effector's x,y,z displacements.
 
-For that we need to define a version of the robot that takes actions in the end-effector space. Check the robot class `SO100FollowerEndEffector` and its configuration `SO100FollowerEndEffectorConfig` for the default parameters related to the end-effector space.
+For that we need to define a version of the robot that takes actions in the end-effector space. Check the robot class `UFactoryLite6` and its configuration `UFactoryLite6Config` for the default parameters related to the end-effector space.
 
 <!-- prettier-ignore-start -->
 ```python
-class SO100FollowerEndEffectorConfig(SO100FollowerConfig):
-    """Configuration for the SO100FollowerEndEffector robot."""
+class UFactoryLite6Config(UFactoryLite6Config):
+    """Configuration for the UFactoryLite6 robot."""
 
     # Default bounds for the end-effector position (in meters)
     end_effector_bounds: dict[str, list[float]] = field( # bounds for the end-effector in x,y,z direction
@@ -585,7 +583,7 @@ Before training, you need to collect a dataset with labeled examples. The `recor
 To collect a dataset, you need to modify some parameters in the environment configuration based on HILSerlRobotEnvConfig.
 
 ```bash
-python -m lerobot.scripts.rl.gym_manipulator --config_path src/lerobot/configs/reward_classifier_train_config.json
+python -m lerobot.scripts.rl.gym_manipulator --config_path configs/ufactory/reward_classifier_train_config_lite6.json
 ```
 
 **Key Parameters for Data Collection**
@@ -685,7 +683,7 @@ Example configuration for training the [reward classifier](https://huggingface.c
 To train the classifier, use the `train.py` script with your configuration:
 
 ```bash
-lerobot-train --config_path path/to/reward_classifier_train_config.json
+   lerobot-train --config_path configs/ufactory/reward_classifier_train_config_lite6.json
 ```
 
 **Deploying and Testing the Model**
@@ -744,18 +742,18 @@ The reward classifier will automatically provide rewards based on the visual inp
 2. **Collect a dataset**:
 
    ```bash
-   python -m lerobot.scripts.rl.gym_manipulator --config_path src/lerobot/configs/env_config.json
+   python -m lerobot.scripts.rl.gym_manipulator --config_path configs/ufactory/env_config_hilserl_lite6.json
    ```
 
 3. **Train the classifier**:
 
    ```bash
-   lerobot-train --config_path src/lerobot/configs/reward_classifier_train_config.json
+   lerobot-train --config_path configs/ufactory/reward_classifier_train_config_lite6.json
    ```
 
 4. **Test the classifier**:
    ```bash
-   python -m lerobot.scripts.rl.gym_manipulator --config_path src/lerobot/configs/env_config.json
+   python -m lerobot.scripts.rl.gym_manipulator --configs/ufactory/env_config_hilserl_lite6.json
    ```
 
 ### Training with Actor-Learner
@@ -792,7 +790,7 @@ The learner:
 In a separate terminal, start the actor process with the same configuration:
 
 ```bash
-python -m lerobot.scripts.rl.actor --config_path src/lerobot/configs/train_config_hilserl_so100.json
+python -m lerobot.scripts.rl.actor --config_path /home/zekaijin/lerobot-hilserl/configs/ufactory/train_config_hilserl_lite6.json
 ```
 
 The actor:
