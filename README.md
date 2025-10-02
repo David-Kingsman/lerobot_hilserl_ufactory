@@ -514,7 +514,7 @@ Note: If you already know the crop parameters, you can skip this step and just s
 Use the `crop_dataset_roi.py` script to interactively select regions of interest in your camera images:
 
 ```bash
-python -m lerobot.scripts.rl.crop_dataset_roi --repo-id username/pick_lift_cube
+python -m lerobot.scripts.rl.crop_dataset_roi --root datasets/lite6_push_cube
 ```
 
 1. For each camera view, the script will display the first frame
@@ -525,10 +525,28 @@ python -m lerobot.scripts.rl.crop_dataset_roi --repo-id username/pick_lift_cube
 
 Example output:
 
-```
+```bash
+Selected Rectangular Regions of Interest (top, left, height, width) :
+
+Select rectangular ROI for image with key: 'observation.images.webcam_1'
+Instructions for ROI selection:
+  - Click and drag to draw a rectangular ROI.
+  - Press 'c' to confirm the selection.
+  - Press 'r' to reset and draw again.
+  - Press ESC to cancel the selection.
+ROI for 'observation.images.webcam_1': (82, 306, 156, 141)
+
+Select rectangular ROI for image with key: 'observation.images.webcam_2'
+Instructions for ROI selection:
+  - Click and drag to draw a rectangular ROI.
+  - Press 'c' to confirm the selection.
+  - Press 'r' to reset and draw again.
+  - Press ESC to cancel the selection.
+ROI for 'observation.images.webcam_2': (116, 136, 177, 263)
+
 Selected Rectangular Regions of Interest (top, left, height, width):
-observation.images.side: [180, 207, 180, 200]
-observation.images.front: [180, 250, 120, 150]
+observation.images.webcam_1: (82, 306, 156, 141)
+observation.images.webcam_2: (116, 136, 177, 263)
 ```
 
 <p align="center">
