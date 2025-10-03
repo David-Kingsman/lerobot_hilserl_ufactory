@@ -1,7 +1,7 @@
 {
     "dataset": {
-        "repo_id": "DavidKINGSMAN/lite6_dataset_without_reward_classifier",
-        "root": "/home/zekaijin/lerobot-hilserl/datasets/lite6_pick_push_cube_without_reward_classifier"
+        "repo_id": null,
+        "root": "/home/zekaijin/lerobot-hilserl/datasets/lite6_push_cube_reward_classifier_test1"
     },
     "policy": {
         "type": "reward_classifier",
@@ -36,10 +36,10 @@
     },
     "batch_size": 16,
     "num_workers": 4,
-    "steps": 5000,
+    "steps": 50000,
     "log_freq": 10,
-    "eval_freq": 1000,
-    "save_freq": 1000,
+    "eval_freq": 5000,
+    "save_freq": 5000,
     "save_checkpoint": true,
     "seed": 2,
     "resume": false,
