@@ -63,7 +63,7 @@
                   "end_effector_step_sizes": { "x": 0.005, "y": 0.005, "z": 0.005 }
             },
             "reward_classifier": {
-                "pretrained_path": null,
+                "pretrained_path": "/home/zekaijin/lerobot-hilserl/outputs/train/2025-10-02/15-03-34_reward-classifier/checkpoints/last/pretrained_model",
                 "success_threshold": 0.5,
                 "success_reward": 1.0
             },
@@ -75,7 +75,7 @@
     },
     "dataset": {
         "repo_id": "DavidKINGSMAN/lite6_dataset",
-        "root": "/home/zekaijin/lerobot-hilserl/datasets/lite6_push_cube_reward_classifier_test2",
+        "root": "/home/zekaijin/lerobot-hilserl/datasets/lite6_push_cube_reward_classifier_test3",
         "task": "push_cube",
         "num_episodes_to_record": 50,
         "replay_episode": null,
