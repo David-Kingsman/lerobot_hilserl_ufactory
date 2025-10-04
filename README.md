@@ -901,6 +901,17 @@ Congrats 🎉, you have finished this tutorial!
 > [!TIP]
 > If you have any questions or need help, please reach out on [Discord](https://discord.com/invite/s3KuuzsPFb).
 
+
+Contributions
+
+| Code Directory                                                                                             | Description                                |
+|------------------------------------------------------------------------------------------------------------|--------------------------------------------|
+| [ufactory_robot_controllers](https://github.com/David-Kingsman/lerobot/blob/main/src/lerobot/motors/ufactory.py) | Ufacotory API Motorbus controller|
+| [utils_for_ufactory](https://github.com/David-Kingsman/lerobot/blob/main/src/lerobot/motors/utils.py)     | Added xArm motor bus implementation |
+| [Ufactory_lite6_class](https://github.com/David-Kingsman/lerobot/tree/main/src/lerobot/robots/ufactory_lite6)            | support ufactory robots |
+| [URDF_for_robots](https://github.com/David-Kingsman/lerobot/tree/main/src/lerobot/simulation)        | supported self-collision detection and joint information printing |
+
+
 Paper citation:
 
 ```
