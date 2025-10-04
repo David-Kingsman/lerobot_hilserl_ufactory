@@ -1,7 +1,7 @@
 {
     "dataset": {
         "repo_id": null,
-        "root": "/home/zekaijin/lerobot-hilserl/datasets/lite6_push_cube_reward_classifier_test1"
+        "root": "/home/zekaijin/lerobot-hilserl/datasets/lite6_push_cube_reward_classifier_test2"
     },
     "policy": {
         "type": "reward_classifier",
@@ -36,7 +36,7 @@
     },
     "batch_size": 16,
     "num_workers": 4,
-    "steps": 50000,
+    "steps": 5000,
     "log_freq": 10,
     "eval_freq": 1000,
     "save_freq": 1000,

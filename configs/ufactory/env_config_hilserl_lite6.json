@@ -49,9 +49,9 @@
             },
             "reset": {
                 "fixed_reset_joint_positions": [-0.019, 0.560, 0.553, -0.047, -0.082, -0.092],
-                "reset_time_s": 2.5,
+                       "reset_time_s": 5.0,
                 "control_time_s": 10.0,
-                "terminate_on_success": false
+                "terminate_on_success": true
             },
             "inverse_kinematics": {
                 "urdf_path": "/home/zekaijin/lerobot-hilserl/lerobot/src/lerobot/simulation/Lite6/lite6.urdf",
@@ -60,7 +60,7 @@
                     "min": [0.1853618, -0.0919344, 0.1102758],
                     "max": [0.3882588, 0.0866573, 0.2135001]
                   },
-                  "end_effector_step_sizes": { "x": 0.005, "y": 0.005, "z": 0.005 }
+                         "end_effector_step_sizes": { "x": 0.015, "y": 0.015, "z": 0.015 }
             },
             "reward_classifier": {
                 "pretrained_path": null,
@@ -69,8 +69,8 @@
             },
             "max_gripper_pos": 100.0
         },
-        "name": "lite6_real_robot",
-        "fps": 30
+               "name": "lite6_real_robot",
+               "fps": 15
 
     },
     "dataset": {
