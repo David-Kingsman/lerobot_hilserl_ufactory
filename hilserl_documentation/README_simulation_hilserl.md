@@ -11,6 +11,10 @@ This guide explains how to use the `gym_hil` simulation environments as an alter
 
 Currently, the main environment is a Franka Panda robot simulation based on MuJoCo, with tasks like picking up a cube.
 
+## Intro
+
+HIL-SERL is a framework for training state-of-the-art robotic manipulation policies via reinforcement learning. The pipeline proceeds in three stages. First, we teleoperate the robot to curate positive and negative examples and fit a binary reward classifier. Second, we gather a small set of demonstrations, which is seeded into the demonstration buffer at the onset of RL training. Third, during online training, the learned classifier supplies a sparse reward while a human operator supplies corrective interventions. Early in training, interventions are frequent to illustrate successful strategies from diverse states and to suppress undesirable behaviors; as policy performance improves—measured by success rate and cycle time—the intervention rate is progressively reduced. This schedule yields a data-efficient training process that transitions from human-guided exploration to largely autonomous policy optimization.
+
 ## Installation
 
 First, install the `gym_hil` package within the LeRobot environment:
@@ -40,6 +44,8 @@ Human-in-the-Loop (HIL) Reinforcement Learning keeps a human inside the control 
 <div align="center">
   <img src="../media/hil-rl-schema.png" alt="Human-in-the-Loop RL Schema" width="70%"/>
 </div>
+
+
 
 ## Configuration
 
@@ -241,3 +247,8 @@ Practical tips:
 
 ### Practical Impact
 The reward classifier transforms the learning process from a high-latency, error-prone manual system to a robust, automated, and scalable solution that significantly improves sample efficiency and training stability in real robot scenarios.
+
+
+### Results
+
+After 80,000 training steps and manual intervention (approximately 1 hour), our policy achieved a 100% success rate in the pick_cube_sim environment. Below are our training curves and the final policy results.
