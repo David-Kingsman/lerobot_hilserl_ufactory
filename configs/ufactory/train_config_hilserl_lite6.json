@@ -1,6 +1,6 @@
 {
     "output_dir": null,
-    "job_name": "hilserl_lite6_reward_classifier_1",
+    "job_name": "hilserl_lite6_reward_classifier_test3",
     "resume": false,
     "seed": 1000,
     "num_workers": 2,
@@ -11,12 +11,12 @@
     "save_freq": 2000000,
     "wandb": {
       "enable": true,
-      "project": "hilserl_lite6_reward_classifier_1",
+      "project": "hilserl_lite6_reward_classifier_test3",
       "disable_artifact": true
     },
       "dataset": {
         "repo_id": "DavidKINGSMAN/lite6_dataset",
-        "root": "/home/zekaijin/lerobot-hilserl/datasets/lite6_push_cube_reward_classifier_test2",
+        "root": "/home/zekaijin/lerobot-hilserl/datasets/lite6_push_cube_reward_classifier_test3",
       "streaming": false,
       "video_backend": "pyav"
     },
@@ -32,7 +32,7 @@
       "input_features": {
         "observation.images.webcam_1": { "type": "VISUAL", "shape": [3, 128, 128] },
         "observation.images.webcam_2": { "type": "VISUAL", "shape": [3, 128, 128] },
-        "observation.state":          { "type": "STATE",  "shape": [6] }
+        "observation.state":          { "type": "STATE",  "shape": [12] }
         },
       "output_features": {"action": { "type": "ACTION", "shape": [3] }},
       "device": "cuda",
@@ -95,7 +95,7 @@
           "actor": "threads",
           "learner": "threads"
       },
-      "repo_id": "DavidKINGSMAN/lite6_push_cube_with_reward_classifier_policy_2"
+      "repo_id": "DavidKINGSMAN/lite6_push_cube_with_reward_classifier_policy_test3"
    },
    
    "env": {
@@ -104,6 +104,7 @@
         "type": "ufactory_lite6",
         "ip": "192.168.1.193",
         "id": "lite6_main",
+        "control_mode": "velocity",
         "cameras": {
             "webcam_1": {
                 "type": "opencv",
@@ -128,15 +129,15 @@
     "processor": {
         "control_mode": "gamepad",
         "observation": {
-            "display_cameras": true,
-            "add_joint_velocity_to_observation": false,
+            "display_cameras": false,
+            "add_joint_velocity_to_observation": true,
             "add_current_to_observation": false,
-            "add_ee_pose_to_observation": false
+            "add_ee_pose_to_observation": true
         },
         "image_preprocessing": {
             "crop_params_dict": {
-              "observation.images.webcam_1": [90, 300, 150, 150],
-              "observation.images.webcam_2": [69, 144, 240, 250]
+                "observation.images.webcam_1": [80, 200, 200, 150],
+                "observation.images.webcam_2": [89, 199, 240, 250]
             },
             "resize_size": [128, 128]
         },
@@ -148,7 +149,7 @@
         "reset": {
             "fixed_reset_joint_positions": [-0.019, 0.560, 0.553, -0.047, -0.082, -0.092],  
             "reset_time_s": 2.5,
-            "control_time_s": 60.0,
+            "control_time_s": 10.0,
             "terminate_on_success": true
         },
         "inverse_kinematics": {
@@ -158,17 +159,18 @@
               "min": [0.1853618, -0.0919344, 0.1102758],
               "max": [0.3882588, 0.0866573, 0.2135001]
             },
-            "end_effector_step_sizes": { "x": 0.005, "y": 0.005, "z": 0.005 }
+            "end_effector_step_sizes": { "x": 0.015, "y": 0.015, "z": 0.015 }
         },
+       
         "reward_classifier": {
-            "pretrained_path":  "/home/zekaijin/lerobot-hilserl/outputs/train/2025-10-03/18-22-24_reward-classifier/checkpoints/last/pretrained_model",
+            "pretrained_path":  "/home/zekaijin/lerobot-hilserl/outputs/train/2025-10-12/15-06-58_reward-classifier/checkpoints/last/pretrained_model",
             "success_threshold": 0.5,
             "success_reward": 1.0
         },
         "max_gripper_pos": 100.0
     },
     "name": "lite6_real_robot",
-    "fps": 30,
+    "fps": 15,
 
     "task": "push_cube",
     "features": {
@@ -191,7 +193,7 @@
         "observation.state": {
             "type": "STATE",
             "shape": [
-                6
+                12
             ]
         },
         "action": {

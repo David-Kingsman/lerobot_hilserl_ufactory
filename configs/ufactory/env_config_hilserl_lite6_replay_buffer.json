@@ -4,6 +4,7 @@
             "type": "ufactory_lite6",
             "id": "lite6_main",
             "mock": false,
+            "control_mode": "velocity",
             "cameras": {
                 "webcam_1": {
                     "type": "opencv",
@@ -23,9 +24,7 @@
         },
         "teleop": {
             "type": "gamepad",
-            "use_gripper": false,
-            "gripper_penalty": -0.02,
-            "gripper_penalty_in_reward": false
+            "use_gripper": false
         },
         "processor": {
             "control_mode": "gamepad",
@@ -37,7 +36,7 @@
             },
             "image_preprocessing": {
             "crop_params_dict": {
-                "observation.images.webcam_1": [80, 285, 150, 150],
+                "observation.images.webcam_1": [80, 200, 200, 150],
                 "observation.images.webcam_2": [89, 199, 240, 250]
             },
                 "resize_size": [128, 128]            
@@ -49,9 +48,9 @@
             },
             "reset": {
                 "fixed_reset_joint_positions": [-0.019, 0.560, 0.553, -0.047, -0.082, -0.092],
-                "reset_time_s": 2.5,
+                       "reset_time_s": 5.0,
                 "control_time_s": 10.0,
-                "terminate_on_success": false
+                "terminate_on_success": true
             },
             "inverse_kinematics": {
                 "urdf_path": "/home/zekaijin/lerobot-hilserl/lerobot/src/lerobot/simulation/Lite6/lite6.urdf",
@@ -60,17 +59,17 @@
                     "min": [0.1853618, -0.0919344, 0.1102758],
                     "max": [0.3882588, 0.0866573, 0.2135001]
                   },
-                  "end_effector_step_sizes": { "x": 0.005, "y": 0.005, "z": 0.005 }
+                         "end_effector_step_sizes": { "x": 0.015, "y": 0.015, "z": 0.015 }
             },
             "reward_classifier": {
-                "pretrained_path": "/home/zekaijin/lerobot-hilserl/outputs/train/2025-10-02/15-03-34_reward-classifier/checkpoints/last/pretrained_model",
+                "pretrained_path": "/home/zekaijin/lerobot-hilserl/outputs/train/2025-10-12/15-06-58_reward-classifier/checkpoints/last/pretrained_model",
                 "success_threshold": 0.5,
                 "success_reward": 1.0
             },
             "max_gripper_pos": 100.0
         },
-        "name": "lite6_real_robot",
-        "fps": 30
+               "name": "lite6_real_robot",
+               "fps": 15
 
     },
     "dataset": {

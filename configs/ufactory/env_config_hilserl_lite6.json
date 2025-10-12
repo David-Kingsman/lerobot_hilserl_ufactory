@@ -4,6 +4,7 @@
             "type": "ufactory_lite6",
             "id": "lite6_main",
             "mock": false,
+            "control_mode": "velocity",
             "cameras": {
                 "webcam_1": {
                     "type": "opencv",
@@ -23,9 +24,7 @@
         },
         "teleop": {
             "type": "gamepad",
-            "use_gripper": false,
-            "gripper_penalty": -0.02,
-            "gripper_penalty_in_reward": false
+            "use_gripper": false
         },
         "processor": {
             "control_mode": "gamepad",
@@ -37,7 +36,7 @@
             },
             "image_preprocessing": {
             "crop_params_dict": {
-                "observation.images.webcam_1": [80, 285, 150, 150],
+                "observation.images.webcam_1": [80, 200, 200, 150],
                 "observation.images.webcam_2": [89, 199, 240, 250]
             },
                 "resize_size": [128, 128]            
@@ -75,7 +74,7 @@
     },
     "dataset": {
         "repo_id": "DavidKINGSMAN/lite6_dataset",
-        "root": "/home/zekaijin/lerobot-hilserl/datasets/lite6_push_cube_reward_classifier_test2",
+        "root": "/home/zekaijin/lerobot-hilserl/datasets/lite6_push_cube_test3",
         "task": "push_cube",
         "num_episodes_to_record": 50,
         "replay_episode": null,
