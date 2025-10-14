@@ -1,7 +1,7 @@
 {
     "dataset": {
         "repo_id": null,
-        "root": "/home/zekaijin/lerobot-hilserl/datasets/lite6_push_cube_reward_classifier_test3"
+        "root": "/home/zekaijin/lerobot-hilserl/datasets/lite6_push_cube_test5"
     },
     "policy": {
         "type": "reward_classifier",
