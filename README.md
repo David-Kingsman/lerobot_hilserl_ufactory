@@ -311,7 +311,7 @@ Bounding the action space will reduce the redundant exploration of the agent and
 
 ```bash
 cd experiments/arm_control_base
-python find_joint_limits_metaquest.py --robot_ip=192.168.1.193 --teleop_time_s=30
+python scripts/find_joint_limits_metaquest.py --robot_ip=192.168.1.193 --teleop_time_s=30
 ```
 
 **Workflow**
@@ -778,6 +778,12 @@ The reward classifier will automatically provide rewards based on the visual inp
    ```bash
    lerobot-train --config_path configs/ufactory/bc_pretrain_lite6.json
    ```
+
+6. **Visualize the datasets**:
+   ```bash
+    PYTHONPATH=lerobot/src python3 -m lerobot.scripts.visualize_dataset --repo-id lite6_push_cube_test4 --episode-index 1 --root /home/zekaijin/lerobot-hilserl/datasets/lite6_push_cube_test4
+   ```
+
 ### Training with Actor-Learner
 
 The LeRobot system uses a distributed actor-learner architecture for training. This architecture decouples robot interactions from the learning process, allowing them to run concurrently without blocking each other. The actor server handles robot observations and actions, sending interaction data to the learner server. The learner server performs gradient descent and periodically updates the actor's policy weights. You will need to start two processes: a learner and an actor.
