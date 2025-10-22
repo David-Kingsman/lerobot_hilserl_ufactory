@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<robot name="two_link_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Define two links -->
+  <link name="base_link"/>
+  <link name="link1"/>
+  <link name="link2"/>
+
+  <!-- Define two joints -->
+  <joint name="joint1" type="revolute">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="link1"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-3.1416" upper="3.1416" effort="100" velocity="3.14"/>
+  </joint>
+
+  <joint name="joint2" type="revolute">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="link1"/>
+    <child link="link2"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-3.1416" upper="3.1416" effort="100" velocity="3.14"/>
+  </joint>
+
+  <!-- Define robot links -->
+  <xacro:macro name="two_link_robot" params="prefix">
+    <xacro:property name="prefix" value="$(arg prefix)"/>
+
+    <joint name="${prefix}_joint1" type="revolute">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <parent link="${prefix}_base_link"/>
+      <child link="${prefix}_link1"/>
+      <axis xyz="0 0 1"/>
+      <limit lower="-3.1416" upper="3.1416" effort="100" velocity="3.14"/>
+    </joint>
+
+    <joint name="${prefix}_joint2" type="revolute">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <parent link="${prefix}_link1"/>
+      <child link="${prefix}_link2"/>
+      <axis xyz="0 0 1"/>
+      <limit lower="-3.1416" upper="3.1416" effort="100" velocity="3.14"/>
+    </joint>
+  </xacro:macro>
+
+</robot>
