@@ -3,25 +3,13 @@
 # Generated files
 outputs
 datasets
-
-# Cache
-.cache
-
-# Logs
-logs
-
-# Data
 data
-
-
-# Videos
+.cache
+logs
 videos
-
-# Images
 images
-
-# Audios
 audios
+
 
 # backup
 backup/
