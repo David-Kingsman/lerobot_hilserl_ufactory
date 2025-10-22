@@ -77,7 +77,7 @@
         "policy_update_freq": 1,
         "discount": 0.97,
         "async_prefetch": false,
-        "temperature_init": 0.01,
+        "temperature_init": 0.05,
         "num_critics": 2,
         "num_subsample_critics": null,
         "critic_lr": 0.001,

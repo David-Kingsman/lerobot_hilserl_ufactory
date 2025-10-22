@@ -1,11 +1,10 @@
 {
     "dataset": {
         "repo_id": null,
-        "root": "/home/zekaijin/lerobot-hilserl/datasets/lite6_push_cube_test5"
+        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/lite6_push_cube_test5"
     },
     "policy": {
         "type": "reward_classifier",
-        "repo_id": "zekaijin/reward_classifier_model_lite6",
         "model_name": "helper2424/resnet10",
         "model_type": "cnn",
         "num_cameras": 2,

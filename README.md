@@ -760,7 +760,7 @@ The reward classifier will automatically provide rewards based on the visual inp
 2. **Collect a dataset**:
 
    ```bash
-   python -m lerobot.scripts.rl.gym_manipulator --config_path configs/ufactory/env_config_hilserl_lite6.json
+   conda activate lerobot && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.rl.gym_manipulator --config configs/ufactory/env_config_hilserl_lite6_spacemouse.json
    ```
 
 3. **Train the classifier**:
