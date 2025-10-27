@@ -1,6 +1,6 @@
 [submodule "lerobot"]
 	path = lerobot
-	url = git@github.com:David-Kingsman/lerobot2.0.git
+	url = git@github.com:David-Kingsman/lerobot.git
 [submodule "experiments/arm_control_base"]
 	path = experiments/arm_control_base
 	url = git@github.com:David-Kingsman/arm_control_base.git
