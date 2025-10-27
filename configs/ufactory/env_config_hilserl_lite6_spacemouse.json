@@ -1,3 +1,4 @@
+
 {
     "env": {
         "robot": {
@@ -6,7 +7,7 @@
             "use_gripper": false,
             "act_features": "xyzrpy_delta",
             "end_effector_bounds": {
-                "min": [0.1, -0.05, 0.125],
+                "min": [0.1, -0.05, 0.13],
                 "max": [0.6, 0.05, 0.2]
             },
             "cameras": {
@@ -39,21 +40,21 @@
             "observation": {
                 "display_cameras": false,
                 "add_joint_velocity_to_observation": true,
-                "add_current_to_observation": false,
-                "add_ee_pose_to_observation": true
+                "add_current_to_observation": false
             },
             "image_preprocessing": {
             "crop_params_dict": {
-
+                "observation.images.webcam_1": [32, 152, 250, 350],
+                "observation.images.webcam_2":  [104, 147, 250, 250]
+            },
                 "resize_size": [128, 128]            
             },
             "gripper": {
                 "use_gripper": false,
-                "gripper_penalty": 0.0,
-                "gripper_penalty_in_reward": false
+                "gripper_penalty": 0.0
             },
             "reset": {
-                "fixed_reset_joint_positions": [-0.02618, 0.3735, 0.424115, 0.073304, 0.164061, -0.949459],
+                "fixed_reset_joint_positions": [-0.041888, 0.504400, 0.471239, 0.651008, -0.012217, -0.724312],
                 "reset_time_s": 2.5,
                 "control_time_s": 20.0,
                 "terminate_on_success": true
@@ -82,7 +83,7 @@
         "replay_episode": null,
         "push_to_hub": true
     },
-    "mode": "record",
+    "mode": "null",
     "device": "cpu"
 }
 
