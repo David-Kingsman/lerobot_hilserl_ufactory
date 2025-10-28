@@ -1,54 +1,11 @@
 # HIL-SERL Real Robot Training Workflow Guide
 
-In this tutorial you will go through the full Human-in-the-Loop Sample-Efficient Reinforcement Learning (HIL-SERL) workflow using LeRobot. You will master training a policy with RL on a real robot in just a few hours.
-
-HIL-SERL is a sample-efficient reinforcement learning algorithm that combines human demonstrations with online learning and human interventions. The approach starts from a small set of human demonstrations, uses them to train a reward classifier, and then employs an actor-learner architecture where humans can intervene during policy execution to guide exploration and correct unsafe behaviors. In this tutorial, you'll use a gamepad to provide interventions and control the robot during the learning process.
-
-It combines three key ingredients:
-
-1. **Offline demonstrations & reward classifier:** a handful of human-teleop episodes plus a vision-based success detector give the policy a shaped starting point.
-
-2. **On-robot actor / learner loop with human interventions:** a distributed Soft Actor Critic (SAC) learner updates the policy while an actor explores on the physical robot; the human can jump in at any time to correct dangerous or unproductive behaviour.
-
-3. **Safety & efficiency tools:** joint/end-effector (EE) bounds, crop region of interest (ROI) preprocessing and WandB monitoring keep the data useful and the hardware safe.
-
-Together these elements let HIL-SERL reach near-perfect task success and faster cycle times than imitation-only baselines.
-
-<p align="center">
-  <img
-    src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/lerobot/hilserl-main-figure.png"
-    alt="HIL-SERL workflow"
-    title="HIL-SERL workflow"
-    width="100%"
-  ></img>
-</p>
-
-<p align="center">
-  <i>HIL-SERL workflow, Luo et al. 2024</i>
-</p>
-
-This guide provides step-by-step instructions for training a robot policy using LeRobot's HilSerl implementation to train on a real robot.
-
 ## What do I need?
 
 - A gamepad (recommended) or keyboard to control the robot
 - A Nvidia GPU
 - A real robot with a follower and leader arm (optional if you use the keyboard or the gamepad)
 - A URDF file for the robot for the kinematics package (check `lerobot/model/kinematics.py`)
-
-## What kind of tasks can I train?
-
-One can use HIL-SERL to train on a variety of manipulation tasks. Some recommendations:
-
-- Start with a simple task to understand how the system works.
-  - Push cube to a goal region
-  - Pick and lift cube with the gripper
-- Avoid extremely long horizon tasks. Focus on tasks that can be completed in 5-10 seconds.
-- Once you have a good idea of how the system works, you can try more complex tasks and longer horizons.
-  - Pick and place cube
-  - Bimanual tasks to pick objects with two arms
-  - Hand-over tasks to transfer objects from one arm to another
-  - Go crazy!
 
 ## Install LeRobot with HIL-SERL
 
@@ -58,253 +15,25 @@ To install LeRobot with HIL-SERL, you need to install the `hilserl` extra.
 pip install -e ".[hilserl]"
 ```
 
-## Real Robot Training Workflow
+## Velocity control and position control teleoperation of Ufactory robot
 
-### Understanding Configuration
+```bash
+# Example for xarm (position control on spacemouse)
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_teleoperate --robot.type=xarm_end_effector --robot.ip=192.168.1.193 --teleop.type=spacemouse --display_data=true
 
-The training process begins with proper configuration for the HILSerl environment. The main configuration class is `GymManipulatorConfig` in `lerobot/scripts/rl/gym_manipulator.py`, which contains nested `HILSerlRobotEnvConfig` and `DatasetConfig`. The configuration is organized into focused, nested sub-configs:
+# Example for xarm (position control on gamepad)
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_teleoperate --robot.type=xarm_end_effector --robot.ip=192.168.1.193 --teleop.type=gamepad --display_data=true
 
-<!-- prettier-ignore-start -->
-```python
-class GymManipulatorConfig:
-    env: HILSerlRobotEnvConfig    # Environment configuration (nested)
-    dataset: DatasetConfig    # Dataset recording/replay configuration (nested)
-    mode: str | None = None    # "record", "replay", or None (for training)
-    device: str = "cpu"    # Compute device
-
-class HILSerlRobotEnvConfig(EnvConfig):
-    robot: RobotConfig | None = None    # Main robot agent (defined in `lerobot/robots`)
-    teleop: TeleoperatorConfig | None = None    # Teleoperator agent, e.g., gamepad or leader arm
-    processor: HILSerlProcessorConfig    # Processing pipeline configuration (nested)
-    name: str = "real_robot"    # Environment name
-    task: str | None = None    # Task identifier
-    fps: int = 10    # Control frequency
-
-# Nested processor configuration
-class HILSerlProcessorConfig:
-    control_mode: str = "gamepad"    # Control mode
-    observation: ObservationConfig | None = None    # Observation processing settings
-    image_preprocessing: ImagePreprocessingConfig | None = None    # Image crop/resize settings
-    gripper: GripperConfig | None = None    # Gripper control and penalty settings
-    reset: ResetConfig | None = None    # Environment reset and timing settings
-    inverse_kinematics: InverseKinematicsConfig | None = None    # IK processing settings
-    reward_classifier: RewardClassifierConfig | None = None    # Reward classifier settings
-    max_gripper_pos: float | None = 100.0    # Maximum gripper position
-
-# Sub-configuration classes
-class ObservationConfig:
-    add_joint_velocity_to_observation: bool = False    # Add joint velocities to state
-    add_current_to_observation: bool = False    # Add motor currents to state
-    add_ee_pose_to_observation: bool = False    # Add end-effector pose to state
-    display_cameras: bool = False    # Display camera feeds during execution
-
-class ImagePreprocessingConfig:
-    crop_params_dict: dict[str, tuple[int, int, int, int]] | None = None    # Image cropping parameters
-    resize_size: tuple[int, int] | None = None    # Target image size
-
-class GripperConfig:
-    use_gripper: bool = True    # Enable gripper control
-    gripper_penalty: float = 0.0    # Penalty for inappropriate gripper usage
-    gripper_penalty_in_reward: bool = False    # Include gripper penalty in reward
-
-class ResetConfig:
-    fixed_reset_joint_positions: Any | None = None    # Joint positions for reset
-    reset_time_s: float = 5.0    # Time to wait during reset
-    control_time_s: float = 20.0    # Maximum episode duration
-    terminate_on_success: bool = True    # Whether to terminate episodes on success detection
-
-class InverseKinematicsConfig:
-    urdf_path: str | None = None    # Path to robot URDF file
-    target_frame_name: str | None = None    # End-effector frame name
-    end_effector_bounds: dict[str, list[float]] | None = None    # EE workspace bounds
-    end_effector_step_sizes: dict[str, float] | None = None    # EE step sizes per axis
-
-class RewardClassifierConfig:
-    pretrained_path: str | None = None    # Path to pretrained reward classifier
-    success_threshold: float = 0.5    # Success detection threshold
-    success_reward: float = 1.0    # Reward value for successful episodes
-
-# Dataset configuration
-class DatasetConfig:
-    repo_id: str    # LeRobot dataset repository ID
-    task: str    # Task identifier
-    root: str | None = None    # Local dataset root directory
-    num_episodes_to_record: int = 5    # Number of episodes for recording
-    replay_episode: int | None = None    # Episode index for replay
-    push_to_hub: bool = False    # Whether to push datasets to Hub
-```
-<!-- prettier-ignore-end -->
-
-### Processor Pipeline Architecture
-
-HIL-SERL uses a modular processor pipeline architecture that processes robot observations and actions through a series of composable steps. The pipeline is divided into two main components:
-
-#### Environment Processor Pipeline
-
-The environment processor (`env_processor`) handles incoming observations and environment state:
-
-1. **VanillaObservationProcessorStep**: Converts raw robot observations into standardized format
-2. **JointVelocityProcessorStep** (optional): Adds joint velocity information to observations
-3. **MotorCurrentProcessorStep** (optional): Adds motor current readings to observations
-4. **ForwardKinematicsJointsToEE** (optional): Computes end-effector pose from joint positions
-5. **ImageCropResizeProcessorStep** (optional): Crops and resizes camera images
-6. **TimeLimitProcessorStep** (optional): Enforces episode time limits
-7. **GripperPenaltyProcessorStep** (optional): Applies penalties for inappropriate gripper usage
-8. **RewardClassifierProcessorStep** (optional): Automated reward detection using vision models
-9. **AddBatchDimensionProcessorStep**: Converts data to batch format for neural network processing
-10. **DeviceProcessorStep**: Moves data to the specified compute device (CPU/GPU)
-
-#### Action Processor Pipeline
-
-The action processor (`action_processor`) handles outgoing actions and human interventions:
-
-1. **AddTeleopActionAsComplimentaryDataStep**: Captures teleoperator actions for logging
-2. **AddTeleopEventsAsInfoStep**: Records intervention events and episode control signals
-3. **InterventionActionProcessorStep**: Handles human interventions and episode termination
-4. **Inverse Kinematics Pipeline** (when enabled):
-   - **MapDeltaActionToRobotActionStep**: Converts delta actions to robot action format
-   - **EEReferenceAndDelta**: Computes end-effector reference and delta movements
-   - **EEBoundsAndSafety**: Enforces workspace safety bounds
-   - **InverseKinematicsEEToJoints**: Converts end-effector actions to joint targets
-   - **GripperVelocityToJoint**: Handles gripper control commands
-
-#### Configuration Examples
-
-**Basic Observation Processing**:
-
-```json
-{
-  "env": {
-    "processor": {
-      "observation": {
-        "add_joint_velocity_to_observation": true,
-        "add_current_to_observation": false,
-        "display_cameras": false
-      }
-    }
-  }
-}
+# Example for xarm (velocity control on gamepad)
+ PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_teleoperate --robot.type=xarm_end_effector_hil --robot.ip=192.168.1.193 --teleop.type=gamepad --display_data=true
 ```
 
-**Image Processing**:
+** robot type: xarm_end_effector, xarm **
+** teleop options: spacemouse (6dof), keyboard_ee (6dof), gamepad (3dof) **
+** add " --display_data=true "   and then you can see the robot state in the console and Rerun **
 
-```json
-{
-  "env": {
-    "processor": {
-      "image_preprocessing": {
-        "crop_params_dict": {
-          "observation.images.front": [180, 250, 120, 150],
-          "observation.images.side": [180, 207, 180, 200]
-        },
-        "resize_size": [128, 128]
-      }
-    }
-  }
-}
-```
 
-**Inverse Kinematics Setup**:
-
-```json
-{
-  "env": {
-    "processor": {
-      "inverse_kinematics": {
-        "urdf_path": "path/to/robot.urdf",
-        "target_frame_name": "end_effector",
-        "end_effector_bounds": {
-          "min": [0.16, -0.08, 0.03],
-          "max": [0.24, 0.2, 0.1]
-        },
-        "end_effector_step_sizes": {
-          "x": 0.02,
-          "y": 0.02,
-          "z": 0.02
-        }
-      }
-    }
-  }
-}
-```
-
-### Advanced Observation Processing
-
-The HIL-SERL framework   additional observation processing features that can improve policy learning:
-
-#### Joint Velocity Processing
-
-Enable joint velocity estimation to provide the policy with motion information:
-
-```json
-{
-  "env": {
-    "processor": {
-      "observation": {
-        "add_joint_velocity_to_observation": true
-      }
-    }
-  }
-}
-```
-
-This processor:
-
-- Estimates joint velocities using finite differences between consecutive joint position readings
-- Adds velocity information to the observation state vector
-- Useful for policies that need motion awareness for dynamic tasks
-
-#### Motor Current Processing
-
-Monitor motor currents to detect contact forces and load conditions:
-
-```json
-{
-  "env": {
-    "processor": {
-      "observation": {
-        "add_current_to_observation": true
-      }
-    }
-  }
-}
-```
-
-This processor:
-
-- Reads motor current values from the robot's control system
-- Adds current measurements to the observation state vector
-- Helps detect contact events, object weights, and mechanical resistance
-- Useful for contact-rich manipulation tasks
-
-#### Combined Observation Processing
-
-You can enable multiple observation processing features simultaneously:
-
-```json
-{
-  "env": {
-    "processor": {
-      "observation": {
-        "add_joint_velocity_to_observation": true,
-        "add_current_to_observation": true,
-        "add_ee_pose_to_observation": false,
-        "display_cameras": false
-      }
-    }
-  }
-}
-```
-
-**Note**: Enabling additional observation features increases the state space dimensionality, which may require adjusting your policy network architecture and potentially collecting more training data.
-
-### Finding Robot Workspace Bounds
-
-Before collecting demonstrations, you need to determine the appropriate operational bounds for your robot.
-
-This helps simplify the problem of learning on the real robot in two ways: 1) by limiting the robot's operational space to a specific region that solves the task and avoids unnecessary or unsafe exploration, and 2) by allowing training in end-effector space rather than joint space. Empirically, learning in joint space for reinforcement learning in manipulation is often a harder problem - some tasks are nearly impossible to learn in joint space but become learnable when the action space is transformed to end-effector coordinates.
-
-**find_joint_limits_metaquest.py**
+## Using lerobot-find-joint-limits**
 
 This script helps you find the safe operational bounds for your robot's end-effector. Given that you have a follower and leader arm, you can use the script to find the bounds for the follower arm that will be applied during training.
 Bounding the action space will reduce the redundant exploration of the agent and guarantees safety.
@@ -346,13 +75,11 @@ This script will:
 }
 ```
 
-### Collecting Demonstrations
+## Collecting Demonstrations
 
 With the bounds defined, you can safely collect demonstrations for training. Training RL with off-policy algorithm allows us to use offline datasets collected in order to improve the efficiency of the learning process.
 
 **Setting Up Record Mode**
-
-Create a configuration file for recording demonstrations (or edit an existing one like [env_config.json](https://huggingface.co/datasets/lerobot/config_examples/resolve/main/rl/env_config.json)):
 
 1. Set `mode` to `"record"` at the root level
 2. Specify a unique `repo_id` for your dataset in the `dataset` section (e.g., "username/task_name")
@@ -360,130 +87,16 @@ Create a configuration file for recording demonstrations (or edit an existing on
 4. Set `env.processor.image_preprocessing.crop_params_dict` to `{}` initially (we'll determine crops later)
 5. Configure `env.robot`, `env.teleop`, and other hardware settings in the `env` section
 
-Example configuration section:
-
-```json
-{
-  "env": {
-    "type": "gym_manipulator",
-    "name": "real_robot",
-    "fps": 10,
-    "processor": {
-      "control_mode": "gamepad",
-      "observation": {
-        "display_cameras": false
-      },
-      "image_preprocessing": {
-        "crop_params_dict": {},
-        "resize_size": [128, 128]
-      },
-      "gripper": {
-        "use_gripper": true,
-        "gripper_penalty": 0.0
-      },
-      "reset": {
-        "reset_time_s": 5.0,
-        "control_time_s": 20.0
-      }
-    },
-    "robot": {
-      // ... robot configuration ...
-    },
-    "teleop": {
-      // ... teleoperator configuration ...
-    }
-  },
-  "dataset": {
-    "repo_id": "username/pick_lift_cube",
-    "root": null,
-    "task": "pick_and_lift",
-    "num_episodes_to_record": 15,
-    "replay_episode": 0,
-    "push_to_hub": true
-  },
-  "mode": "record",
-  "device": "cpu"
-}
-```
-
-### Using a Teleoperation Device
-
-Along with your robot, you will need a teleoperation device to control it in order to collect datasets of your task and perform interventions during the online training.
-We support using a gamepad or a keyboard or the leader arm of the robot.
-
-HIL-Serl learns actions in the end-effector space of the robot. Therefore, the teleoperation will control the end-effector's x,y,z displacements.
-
-For that we need to define a version of the robot that takes actions in the end-effector space. Check the robot class `UFactoryLite6` and its configuration `UFactoryLite6Config` for the default parameters related to the end-effector space.
-
-<!-- prettier-ignore-start -->
-```python
-class UFactoryLite6Config(UFactoryLite6Config):
-    """Configuration for the UFactoryLite6 robot."""
-
-    # Default bounds for the end-effector position (in meters)
-    end_effector_bounds: dict[str, list[float]] = field( # bounds for the end-effector in x,y,z direction
-        default_factory=lambda: {
-            "min": [-1.0, -1.0, -1.0],  # min x, y, z
-            "max": [1.0, 1.0, 1.0],  # max x, y, z
-        }
-    )
-
-    max_gripper_pos: float = 50 # maximum gripper position that the gripper will be open at
-
-    end_effector_step_sizes: dict[str, float] = field( # maximum step size for the end-effector in x,y,z direction
-        default_factory=lambda: {
-            "x": 0.02,
-            "y": 0.02,
-            "z": 0.02,
-        }
-    )
-```
-<!-- prettier-ignore-end -->
-
-The `Teleoperator` defines the teleoperation device. You can check the list of available teleoperators in `lerobot/teleoperators`.
-
-**Setting up the Gamepad**
-
-The gamepad provides a very convenient way to control the robot and the episode state.
-
-To setup the gamepad, you need to set the `control_mode` to `"gamepad"` and define the `teleop` section in the configuration file.
-
-```json
-{
-  "env": {
-    "teleop": {
-      "type": "gamepad",
-      "use_gripper": true
-    },
-    "processor": {
-      "control_mode": "gamepad",
-      "gripper": {
-        "use_gripper": true
-      }
-    }
-  }
-}
-```
-
-<p align="center">
-  <img
-    src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/lerobot/gamepad_guide.jpg?raw=true"
-    alt="Figure shows the control mappings on a Logitech gamepad."
-    title="Gamepad Control Mapping"
-    width="100%"
-  ></img>
-</p>
-<p align="center">
-  <i>Gamepad button mapping for robot control and episode management</i>
-</p>
-
 
 **Recording Demonstrations**
 
-Start the recording process, an example of the config file can be found [here](https://huggingface.co/datasets/aractingi/lerobot-example-config-files/blob/main/env_config_so100.json):
+Start the recording process, 
 
 ```bash
-python -m lerobot.scripts.rl.gym_manipulator --config_path configs/ufactory/env_config_hilserl_lite6.json   --env.teleop.use_gripper true   --env.processor.gripper.use_gripper true
+# spacemouse (6dof)
+conda activate lerobot && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config configs/ufactory/env_config_hilserl_lite6_spacemouse.json
+# gamepad (3dof)
+conda activate lerobot && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config configs/ufactory/env_config_hilserl_lite6_gamepad.json
 ```
 
 During recording:
@@ -509,12 +122,12 @@ Visual RL algorithms learn directly from pixel inputs, making them vulnerable to
 
 Note: If you already know the crop parameters, you can skip this step and just set the `crop_params_dict` in the configuration file during recording.
 
-**Determining Crop Parameters**
+## Determining Crop Parameters
 
 Use the `crop_dataset_roi.py` script to interactively select regions of interest in your camera images:
 
 ```bash
-python -m lerobot.scripts.rl.crop_dataset_roi --root datasets/lite6_push_cube
+python -m lerobot.rl.crop_dataset_roi --repo-id username/push_cube
 ```
 
 1. For each camera view, the script will display the first frame
@@ -525,60 +138,12 @@ python -m lerobot.scripts.rl.crop_dataset_roi --root datasets/lite6_push_cube
 
 Example output:
 
-```bash
-Selected Rectangular Regions of Interest (top, left, height, width) :
-
-Select rectangular ROI for image with key: 'observation.images.webcam_1'
-Instructions for ROI selection:
-  - Click and drag to draw a rectangular ROI.
-  - Press 'c' to confirm the selection.
-  - Press 'r' to reset and draw again.
-  - Press ESC to cancel the selection.
-ROI for 'observation.images.webcam_1': (82, 306, 156, 141)
-
-Select rectangular ROI for image with key: 'observation.images.webcam_2'
-Instructions for ROI selection:
-  - Click and drag to draw a rectangular ROI.
-  - Press 'c' to confirm the selection.
-  - Press 'r' to reset and draw again.
-  - Press ESC to cancel the selection.
-ROI for 'observation.images.webcam_2': (116, 136, 177, 263)
-
+```
 Selected Rectangular Regions of Interest (top, left, height, width):
-observation.images.webcam_1: (82, 306, 156, 141)
-observation.images.webcam_2: (116, 136, 177, 263)
+observation.images.side: [180, 207, 180, 200]
+observation.images.front: [180, 250, 120, 150]
 ```
 
-<p align="center">
-  <img
-    src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/lerobot/crop_dataset.gif"
-    width="600"
-  />
-</p>
-
-<p align="center">
-  <i>Interactive cropping tool for selecting regions of interest</i>
-</p>
-
-**Updating Configuration**
-
-Add these crop parameters to your training configuration:
-
-```json
-{
-  "env": {
-    "processor": {
-      "image_preprocessing": {
-        "crop_params_dict": {
-          "observation.images.side": [180, 207, 180, 200],
-          "observation.images.front": [180, 250, 120, 150]
-        },
-        "resize_size": [128, 128]
-      }
-    }
-  }
-}
-```
 
 **Recommended image resolution**
 
@@ -594,66 +159,22 @@ This guide explains how to train a reward classifier for human-in-the-loop reinf
 
 The reward classifier implementation in `modeling_classifier.py` uses a pretrained vision model to process the images. It can output either a single value for binary rewards to predict success/fail cases or multiple values for multi-class settings.
 
-**Collecting a Dataset for the reward classifier**
+## Collecting a Dataset for the reward classifier
 
 Before training, you need to collect a dataset with labeled examples. The `record_dataset` function in `gym_manipulator.py` enables the process of collecting a dataset of observations, actions, and rewards.
 
 To collect a dataset, you need to modify some parameters in the environment configuration based on HILSerlRobotEnvConfig.
 
 ```bash
-python -m lerobot.scripts.rl.gym_manipulator --config_path configs/ufactory/reward_classifier_train_config_lite6.json
+python -m lerobot.rl.gym_manipulator --config_path src/lerobot/configs/reward_classifier_train_config.json
 ```
 
 **Key Parameters for Data Collection**
-
-- **mode**: set it to `"record"` to collect a dataset (at root level)
-- **dataset.repo_id**: `"hf_username/dataset_name"`, name of the dataset and repo on the hub
-- **dataset.num_episodes_to_record**: Number of episodes to record
-- **env.processor.reset.terminate_on_success**: Whether to automatically terminate episodes when success is detected (default: `true`)
-- **env.fps**: Number of frames per second to record
-- **dataset.push_to_hub**: Whether to push the dataset to the hub
 
 The `env.processor.reset.terminate_on_success` parameter allows you to control episode termination behavior. When set to `false`, episodes will continue even after success is detected, allowing you to collect more positive examples with the reward=1 label. This is crucial for training reward classifiers as it provides more success state examples in your dataset. When set to `true` (default), episodes terminate immediately upon success detection.
 
 **Important**: For reward classifier training, set `terminate_on_success: false` to collect sufficient positive examples. For regular HIL-SERL training, keep it as `true` to enable automatic episode termination when the task is completed successfully.
 
-Example configuration section for data collection:
-
-```json
-{
-  "env": {
-    "type": "gym_manipulator",
-    "name": "real_robot",
-    "fps": 10,
-    "processor": {
-      "reset": {
-        "reset_time_s": 5.0,
-        "control_time_s": 20.0,
-        "terminate_on_success": false
-      },
-      "gripper": {
-        "use_gripper": true
-      }
-    },
-    "robot": {
-      // ... robot configuration ...
-    },
-    "teleop": {
-      // ... teleoperator configuration ...
-    }
-  },
-  "dataset": {
-    "repo_id": "hf_username/dataset_name",
-    "dataset_root": "data/your_dataset",
-    "task": "reward_classifier_task",
-    "num_episodes_to_record": 20,
-    "replay_episode": null,
-    "push_to_hub": true
-  },
-  "mode": "record",
-  "device": "cpu"
-}
-```
 
 **Reward Classifier Configuration**
 
@@ -667,87 +188,19 @@ The reward classifier is configured using `configuration_classifier.py`. Here ar
 - **dropout_rate**: Regularization parameter
 - **learning_rate**: Learning rate for optimizer
 
-Example configuration for training the [reward classifier](https://huggingface.co/datasets/aractingi/lerobot-example-config-files/blob/main/reward_classifier_train_config.json):
 
-```json
-{
-  "policy": {
-    "type": "reward_classifier",
-    "model_name": "helper2424/resnet10",
-    "model_type": "cnn",
-    "num_cameras": 2,
-    "num_classes": 2,
-    "hidden_dim": 256,
-    "dropout_rate": 0.1,
-    "learning_rate": 1e-4,
-    "device": "cuda",
-    "use_amp": true,
-    "input_features": {
-      "observation.images.front": {
-        "type": "VISUAL",
-        "shape": [3, 128, 128]
-      },
-      "observation.images.side": {
-        "type": "VISUAL",
-        "shape": [3, 128, 128]
-      }
-    }
-  }
-}
-```
+## Training the Classifier
 
-**Training the Classifier**
-
-To train the classifier, use the `train.py` script with your configuration:
+To train the classifier, use the `train.py` script with your configuration and add the reward classifier pretrain:
 
 ```bash
-   lerobot-train --config_path configs/ufactory/reward_classifier_train_config_lite6.json
-```
-
-**Deploying and Testing the Model**
-
-To use your trained reward classifier, configure the `HILSerlRobotEnvConfig` to use your model:
-
-<!-- prettier-ignore-start -->
-```python
-config = GymManipulatorConfig(
-    env=HILSerlRobotEnvConfig(
-        processor=HILSerlProcessorConfig(
-            reward_classifier=RewardClassifierConfig(
-                pretrained_path="path_to_your_pretrained_trained_model"
-            )
-        ),
-        # Other environment parameters
-    ),
-    dataset=DatasetConfig(...),
-    mode=None  # For training
-)
-```
-<!-- prettier-ignore-end -->
-
-or set the argument in the json config file.
-
-```json
-{
-  "env": {
-    "processor": {
-      "reward_classifier": {
-        "pretrained_path": "path_to_your_pretrained_model",
-        "success_threshold": 0.7,
-        "success_reward": 1.0
-      },
-      "reset": {
-        "terminate_on_success": true
-      }
-    }
-  }
-}
+lerobot-train --config_path path/to/reward_classifier_train_config.json
 ```
 
 Run `gym_manipulator.py` to test the model.
 
 ```bash
-python -m lerobot.scripts.rl.gym_manipulator --config_path configs/ufactory/env_config_hilserl_lite6.json
+python -m lerobot.rl.gym_manipulator --config_path path/to/env_config.json
 ```
 
 The reward classifier will automatically provide rewards based on the visual input from the robot's cameras.
@@ -755,12 +208,14 @@ The reward classifier will automatically provide rewards based on the visual inp
 **Example Workflow for training the reward classifier**
 
 1. **Create the configuration files**:
-   Create the necessary json configuration files for the reward classifier and the environment. Check the examples [here](https://huggingface.co/datasets/lerobot/config_examples/resolve/main/reward_classifier/config.json).
+   Create the necessary json configuration files for the reward classifier and the environment.
 
 2. **Collect a dataset**:
 
    ```bash
-   conda activate lerobot && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.rl.gym_manipulator --config configs/ufactory/env_config_hilserl_lite6_spacemouse.json
+   conda activate lerobot && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config configs/ufactory/env_config_hilserl_lite6_spacemouse.json
+
+    conda activate lerobot && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config configs/ufactory/env_config_hilserl_lite6_gamepad.json
    ```
 
 3. **Train the classifier**:
@@ -790,12 +245,12 @@ The LeRobot system uses a distributed actor-learner architecture for training. T
 
 **Configuration Setup**
 
-Create a training configuration file (example available [here](https://huggingface.co/datasets/lerobot/config_examples/resolve/main/rl/train_config.json)). The training config is based on the main `TrainRLServerPipelineConfig` class in `lerobot/configs/train.py`.
+ The training config is based on the main `TrainRLServerPipelineConfig` class in `lerobot/configs/train.py`.
 
 1. Configure the policy settings (`type="sac"`, `device`, etc.)
 2. Set `dataset` to your cropped dataset
 3. Configure environment settings with crop parameters
-4. Check the other parameters related to SAC in [configuration_sac.py](https://github.com/huggingface/lerobot/blob/main/src/lerobot/policies/sac/configuration_sac.py#L79).
+4. Check the other parameters related to SAC 
 5. Verify that the `policy` config is correct with the right `input_features` and `output_features` for your task.
 
 **Starting the Learner**
@@ -902,20 +357,7 @@ Some configuration values have a disproportionate impact on training stability a
 - **`policy_parameters_push_frequency`** (`policy.actor_learner_config.policy_parameters_push_frequency`) – interval in _seconds_ between two weight pushes from the learner to the actor. The default is `4 s`. Decrease to **1-2 s** to provide fresher weights (at the cost of more network traffic); increase only if your connection is slow, as this will reduce sample efficiency.
 - **`storage_device`** (`policy.storage_device`) – device on which the learner keeps the policy parameters. If you have spare GPU memory, set this to `"cuda"` (instead of the default `"cpu"`). Keeping the weights on-GPU removes CPU→GPU transfer overhead and can significantly increase the number of learner updates per second.
 
-Congrats 🎉, you have finished this tutorial!
 
-> [!TIP]
-> If you have any questions or need help, please reach out on [Discord](https://discord.com/invite/s3KuuzsPFb).
-
-
-Contributions
-
-| Code Directory                                                                                             | Description                                |
-|------------------------------------------------------------------------------------------------------------|--------------------------------------------|
-| [ufactory_robot_controllers](https://github.com/David-Kingsman/lerobot/blob/main/src/lerobot/motors/ufactory.py) | Ufacotory API Motorbus controller|
-| [utils_for_ufactory](https://github.com/David-Kingsman/lerobot/blob/main/src/lerobot/motors/utils.py)     | Added xArm motor bus implementation |
-| [Ufactory_lite6_class](https://github.com/David-Kingsman/lerobot/tree/main/src/lerobot/robots/ufactory_lite6)            | support ufactory robots |
-| [URDF_for_robots](https://github.com/David-Kingsman/lerobot/tree/main/src/lerobot/simulation)        | supported self-collision detection and joint information printing |
 
 
 Paper citation:
