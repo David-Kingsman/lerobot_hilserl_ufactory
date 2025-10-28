@@ -10,7 +10,7 @@ p.setAdditionalSearchPath(pybullet_data.getDataPath())
 p.resetDebugVisualizerCamera(cameraDistance=1.2, cameraYaw=50, cameraPitch=-30, cameraTargetPosition=[0,0,0.3])
 
 # 2) load URDF, enable self-collision
-urdf_path = "/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src/lerobot/simulation/Lite6/lite6.urdf"
+urdf_path = "/home/zekaijin/lerobot-hilserl-ufactory/simulation/Lite6/lite6.urdf"
 
 assert os.path.exists(urdf_path), f"URDF not found: {urdf_path}"
 flags = p.URDF_USE_SELF_COLLISION | p.URDF_USE_INERTIA_FROM_FILE
