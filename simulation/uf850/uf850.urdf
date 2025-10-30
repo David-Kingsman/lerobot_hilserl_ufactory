@@ -1,0 +1,282 @@
+<?xml version="1.0"?>
+<robot name="uf850_robot">
+  <!-- Materials -->
+  <material name="White">
+    <color rgba="1.0 1.0 1.0 1.0"/>
+  </material>
+
+  <!-- Common macro for link inertial properties -->
+  <macro name="common_link_inertial" params="link_inertial_params origin_rpy">
+    <inertial>
+      <origin xyz="${link_inertial_params['x']} ${link_inertial_params['y']} ${link_inertial_params['z']}" rpy="${origin_rpy}"/>
+      <mass value="${link_inertial_params['mass']}"/>
+      <inertia 
+        ixx="${link_inertial_params['ixx']}" ixy="${link_inertial_params['ixy']}" ixz="${link_inertial_params['ixz']}"
+        iyy="${link_inertial_params['iyy']}" iyz="${link_inertial_params['iyz']}" izz="${link_inertial_params['izz']}"/>
+    </inertial>
+  </macro>
+
+  <!-- Common macro for link visual properties -->
+  <macro name="common_link_visual" params="mesh_filename origin_xyz origin_rpy material_name">
+    <visual>
+      <origin xyz="${origin_xyz}" rpy="${origin_rpy}"/>
+      <geometry>
+        <mesh filename="package://xarm_description/meshes/${mesh_filename}.stl"/>
+      </geometry>
+      <material name="${material_name}"/>
+    </visual>
+  </macro>
+
+  <!-- Common macro for link collision properties -->
+  <macro name="common_link_collision" params="mesh_filename origin_xyz origin_rpy">
+    <collision>
+      <origin xyz="${origin_xyz}" rpy="${origin_rpy}"/>
+      <geometry>
+        <mesh filename="package://xarm_description/meshes/${mesh_filename}.stl"/>
+      </geometry>
+    </collision>
+  </macro>
+
+  <!-- Common macro for joint origin -->
+  <macro name="common_joint_origin" params="joint_kinematic_params">
+    <origin 
+      xyz="${joint_kinematic_params['x']} ${joint_kinematic_params['y']} ${joint_kinematic_params['z']}" 
+      rpy="${joint_kinematic_params['roll']} ${joint_kinematic_params['pitch']} ${joint_kinematic_params['yaw']}"/>
+  </macro>
+
+  <!-- Base Link -->
+  <link name="link_base">
+    <inertial>
+      <origin xyz="-0.00025599 -2.8579E-06 0.085749" rpy="0 0 0" />
+      <mass value="2.2684" />
+      <inertia
+        ixx="0.0063949" ixy="-8.0653E-07" ixz="-2.1841E-05"
+        iyy="0.0064375" iyz="-4.2181E-07" izz="0.0048631" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://xarm_description/meshes/uf850/visual/link_base.stl"/>
+      </geometry>
+      <material name="White"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://xarm_description/meshes/uf850/collision/link_base.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Link 1 -->
+  <link name="link1">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="5.0" />
+      <inertia
+        ixx="0.01" ixy="0" ixz="0"
+        iyy="0.01" iyz="0" izz="0.01" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://xarm_description/meshes/uf850/visual/link1.stl"/>
+      </geometry>
+      <material name="White"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://xarm_description/meshes/uf850/collision/link1.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Joint 1 -->
+  <joint name="joint1" type="revolute">
+    <parent link="link_base"/>
+    <child link="link1"/>
+    <origin xyz="0 0 0.364" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-6.28319" upper="6.28319" effort="200.0" velocity="3.14"/>
+    <dynamics damping="16.6" friction="9.6"/>
+  </joint>
+
+  <!-- Link 2 -->
+  <link name="link2">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="4.5" />
+      <inertia
+        ixx="0.01" ixy="0" ixz="0"
+        iyy="0.01" iyz="0" izz="0.01" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://xarm_description/meshes/uf850/visual/link2.stl"/>
+      </geometry>
+      <material name="White"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://xarm_description/meshes/uf850/collision/link2.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Joint 2 -->
+  <joint name="joint2" type="revolute">
+    <parent link="link1"/>
+    <child link="link2"/>
+    <origin xyz="0 0 0" rpy="1.5708 -1.5708 0" />
+    <axis xyz="0 0 1"/>
+    <limit lower="-2.3038346" upper="2.3038346" effort="200.0" velocity="3.14"/>
+    <dynamics damping="12.5" friction="12.1"/>
+  </joint>
+
+  <!-- Link 3 -->
+  <link name="link3">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="3.8" />
+      <inertia
+        ixx="0.01" ixy="0" ixz="0"
+        iyy="0.01" iyz="0" izz="0.01" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://xarm_description/meshes/uf850/visual/link3.stl"/>
+      </geometry>
+      <material name="White"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://xarm_description/meshes/uf850/collision/link3.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Joint 3 -->
+  <joint name="joint3" type="revolute">
+    <parent link="link2"/>
+    <child link="link3"/>
+    <origin xyz="0.39 0 0" rpy="-3.1416 0 -1.5708"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-4.2236968" upper="0.061087" effort="90.0" velocity="3.14"/>
+    <dynamics damping="4.0" friction="5.5"/>
+  </joint>
+
+  <!-- Link 4 -->
+  <link name="link4">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="3.0" />
+      <inertia
+        ixx="0.01" ixy="0" ixz="0"
+        iyy="0.01" iyz="0" izz="0.01" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://xarm_description/meshes/uf850/visual/link4.stl"/>
+      </geometry>
+      <material name="White"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://xarm_description/meshes/uf850/collision/link4.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Joint 4 -->
+  <joint name="joint4" type="revolute">
+    <parent link="link3"/>
+    <child link="link4"/>
+    <origin xyz="0.15 0.426 0" rpy="-1.5708 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-6.28319" upper="6.28319" effort="68.0" velocity="3.14"/>
+    <dynamics damping="3.6" friction="2.2"/>
+  </joint>
+
+  <!-- Link 5 -->
+  <link name="link5">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="2.5" />
+      <inertia
+        ixx="0.01" ixy="0" ixz="0"
+        iyy="0.01" iyz="0" izz="0.01" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://xarm_description/meshes/uf850/visual/link5.stl"/>
+      </geometry>
+      <material name="White"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://xarm_description/meshes/uf850/collision/link5.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Joint 5 -->
+  <joint name="joint5" type="revolute">
+    <parent link="link4"/>
+    <child link="link5"/>
+    <origin xyz="0 0 0" rpy="-1.5708 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-2.1642" upper="2.1642" effort="19.0" velocity="3.14"/>
+    <dynamics damping="3.45" friction="3.2"/>
+  </joint>
+
+  <!-- Link 6 -->
+  <link name="link6">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="1.5" />
+      <inertia
+        ixx="0.005" ixy="0" ixz="0"
+        iyy="0.005" iyz="0" izz="0.005" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://xarm_description/meshes/uf850/visual/link6.stl"/>
+      </geometry>
+      <material name="White"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://xarm_description/meshes/uf850/collision/link6.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Joint 6 -->
+  <joint name="joint6" type="revolute">
+    <parent link="link5"/>
+    <child link="link6"/>
+    <origin xyz="0 -0.09 0" rpy="1.5708 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-6.28319" upper="6.28319" effort="19.0" velocity="3.14"/>
+    <dynamics damping="3.4" friction="1.1"/>
+  </joint>
+
+  <!-- End Effector -->
+  <link name="link_eef" />
+  <joint name="joint_eef" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <parent link="link6" />
+    <child link="link_eef" />
+  </joint>
+</robot>
