@@ -25,7 +25,7 @@ PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot
 PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_teleoperate --robot.type=xarm_end_effector --robot.ip=192.168.1.193 --teleop.type=gamepad --display_data=true
 
 # Example for xarm (velocity control on gamepad)
- PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_teleoperate --robot.type=xarm_end_effector_hil --robot.ip=192.168.1.193 --teleop.type=gamepad --display_data=true
+ PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_teleoperate --robot.type=xarm_end_effector_hil_lite6 --robot.ip=192.168.1.193 --teleop.type=gamepad --display_data=true
 ```
 
 ** robot type: xarm_end_effector, xarm **
