@@ -2,7 +2,7 @@
 {
     "env": {
         "robot": {
-            "type": "xarm_end_effector_hil",
+            "type": "xarm_end_effector_hil_lite6",
             "ip": "192.168.1.193",
             "use_gripper": false,
             "act_features": "xyzrpy_delta",
