@@ -2,7 +2,7 @@
 {
     "env": {
         "robot": {
-            "type": "xarm_end_effector_hil_lite6",
+            "type": "lite6_end_effector_hil",
             "ip": "192.168.1.193",
             "use_gripper": false,
             "act_features": "xyz_delta",
@@ -56,7 +56,7 @@
                 "terminate_on_success": true
             },
             "inverse_kinematics": {
-                "urdf_path": "/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src/lerobot/robots/xarm/lite6.urdf",
+                "urdf_path": "/home/zekaijin/lerobot-hilserl-ufactory/simulation/Lite6/lite6.urdf",
                 "target_frame_name": "link_eef",
                 "end_effector_step_sizes": { "x": 0.005, "y": 0.005, "z": 0.005 }
             },
