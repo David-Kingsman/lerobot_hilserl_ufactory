@@ -50,8 +50,7 @@ for i in range(num_joints):
     print(i, info[1].decode(), "type:", info[2], "parent:", info[16], "child link:", info[12].decode())
 
 # 4) set the joint angle to the "neutral/initial pose"
-# if the neutral pose is different for different robots, 
-# you can modify the NEUTRAL_MAP in visualization.py
+# if the neutral pose is different for different robots, you can modify the NEUTRAL_MAP in visualization.py
 NEUTRAL_MAP = {
     "lite6": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
     "xarm6": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
