@@ -19,13 +19,13 @@ pip install -e ".[hilserl]"
 
 ```bash
 # Example for xarm (position control on spacemouse)
-PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_teleoperate --robot.type=xarm_end_effector --robot.ip=192.168.1.193 --teleop.type=spacemouse --display_data=true
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_teleoperate --robot.type=xarm_end_effector --robot.ip=192.168.1.193 --teleop.type=spacemouse
 
 # Example for xarm (position control on gamepad)
-PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_teleoperate --robot.type=xarm_end_effector --robot.ip=192.168.1.193 --teleop.type=gamepad --display_data=true
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_teleoperate --robot.type=xarm_end_effector --robot.ip=192.168.1.193 --teleop.type=gamepad 
 
 # Example for xarm (velocity control on gamepad)
- PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_teleoperate --robot.type=lite6_end_effector_hil --robot.ip=192.168.1.193 --teleop.type=gamepad --display_data=true
+ PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_teleoperate --robot.type=lite6_end_effector_hil --robot.ip=192.168.1.193 --teleop.type=gamepad
 ```
 
 ** robot type: xarm_end_effector, xarm **
