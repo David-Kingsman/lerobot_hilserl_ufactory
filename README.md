@@ -18,20 +18,16 @@ pip install -e ".[hilserl]"
 ## Velocity control and position control teleoperation of Ufactory robot
 
 ```bash
-# Example for lite6 (position control on spacemouse)
-PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_teleoperate --robot.type=xarm_end_effector --robot.ip=192.168.1.193 --teleop.type=spacemouse
-# Example for lite6 (position control on gamepad)
-PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_teleoperate --robot.type=xarm_end_effector --robot.ip=192.168.1.193 --teleop.type=gamepad 
-# Example for lite6 (velocity control on gamepad)
- PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_teleoperate --robot.type=lite6_end_effector_hil --robot.ip=192.168.1.193 --teleop.type=gamepad
-
 # Example for xarm6 (position control on gamepad)
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_teleoperate --robot.type=xarm6_end_effector --robot.ip=192.168.1.235 --teleop.type=gamepad 
+
+# Example for xarm6 (velocity control on gamepad)
 PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_teleoperate --robot.type=xarm6_end_effector_hil --robot.ip=192.168.1.235 --teleop.type=gamepad 
 
 
 ```
 
-** robot type: xarm_end_effector, xarm **
+** robot type: xarm_end_effector, xarm6_end_effector, xarm6_end_effector_hil, xarm **
 ** teleop options: spacemouse (6dof), keyboard_ee (6dof), gamepad (3dof) **
 ** add " --display_data=true "   and then you can see the robot state in the console and Rerun **
 
