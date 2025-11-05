@@ -6,7 +6,7 @@ visualize the crop effect of LeRobot, including the original image and the cropp
 support reading crop parameters from the configuration file, and real-time adjustment of the crop region.
 
 usage:
-    python test/crop_visualizer.py --config_path configs/ufactory/env_config_hilserl_lite6.json
+    python test/crop_visualizer.py --config_path configs/ufactory/lite6/env_config_hilserl_lite6.json
 
 controls:
     - ESC: exit
@@ -419,7 +419,7 @@ def main():
     parser.add_argument(
         "--config_path", 
         type=str, 
-        default="configs/ufactory/env_config_hilserl_lite6.json",
+        default="configs/ufactory/lite6/env_config_hilserl_lite6.json",
         help="configuration file path"
     )
     parser.add_argument(

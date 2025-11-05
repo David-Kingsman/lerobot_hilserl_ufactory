@@ -28,6 +28,13 @@ PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot
 ** teleop options: spacemouse (6dof), keyboard_ee (6dof), gamepad (3dof) **
 ** add " --display_data=true "   and then you can see the robot state in the console and Rerun **
 ```
+## Check cameras
+
+This script helps you determine the port of the existing cameras.
+
+```bash
+cd /home/zekaijin/lerobot-hilserl-ufactory && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_find_cameras opencv
+```
 
 
 ## Using lerobot-find-joint-limits**
@@ -92,10 +99,16 @@ With the bounds defined, you can safely collect demonstrations for training. Tra
 Start the recording process, 
 
 ```bash
+# Ufactory lite6
 # spacemouse (6dof)
-conda activate lerobot && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config configs/ufactory/env_config_hilserl_lite6_spacemouse.json
+conda activate lerobot && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config configs/ufactory/lite6/env_config_hilserl_lite6_spacemouse.json
 # gamepad (3dof)
-conda activate lerobot && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config configs/ufactory/env_config_hilserl_lite6_gamepad.json
+conda activate lerobot && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config configs/ufactory/lite6/env_config_hilserl_lite6_gamepad.json
+
+# Ufactory xarm6
+# gamepad (3dof)
+conda activate lerobot && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config configs/ufactory/xarm6/env_config_hilserl_xarm6_gamepad.json
+
 ```
 
 During recording:
@@ -212,25 +225,25 @@ The reward classifier will automatically provide rewards based on the visual inp
 2. **Collect a dataset**:
 
    ```bash
-   conda activate lerobot && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config configs/ufactory/env_config_hilserl_lite6_spacemouse.json
+   conda activate lerobot && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config configs/ufactory/lite6/env_config_hilserl_lite6_spacemouse.json
 
-    conda activate lerobot && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config configs/ufactory/env_config_hilserl_lite6_gamepad.json
+    conda activate lerobot && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config configs/ufactory/lite6/env_config_hilserl_lite6_gamepad.json
    ```
 
 3. **Train the classifier**:
 
    ```bash
-   lerobot-train --config_path configs/ufactory/reward_classifier_train_config_lite6.json
+   lerobot-train --config_path configs/ufactory/lite6/reward_classifier_train_config_lite6.json
    ```
 
 4. **Test the classifier**:
    ```bash
-   python -m lerobot.scripts.rl.gym_manipulator --config_path configs/ufactory/env_config_hilserl_lite6.json
+   python -m lerobot.scripts.rl.gym_manipulator --config_path configs/ufactory/lite6/env_config_hilserl_lite6.json
    ```
 
 5. **(Optional) 
    ```bash
-   lerobot-train --config_path configs/ufactory/bc_pretrain_lite6.json
+   lerobot-train --config_path configs/ufactory/lite6/bc_pretrain_lite6.json
    ```
 
 6. **Visualize the datasets**:
@@ -257,7 +270,7 @@ The LeRobot system uses a distributed actor-learner architecture for training. T
 First, start the learner server process:
 
 ```bash
-python -m lerobot.scripts.rl.learner --config_path configs/ufactory/train_config_hilserl_lite6.json
+python -m lerobot.scripts.rl.learner --config_path configs/ufactory/lite6/train_config_hilserl_lite6.json
 ```
 
 The learner:
@@ -272,7 +285,7 @@ The learner:
 In a separate terminal, start the actor process with the same configuration:
 
 ```bash
-python -m lerobot.scripts.rl.actor --config_path configs/ufactory/train_config_hilserl_lite6.json
+python -m lerobot.scripts.rl.actor --config_path configs/ufactory/lite6/train_config_hilserl_lite6.json
 ```
 
 The actor:

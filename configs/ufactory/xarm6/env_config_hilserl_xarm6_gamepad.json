@@ -1,0 +1,86 @@
+
+{
+    "env": {
+        "robot": {
+            "type": "xarm6_end_effector_hil",
+            "ip": "192.168.1.235",
+            "use_gripper": true,
+            "act_features": "xyz_delta",
+            "end_effector_bounds": {
+                "min": [0.1, -0.05, 0.125],
+                "max": [0.6, 0.05, 0.2]
+            },
+            "cameras": {
+                "webcam_1": {
+                    "type": "opencv",
+                    "index_or_path": "/dev/video0" ,
+                    "height": 480,
+                    "width": 640,
+                    "fps": 30
+                },
+                "webcam_2": {
+                    "type": "opencv",
+                    "index_or_path": "/dev/video2",
+                    "height": 480,
+                    "width": 640,
+                    "fps": 30
+                }
+            }
+        },
+        "teleop": {
+            "type": "gamepad",
+            "use_gripper": false
+        },
+        "processor": {
+            "control_mode": "gamepad",
+            "observation": {
+                "display_cameras": false,
+                "add_joint_velocity_to_observation": true,
+                "add_current_to_observation": false
+            },
+            "image_preprocessing": {
+            "crop_params_dict": {
+                "observation.images.webcam_1": [32, 152, 250, 350],
+                "observation.images.webcam_2":  [104, 147, 250, 250]
+            },
+                "resize_size": [128, 128]            
+            },
+            "gripper": {
+                "use_gripper": false,
+                "gripper_penalty": 0.0
+            },
+            "reset": {
+                "fixed_reset_joint_positions": [0.010472, 0.462512, 0.694641, -0.052360, 0.232129, 0.052360],
+                "reset_time_s": 2.5,
+                "control_time_s": 20.0,
+                "terminate_on_success": true
+            },
+            "inverse_kinematics": {
+                "urdf_path": "/home/zekaijin/lerobot-hilserl-ufactory/simulation/xarm6/xarm6.urdf",
+                "target_frame_name": "link6",
+                "end_effector_step_sizes": { "x": 0.005, "y": 0.005, "z": 0.005 }
+            },
+            "reward_classifier": {
+                "pretrained_path": null,
+                "success_threshold": 0.5,
+                "success_reward": 1.0
+            },
+            "max_gripper_pos": 100.0
+        },
+               "name": "xarm6_real_robot",
+               "fps": 10
+
+    },
+    "dataset": {
+        "repo_id": "DavidKINGSMAN/lite6_dataset",
+        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/lite6_pick_cube_test001",
+        "task": "pick_cube",
+        "num_episodes_to_record": 20,
+        "replay_episode": null,
+        "push_to_hub": true
+    },
+    "mode": "null",
+    "device": "cpu"
+}
+
+

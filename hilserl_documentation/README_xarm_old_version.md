@@ -483,7 +483,7 @@ To setup the gamepad, you need to set the `control_mode` to `"gamepad"` and defi
 Start the recording process, an example of the config file can be found [here](https://huggingface.co/datasets/aractingi/lerobot-example-config-files/blob/main/env_config_so100.json):
 
 ```bash
-python -m lerobot.scripts.rl.gym_manipulator --config_path configs/ufactory/env_config_hilserl_lite6.json   --env.teleop.use_gripper true   --env.processor.gripper.use_gripper true
+python -m lerobot.scripts.rl.gym_manipulator --config_path configs/ufactory/lite6/env_config_hilserl_lite6.json   --env.teleop.use_gripper true   --env.processor.gripper.use_gripper true
 ```
 
 During recording:
@@ -601,7 +601,7 @@ Before training, you need to collect a dataset with labeled examples. The `recor
 To collect a dataset, you need to modify some parameters in the environment configuration based on HILSerlRobotEnvConfig.
 
 ```bash
-python -m lerobot.scripts.rl.gym_manipulator --config_path configs/ufactory/reward_classifier_train_config_lite6.json
+python -m lerobot.scripts.rl.gym_manipulator --config_path configs/ufactory/lite6/reward_classifier_train_config_lite6.json
 ```
 
 **Key Parameters for Data Collection**
@@ -701,7 +701,7 @@ Example configuration for training the [reward classifier](https://huggingface.c
 To train the classifier, use the `train.py` script with your configuration:
 
 ```bash
-   lerobot-train --config_path configs/ufactory/reward_classifier_train_config_lite6.json
+   lerobot-train --config_path configs/ufactory/lite6/reward_classifier_train_config_lite6.json
 ```
 
 **Deploying and Testing the Model**
@@ -747,7 +747,7 @@ or set the argument in the json config file.
 Run `gym_manipulator.py` to test the model.
 
 ```bash
-python -m lerobot.scripts.rl.gym_manipulator --config_path configs/ufactory/env_config_hilserl_lite6.json
+python -m lerobot.scripts.rl.gym_manipulator --config_path configs/ufactory/lite6/env_config_hilserl_lite6.json
 ```
 
 The reward classifier will automatically provide rewards based on the visual input from the robot's cameras.
@@ -760,23 +760,23 @@ The reward classifier will automatically provide rewards based on the visual inp
 2. **Collect a dataset**:
 
    ```bash
-   conda activate lerobot && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config configs/ufactory/env_config_hilserl_lite6_spacemouse.json
+   conda activate lerobot && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config configs/ufactory/lite6/env_config_hilserl_lite6_spacemouse.json
    ```
 
 3. **Train the classifier**:
 
    ```bash
-   lerobot-train --config_path configs/ufactory/reward_classifier_train_config_lite6.json
+   lerobot-train --config_path configs/ufactory/lite6/reward_classifier_train_config_lite6.json
    ```
 
 4. **Test the classifier**:
    ```bash
-   python -m lerobot.scripts.rl.gym_manipulator --config_path configs/ufactory/env_config_hilserl_lite6.json
+   python -m lerobot.scripts.rl.gym_manipulator --config_path configs/ufactory/lite6/env_config_hilserl_lite6.json
    ```
 
 5. **(Optional) 
    ```bash
-   lerobot-train --config_path configs/ufactory/bc_pretrain_lite6.json
+   lerobot-train --config_path configs/ufactory/lite6/bc_pretrain_lite6.json
    ```
 
 6. **Visualize the datasets**:
@@ -803,7 +803,7 @@ Create a training configuration file (example available [here](https://huggingfa
 First, start the learner server process:
 
 ```bash
-python -m lerobot.scripts.rl.learner --config_path configs/ufactory/train_config_hilserl_lite6.json
+python -m lerobot.scripts.rl.learner --config_path configs/ufactory/lite6/train_config_hilserl_lite6.json
 ```
 
 The learner:
@@ -818,7 +818,7 @@ The learner:
 In a separate terminal, start the actor process with the same configuration:
 
 ```bash
-python -m lerobot.scripts.rl.actor --config_path configs/ufactory/train_config_hilserl_lite6.json
+python -m lerobot.scripts.rl.actor --config_path configs/ufactory/lite6/train_config_hilserl_lite6.json
 ```
 
 The actor:
