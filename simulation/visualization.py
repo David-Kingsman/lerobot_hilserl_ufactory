@@ -30,7 +30,7 @@ p.resetDebugVisualizerCamera(cameraDistance=1.2, cameraYaw=50, cameraPitch=-30, 
 ROOT = "/home/zekaijin/lerobot-hilserl-ufactory"
 URDF_MAP = {
     "lite6": f"{ROOT}/simulation/Lite6/lite6.urdf",
-    "xarm6": f"{ROOT}/simulation/xarm6/xarm6.urdf",
+    "xarm6": f"{ROOT}/simulation/xarm6/xarm6_robotiq.urdf",
     "xarm7": f"{ROOT}/simulation/xarm7/xarm7.urdf",
     "uf850": f"{ROOT}/simulation/uf850/uf850.urdf",
 }
