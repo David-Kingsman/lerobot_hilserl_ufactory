@@ -48,7 +48,7 @@
                 "gripper_penalty_in_reward": true
             },
             "reset": {
-                "fixed_reset_joint_positions": [0.010472, 0.462512, 0.694641, -0.052360, 0.232129, 0.052360],
+                "fixed_reset_joint_positions": [0.0576, -0.1676, -1.3744, -0.0471, 1.5882, 0.0611],
                 "reset_time_s": 2.5,
                 "control_time_s": 20.0,
                 "terminate_on_success": true
@@ -63,7 +63,7 @@
                 "success_threshold": 0.5,
                 "success_reward": 1.0
             },
-            "max_gripper_pos": 100.0
+            "max_gripper_pos": 255.0
         },
                "name": "xarm6_real_robot",
                "fps": 10

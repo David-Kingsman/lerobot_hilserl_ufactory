@@ -32,7 +32,7 @@
             "observation": {
                 "display_cameras": false,
                 "add_joint_velocity_to_observation": true,
-                "add_current_to_observation": false,
+                "add_current_to_observation": true,
                 "add_ee_pose_to_observation": true
             },
             "image_preprocessing": {
@@ -48,7 +48,7 @@
                 "gripper_penalty_in_reward": false
             },
             "reset": {
-                "fixed_reset_joint_positions": [0.000000, 29.697381, 26.505690, 29.295826, -5.399654, -30.901693],
+                "fixed_reset_joint_positions": [0.0576, -0.1676, -1.3744, -0.0471, 1.5882, 0.0611],
                 "reset_time_s": 5.0,
                 "control_time_s": 20.0,
                 "terminate_on_success": true
