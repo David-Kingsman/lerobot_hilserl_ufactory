@@ -1,10 +1,39 @@
 # HIL-SERL Real Robot Training Workflow Guide
 
+In this tutorial you will go through the full Human-in-the-Loop Sample-Efficient Reinforcement Learning (HIL-SERL) workflow using LeRobot. You will master training a policy with RL on a real robot in just a few hours.
+
+HIL-SERL is a sample-efficient reinforcement learning algorithm that combines human demonstrations with online learning and human interventions. The approach starts from a small set of human demonstrations, uses them to train a reward classifier, and then employs an actor-learner architecture where humans can intervene during policy execution to guide exploration and correct unsafe behaviors. In this tutorial, you'll use a gamepad to provide interventions and control the robot during the learning process.
+
+It combines three key ingredients:
+
+1. **Offline demonstrations & reward classifier:** a handful of human-teleop episodes plus a vision-based success detector give the policy a shaped starting point.
+
+2. **On-robot actor / learner loop with human interventions:** a distributed Soft Actor Critic (SAC) learner updates the policy while an actor explores on the physical robot; the human can jump in at any time to correct dangerous or unproductive behaviour.
+
+3. **Safety & efficiency tools:** joint/end-effector (EE) bounds, crop region of interest (ROI) preprocessing and WandB monitoring keep the data useful and the hardware safe.
+
+Together these elements let HIL-SERL reach near-perfect task success and faster cycle times than imitation-only baselines.
+
+<p align="center">
+  <img
+    src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/lerobot/hilserl-main-figure.png"
+    alt="HIL-SERL workflow"
+    title="HIL-SERL workflow"
+    width="100%"
+  ></img>
+</p>
+
+<p align="center">
+  <i>HIL-SERL workflow, Luo et al. 2024</i>
+</p>
+
+This guide provides step-by-step instructions for training a robot policy using LeRobot's HilSerl implementation to train on a real robot.
+
 ## What do I need?
 
 - A gamepad (recommended) or keyboard to control the robot
 - A Nvidia GPU
-- A real robot with a follower and leader arm (optional if you use the keyboard or the gamepad)
+- A real robot with any teleoperation methods
 - A URDF file for the robot for the kinematics package (check `lerobot/model/kinematics.py`)
 
 ## Install LeRobot with HIL-SERL
@@ -15,7 +44,7 @@ To install LeRobot with HIL-SERL, you need to install the `hilserl` extra.
 pip install -e ".[hilserl]"
 ```
 
-## Velocity control and position control teleoperation of Ufactory robot
+## Velocity control and position control teleoperation of Ufactory robot Xarm6, Lite6 and Ufactory 850
 
 ```bash
 # Example for xarm6 (position control on gamepad)
@@ -37,22 +66,177 @@ cd /home/zekaijin/lerobot-hilserl-ufactory && PYTHONPATH=/home/zekaijin/lerobot-
 ```
 
 
+#### Configuration Examples
+
+**Basic Observation Processing**:
+
+```json
+{
+  "env": {
+    "processor": {
+      "observation": {
+        "add_joint_velocity_to_observation": true,
+        "add_current_to_observation": false,
+        "display_cameras": false
+      }
+    }
+  }
+}
+```
+
+**Image Processing**:
+
+```json
+{
+  "env": {
+    "processor": {
+      "image_preprocessing": {
+        "crop_params_dict": {
+          "observation.images.front": [180, 250, 120, 150],
+          "observation.images.side": [180, 207, 180, 200]
+        },
+        "resize_size": [128, 128]
+      }
+    }
+  }
+}
+```
+
+**Inverse Kinematics Setup**:
+
+```json
+{
+  "env": {
+    "processor": {
+      "inverse_kinematics": {
+        "urdf_path": "path/to/robot.urdf",
+        "target_frame_name": "end_effector",
+        "end_effector_bounds": {
+          "min": [0.16, -0.08, 0.03],
+          "max": [0.24, 0.2, 0.1]
+        },
+        "end_effector_step_sizes": {
+          "x": 0.02,
+          "y": 0.02,
+          "z": 0.02
+        }
+      }
+    }
+  }
+}
+```
+
+### Advanced Observation Processing
+
+The HIL-SERL framework   additional observation processing features that can improve policy learning:
+
+#### Joint Velocity Processing
+
+Enable joint velocity estimation to provide the policy with motion information:
+
+```json
+{
+  "env": {
+    "processor": {
+      "observation": {
+        "add_joint_velocity_to_observation": true
+      }
+    }
+  }
+}
+```
+
+This processor:
+
+- Estimates joint velocities using finite differences between consecutive joint position readings
+- Adds velocity information to the observation state vector
+- Useful for policies that need motion awareness for dynamic tasks
+
+#### Motor Current Processing
+
+Monitor motor currents to detect contact forces and load conditions:
+
+```json
+{
+  "env": {
+    "processor": {
+      "observation": {
+        "add_current_to_observation": true
+      }
+    }
+  }
+}
+```
+
+This processor:
+
+- Reads motor current values from the robot's control system
+- Adds current measurements to the observation state vector
+- Helps detect contact events, object weights, and mechanical resistance
+- Useful for contact-rich manipulation tasks
+
+#### Combined Observation Processing
+
+You can enable multiple observation processing features simultaneously:
+
+```json
+{
+  "env": {
+    "processor": {
+      "observation": {
+        "add_joint_velocity_to_observation": true,
+        "add_current_to_observation": true,
+        "add_ee_pose_to_observation": false,
+        "display_cameras": false
+      }
+    }
+  }
+}
+```
+
+**Note**: Enabling additional observation features increases the state space dimensionality, which may require adjusting your policy network architecture and potentially collecting more training data.
+
+
+### Finding Robot Workspace Bounds
+
+Before collecting demonstrations, you need to determine the appropriate operational bounds for your robot.
+
+This helps simplify the problem of learning on the real robot in two ways: 1) by limiting the robot's operational space to a specific region that solves the task and avoids unnecessary or unsafe exploration, and 2) by allowing training in end-effector space rather than joint space. Empirically, learning in joint space for reinforcement learning in manipulation is often a harder problem - some tasks are nearly impossible to learn in joint space but become learnable when the action space is transformed to end-effector coordinates.
+
+
 ## Using lerobot-find-joint-limits**
 
 This script helps you find the safe operational bounds for your robot's end-effector. Given that you have a follower and leader arm, you can use the script to find the bounds for the follower arm that will be applied during training.
 Bounding the action space will reduce the redundant exploration of the agent and guarantees safety.
 
 ```bash
+# gamepad test
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src 
+python -m lerobot.scripts.lerobot_find_joint_limits_spacemouse \  --robot.type=lite6_end_effector_hil   \
+--robot.ip=192.168.1.193   \
+--teleop.type=spacemouse  \ 
+--teleop_time_s=30
+
+# spacemouse test
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_find_joint_limits_spacemouse \
+  --robot.type=lite6_end_effector_hil \
+  --robot.ip=192.168.1.193 \
+  --teleop.type=spacemouse \
+  --teleop_time_s=30
+
+# meta quest test
 cd experiments/arm_control_base
-python scripts/find_joint_limits_metaquest.py --robot_ip=192.168.1.193 --teleop_time_s=30
+python scripts/find_joint_limits_metaquest.py \
+--robot_ip=192.168.1.193 \
+--teleop_time_s=30
 ```
 
 **Workflow**
 
 This script will:
 1. Connect to UFactory Lite6 robot
-2. Connect to Meta Quest 2 controller
-3. Find the joint and end-effector position limits through Meta Quest 2 control
+2. Connect to Meta Quest 2 controller, gamepad, spacemouse
+3. Find the joint and end-effector position limits through Meta Quest 2 control or gamepad and spacemouse control
 4. Output the found limits, format same as LeRobot
 
    ```
@@ -79,8 +263,6 @@ This script will:
 }
 ```
 
-
-
 ## Collecting Demonstrations
 
 With the bounds defined, you can safely collect demonstrations for training. Training RL with off-policy algorithm allows us to use offline datasets collected in order to improve the efficiency of the learning process.
@@ -99,16 +281,14 @@ With the bounds defined, you can safely collect demonstrations for training. Tra
 Start the recording process, 
 
 ```bash
-# Ufactory lite6
-# spacemouse (6dof)
+# Ufactory lite6 using spacemouse (6dof)
 conda activate lerobot && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config configs/ufactory/lite6/env_config_hilserl_lite6_spacemouse.json
+
 # gamepad (3dof)
 conda activate lerobot && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config configs/ufactory/lite6/env_config_hilserl_lite6_gamepad.json
 
-# Ufactory xarm6
-# gamepad (3dof)
+# Ufactory xarm6 using gamepad (3dof)
 conda activate lerobot && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config configs/ufactory/xarm6/env_config_hilserl_xarm6_gamepad.json
-
 ```
 
 During recording:
