@@ -314,7 +314,7 @@ Note: If you already know the crop parameters, you can skip this step and just s
 Use the `crop_dataset_roi.py` script to interactively select regions of interest in your camera images:
 
 ```bash
-python -m lerobot.rl.crop_dataset_roi --root  datasets/xarm6_pick_cube_test1
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.crop_dataset_roi --root  datasets/xarm6_pick_cube_test1
 ```
 
 1. For each camera view, the script will display the first frame
