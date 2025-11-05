@@ -1,0 +1,235 @@
+{
+    "output_dir": null,
+    "job_name": "hilserl_xarm6_replay_buffer_test1",
+    "resume": false,
+    "seed": 1000,
+    "num_workers": 2,
+    "batch_size": 16,
+    "steps": 100000,
+    "log_freq": 500,
+    "save_checkpoint": true,
+    "save_freq": 2000000,
+    "wandb": {
+        "enable": true,
+        "project": "hilserl_xarm6_replay_buffer_test1",
+        "disable_artifact": true
+    },
+    "dataset": {
+        "repo_id": "DavidKINGSMAN/xarm6_dataset",
+        "root": "/home/zekaijin/lerobot-hilserl/datasets/xarm6_pick_cube_replay_buffer_test001",
+        "streaming": false,
+        "video_backend": "pyav"
+    },
+    "policy": {
+        "type": "sac",
+        "n_obs_steps": 1,
+        "normalization_mapping": {
+            "VISUAL": "MEAN_STD",
+            "STATE": "MIN_MAX",
+            "ENV": "MIN_MAX",
+            "ACTION": "MIN_MAX"
+        },
+        "input_features": {
+            "observation.images.webcam_1": {
+                "type": "VISUAL",
+                "shape": [
+                    3,
+                    128,
+                    128
+                ]
+            },
+            "observation.images.webcam_2": {
+                "type": "VISUAL",
+                "shape": [
+                    3,
+                    128,
+                    128
+                ]
+            },
+            "observation.state": {
+                "type": "STATE",
+                "shape": [
+                    12
+                ]
+            }
+        },
+        "output_features": {
+            "action": {
+                "type": "ACTION",
+                "shape": [
+                    3
+                ]
+            }
+        },
+        "device": "cuda",
+        "use_amp": false,
+        "num_discrete_actions": null,
+        "storage_device": "cpu",
+        "vision_encoder_name": "helper2424/resnet10",
+        "freeze_vision_encoder": true,
+        "image_encoder_hidden_dim": 32,
+        "shared_encoder": true,
+        "online_steps": 1000000,
+        "online_env_seed": 10000,
+        "online_buffer_capacity": 50000,
+        "offline_buffer_capacity": 10000,
+        "online_step_before_learning": 1000,
+        "policy_update_freq": 1,
+        "discount": 0.97,
+        "async_prefetch": false,
+        "temperature_init": 0.05,
+        "num_critics": 2,
+        "num_subsample_critics": null,
+        "critic_lr": 0.001,
+        "actor_lr": 0.0003,
+        "temperature_lr": 0.0003,
+        "critic_target_update_weight": 0.001,
+        "utd_ratio": 2,
+        "state_encoder_hidden_dim": 256,
+        "latent_dim": 256,
+        "target_entropy": null,
+        "use_backup_entropy": true,
+        "grad_clip_norm": 40.0,
+        "critic_network_kwargs": {
+            "hidden_dims": [
+                256,
+                256
+            ],
+            "activate_final": true,
+            "final_activation": null
+        },
+        "actor_network_kwargs": {
+            "hidden_dims": [
+                256,
+                256
+            ],
+            "activate_final": true
+        },
+        "policy_kwargs": {
+            "use_tanh_squash": true,
+            "std_min": -5,
+            "std_max": 2,
+            "init_final": 0.05
+        },
+        "actor_learner_config": {
+            "learner_host": "127.0.0.1",
+            "learner_port": 50051,
+            "policy_parameters_push_frequency": 4
+        },
+        "concurrency": {
+            "actor": "threads",
+            "learner": "threads"
+        },
+        "repo_id": "DavidKINGSMAN/xarm6_pick_cube_with_reward_classifier_policy_test1"
+    },
+    "env": {
+        "type": "gym_manipulator",
+        "robot": {
+            "type": "ufactory_xarm6",
+            "ip": "192.168.1.235",
+            "id": "xarm6_main",
+            "use_degrees": true,
+            "cameras": {
+                "webcam_1": {
+                    "type": "opencv",
+                    "index_or_path": "/dev/video0",
+                    "height": 480,
+                    "width": 640,
+                    "fps": 30
+                },
+                "webcam_2": {
+                    "type": "opencv",
+                    "index_or_path": "/dev/video2",
+                    "height": 480,
+                    "width": 640,
+                    "fps": 30
+                }
+            }
+        },
+        "teleop": {
+            "type": "gamepad",
+            "use_gripper": false
+        },
+        "processor": {
+            "control_mode": "gamepad",
+            "observation": {
+                "display_cameras": false,
+                "add_joint_velocity_to_observation": true,
+                "add_current_to_observation": false,
+                "add_ee_pose_to_observation": true
+            },
+            "image_preprocessing": {
+                "crop_params_dict": {
+                    "observation.images.webcam_1": [32, 152, 250, 350],
+                    "observation.images.webcam_2": [104, 147, 250, 250]
+                },
+                "resize_size": [128, 128]
+            },
+            "gripper": {
+                "use_gripper": false,
+                "gripper_penalty": 0.0,
+                "gripper_penalty_in_reward": false
+            },
+            "reset": {
+                "fixed_reset_joint_positions": [0.000000, 29.697381, 26.505690, 29.295826, -5.399654, -30.901693],
+                "reset_time_s": 5.0,
+                "control_time_s": 20.0,
+                "terminate_on_success": true
+            },
+            "inverse_kinematics": {
+                "urdf_path": "/home/zekaijin/lerobot-hilserl-ufactory/simulation/xarm6/xarm6.urdf",
+                "target_frame_name": "link_eef",
+                "end_effector_bounds": {
+                    "min": [0.2, -0.04, 0.12],
+                    "max":[0.5, 0.04, 0.15]
+                },
+                "end_effector_step_sizes": { "x": 0.02, "y": 0.02, "z": 0.02 }
+            },
+            "reward_classifier": {
+                "pretrained_path": "/home/zekaijin/lerobot-hilserl/outputs/train/2025-10-14/16-17-51_reward-classifier/checkpoints/last/pretrained_model",
+                "success_threshold": 0.5,
+                "success_reward": 1.0
+            },
+            "max_gripper_pos": 100.0
+        },
+        "name": "xarm6_real_robot",
+        "fps": 10,
+        "task": "pick_cube",
+        "features": {
+            "observation.images.webcam_1": {
+                "type": "VISUAL",
+                "shape": [
+                    3,
+                    128,
+                    128
+                ]
+            },
+            "observation.images.webcam_2": {
+                "type": "VISUAL",
+                "shape": [
+                    3,
+                    128,
+                    128
+                ]
+            },
+            "observation.state": {
+                "type": "STATE",
+                "shape": [
+                    12
+                ]
+            },
+            "action": {
+                "type": "ACTION",
+                "shape": [
+                    3
+                ]
+            }
+        },
+        "features_map": {
+            "observation.images.webcam_1": "observation.images.webcam_1",
+            "observation.images.webcam_2": "observation.images.webcam_2",
+            "observation.state": "observation.state",
+            "action": "action"
+        }
+    }
+}
