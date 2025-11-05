@@ -49,7 +49,7 @@
                 "gripper_penalty_in_reward": false
             },
             "reset": {
-                "fixed_reset_joint_positions": [0.000000, 29.697381, 26.505690, 29.295826, -5.399654, -30.901693],
+                "fixed_reset_joint_positions": [0.11, -0.0628, -1.1676, -0.0471, 1.2025, 0.0611],
                 "reset_time_s": 5.0,
                 "control_time_s": 20.0,
                 "terminate_on_success": true

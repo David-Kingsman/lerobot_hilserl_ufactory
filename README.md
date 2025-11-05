@@ -47,10 +47,10 @@ pip install -e ".[hilserl]"
 ## Velocity control and position control teleoperation of Ufactory robot Xarm6, Lite6 and Ufactory 850
 
 ```bash
-# Example for xarm6 (position control on gamepad)
+# Example for position control on gamepad using Xarm6
 PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_teleoperate --robot.type=xarm6_end_effector --robot.ip=192.168.1.235 --teleop.type=gamepad 
 
-# Example for xarm6 (velocity control on gamepad)
+# Example for velocity control on gamepad using Xarm6
 PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_teleoperate --robot.type=xarm6_end_effector_hil --robot.ip=192.168.1.235 --teleop.type=gamepad 
 
 ** robot type: xarm_end_effector, xarm6_end_effector, xarm6_end_effector_hil, xarm **
@@ -64,7 +64,6 @@ This script helps you determine the port of the existing cameras.
 ```bash
 cd /home/zekaijin/lerobot-hilserl-ufactory && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_find_cameras opencv
 ```
-
 
 #### Configuration Examples
 
@@ -211,11 +210,7 @@ Bounding the action space will reduce the redundant exploration of the agent and
 
 ```bash
 # gamepad test
-PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src 
-python -m lerobot.scripts.lerobot_find_joint_limits_spacemouse \  --robot.type=lite6_end_effector_hil   \
---robot.ip=192.168.1.193   \
---teleop.type=spacemouse  \ 
---teleop_time_s=30
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_find_joint_limits_gamepad --robot.type=xarm6_end_effector_hil --robot.ip=192.168.1.235 --teleop.type=gamepad --teleop_time_s=30
 
 # spacemouse test
 PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_find_joint_limits_spacemouse \
@@ -319,7 +314,7 @@ Note: If you already know the crop parameters, you can skip this step and just s
 Use the `crop_dataset_roi.py` script to interactively select regions of interest in your camera images:
 
 ```bash
-python -m lerobot.rl.crop_dataset_roi --repo-id username/push_cube
+python -m lerobot.rl.crop_dataset_roi --root  datasets/xarm6_pick_cube_test1
 ```
 
 1. For each camera view, the script will display the first frame
@@ -335,7 +330,6 @@ Selected Rectangular Regions of Interest (top, left, height, width):
 observation.images.side: [180, 207, 180, 200]
 observation.images.front: [180, 250, 120, 150]
 ```
-
 
 **Recommended image resolution**
 

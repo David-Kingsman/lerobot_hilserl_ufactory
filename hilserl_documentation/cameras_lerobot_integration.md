@@ -106,7 +106,7 @@ from lerobot.cameras.configs import ColorMode, Cv2Rotation
 
 # Create a `RealSenseCameraConfig` specifying your camera’s serial number and enabling depth.
 config = RealSenseCameraConfig(
-    serial_number_or_name="816612061856",
+    serial_number_or_name="151422061401",   # Realsense 415 @1@  151422061401, @2@ 816612061856
     fps=15,
     width=640,
     height=480,

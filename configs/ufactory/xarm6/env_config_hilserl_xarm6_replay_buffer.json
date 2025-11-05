@@ -25,7 +25,7 @@
         },
         "teleop": {
             "type": "gamepad",
-            "use_gripper": false
+            "use_gripper": true
         },
         "processor": {
             "control_mode": "gamepad",
@@ -67,7 +67,7 @@
                 "success_threshold": 0.5,
                 "success_reward": 1.0
             },
-            "max_gripper_pos": 100.0
+            "max_gripper_pos": 255.0
         },
                "name": "xarm6_real_robot",
                "fps": 10
