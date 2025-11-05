@@ -24,12 +24,10 @@ PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot
 # Example for xarm6 (velocity control on gamepad)
 PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_teleoperate --robot.type=xarm6_end_effector_hil --robot.ip=192.168.1.235 --teleop.type=gamepad 
 
-
-```
-
 ** robot type: xarm_end_effector, xarm6_end_effector, xarm6_end_effector_hil, xarm **
 ** teleop options: spacemouse (6dof), keyboard_ee (6dof), gamepad (3dof) **
 ** add " --display_data=true "   and then you can see the robot state in the console and Rerun **
+```
 
 
 ## Using lerobot-find-joint-limits**
@@ -73,6 +71,8 @@ This script will:
     "min": [185.3618, -91.9344, 110.2758]
 }
 ```
+
+
 
 ## Collecting Demonstrations
 
