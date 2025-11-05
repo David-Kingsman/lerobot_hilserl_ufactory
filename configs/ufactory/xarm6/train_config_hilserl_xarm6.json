@@ -177,8 +177,8 @@
                 "terminate_on_success": true
             },
             "inverse_kinematics": {
-                "urdf_path": "/home/zekaijin/lerobot-hilserl-ufactory/simulation/xarm6/xarm6.urdf",
-                "target_frame_name": "link_eef",
+                "urdf_path": "/home/zekaijin/lerobot-hilserl-ufactory/simulation/xarm6/xarm6_robotiq.urdf",
+                "target_frame_name": "eef",
                 "end_effector_bounds": {
                     "min": [0.2, -0.04, 0.12],
                     "max":[0.5, 0.04, 0.15]

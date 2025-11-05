@@ -19,8 +19,8 @@
                     "fps": 30
                 },
                 "webcam_2": {
-                    "type": "opencv",
-                    "index_or_path": "/dev/video2",
+                    "type": "realsense",
+                    "index_or_path": "/dev/video8",
                     "height": 480,
                     "width": 640,
                     "fps": 30
@@ -54,8 +54,8 @@
                 "terminate_on_success": true
             },
             "inverse_kinematics": {
-                "urdf_path": "/home/zekaijin/lerobot-hilserl-ufactory/simulation/xarm6/xarm6.urdf",
-                "target_frame_name": "link6",
+                "urdf_path": "/home/zekaijin/lerobot-hilserl-ufactory/simulation/xarm6/xarm6_robotiq.urdf",
+                "target_frame_name": "eef",
                 "end_effector_step_sizes": { "x": 0.005, "y": 0.005, "z": 0.005 }
             },
             "reward_classifier": {
