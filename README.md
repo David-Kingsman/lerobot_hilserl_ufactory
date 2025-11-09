@@ -327,8 +327,13 @@ Example output:
 
 ```
 Selected Rectangular Regions of Interest (top, left, height, width):
-observation.images.side: [180, 207, 180, 200]
-observation.images.front: [180, 250, 120, 150]
+observation.images.webcam_1: (13, 47, 64, 66)
+observation.images.realsense: (9, 10, 81, 93)
+
+Converted ROI coordinates for original image size (640x480):
+Format: (top, left, height, width)
+observation.images.webcam_1: (48, 235, 240, 330)
+observation.images.realsense: (33, 50, 303, 465)
 ```
 
 **Recommended image resolution**
@@ -442,7 +447,7 @@ The LeRobot system uses a distributed actor-learner architecture for training. T
 First, start the learner server process:
 
 ```bash
-python -m lerobot.scripts.rl.learner --config_path configs/ufactory/lite6/train_config_hilserl_lite6.json
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.learner --config_path configs/ufactory/xarm6/train_config_hilserl_xarm6.json
 ```
 
 The learner:
@@ -457,7 +462,7 @@ The learner:
 In a separate terminal, start the actor process with the same configuration:
 
 ```bash
-python -m lerobot.scripts.rl.actor --config_path configs/ufactory/lite6/train_config_hilserl_lite6.json
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.actor --config_path configs/ufactory/xarm6/train_config_hilserl_xarm6.json
 ```
 
 The actor:
