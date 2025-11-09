@@ -279,7 +279,7 @@ Start the recording process,
 # Ufactory lite6 using spacemouse (6dof)
 conda activate lerobot && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config configs/ufactory/lite6/env_config_hilserl_lite6_spacemouse.json
 
-# gamepad (3dof)
+# Ufactory lite6 using gamepad (3dof)
 conda activate lerobot && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config configs/ufactory/lite6/env_config_hilserl_lite6_gamepad.json
 
 # Ufactory xarm6 using gamepad (3dof)
@@ -352,7 +352,7 @@ Before training, you need to collect a dataset with labeled examples. The `recor
 To collect a dataset, you need to modify some parameters in the environment configuration based on HILSerlRobotEnvConfig.
 
 ```bash
-python -m lerobot.rl.gym_manipulator --config_path src/lerobot/configs/reward_classifier_train_config.json
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config_path configs/ufactory/xarm6/reward_classifier_train_config_xarm6.json
 ```
 
 **Key Parameters for Data Collection**
@@ -399,15 +399,13 @@ The reward classifier will automatically provide rewards based on the visual inp
 2. **Collect a dataset**:
 
    ```bash
-   conda activate lerobot && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config configs/ufactory/lite6/env_config_hilserl_lite6_spacemouse.json
-
-    conda activate lerobot && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config configs/ufactory/lite6/env_config_hilserl_lite6_gamepad.json
+  PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config configs/ufactory/xarm6/env_config_hilserl_xarm6_gamepad.json
    ```
 
 3. **Train the classifier**:
 
    ```bash
-   lerobot-train --config_path configs/ufactory/lite6/reward_classifier_train_config_lite6.json
+   PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_train --config_path configs/ufactory/xarm6/reward_classifier_train_config_xarm6.json
    ```
 
 4. **Test the classifier**:

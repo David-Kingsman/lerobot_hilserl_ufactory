@@ -1,22 +1,26 @@
+
 {
     "env": {
         "robot": {
-            "type": "ufactory_xarm6",
+            "type": "xarm6_end_effector_hil",
             "ip": "192.168.1.235",
-            "id": "xarm6_main",
-            "mock": false,
-            "use_degrees": true,
+            "use_gripper": true,
+            "act_features": "xyz_delta",
+            "end_effector_bounds": {
+                "min": [0.394, -0.00008, 0.15],
+                "max": [0.570, 0.144, 0.3]
+            },
             "cameras": {
                 "webcam_1": {
                     "type": "opencv",
-                    "index_or_path": "/dev/video0" ,
+                    "index_or_path": "/dev/video2" ,
                     "height": 480,
                     "width": 640,
                     "fps": 30
                 },
-                "webcam_2": {
-                    "type": "opencv",
-                    "index_or_path": "/dev/video2",
+                "realsense": {
+                    "type": "intelrealsense",
+                    "serial_number_or_name": "151422061401",
                     "height": 480,
                     "width": 640,
                     "fps": 30
@@ -32,38 +36,30 @@
             "observation": {
                 "display_cameras": false,
                 "add_joint_velocity_to_observation": true,
-                "add_current_to_observation": true,
+                "add_current_to_observation": false,
                 "add_ee_pose_to_observation": true
             },
             "image_preprocessing": {
-            "crop_params_dict": {
-                "observation.images.webcam_1": [32, 152, 250, 350],
-                "observation.images.webcam_2":  [104, 147, 250, 250]
-            },
                 "resize_size": [128, 128]            
             },
             "gripper": {
-                "use_gripper": false,
-                "gripper_penalty": 0.0,
-                "gripper_penalty_in_reward": false
+                "use_gripper": true,
+                "gripper_penalty": -0.02,
+                "gripper_penalty_in_reward": true
             },
             "reset": {
                 "fixed_reset_joint_positions": [0.0576, -0.1676, -1.3744, -0.0471, 1.5882, 0.0611],
-                "reset_time_s": 5.0,
+                "reset_time_s": 2.5,
                 "control_time_s": 20.0,
                 "terminate_on_success": true
             },
             "inverse_kinematics": {
                 "urdf_path": "/home/zekaijin/lerobot-hilserl-ufactory/simulation/xarm6/xarm6_robotiq.urdf",
                 "target_frame_name": "eef",
-                "end_effector_bounds": {
-                    "min": [0.1, -0.05, 0.125],
-                    "max": [0.6, 0.05, 0.2]
-                  },
-                "end_effector_step_sizes": { "x": 0.02, "y": 0.02, "z": 0.02 }
+                "end_effector_step_sizes": { "x": 0.01, "y": 0.01, "z": 0.01 }
             },
             "reward_classifier": {
-                "pretrained_path": "/home/zekaijin/lerobot-hilserl/outputs/train/2025-10-14/16-17-51_reward-classifier/checkpoints/last/pretrained_model",
+                "pretrained_path": "/home/zekaijin/lerobot-hilserl-ufactory/outputs/train/2025-11-09/13-27-22_reward-classifier/checkpoints/last/pretrained_model",
                 "success_threshold": 0.5,
                 "success_reward": 1.0
             },
@@ -75,11 +71,11 @@
     },
     "dataset": {
         "repo_id": "DavidKINGSMAN/xarm6_dataset",
-        "root": "/home/zekaijin/lerobot-hilserl/datasets/xarm6_pick_cube_replay_buffer_test001",
+        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/xarm6_pick_cube_test1",
         "task": "pick_cube",
-        "num_episodes_to_record": 50,
+        "num_episodes_to_record": 20,
         "replay_episode": null,
-        "push_to_hub": true
+        "push_to_hub": false
     },
     "mode": "record",
     "device": "cpu"

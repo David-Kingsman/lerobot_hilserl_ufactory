@@ -7,7 +7,7 @@
             "use_gripper": true,
             "act_features": "xyz_delta",
             "end_effector_bounds": {
-                "min": [0.394, -0.00008, 0.165],
+                "min": [0.394, -0.00008, 0.15],
                 "max": [0.570, 0.144, 0.3]
             },
             "cameras": {
@@ -40,10 +40,6 @@
                 "add_ee_pose_to_observation": true
             },
             "image_preprocessing": {
-                "crop_params_dict": {
-                    "observation.images.realsense": [187, 230, 105, 135],
-                    "observation.images.webcam_1": [153, 280, 116, 255]
-                },
                 "resize_size": [128, 128]            
             },
             "gripper": {
@@ -55,12 +51,12 @@
                 "fixed_reset_joint_positions": [0.0576, -0.1676, -1.3744, -0.0471, 1.5882, 0.0611],
                 "reset_time_s": 2.5,
                 "control_time_s": 20.0,
-                "terminate_on_success": false
+                "terminate_on_success": true
             },
             "inverse_kinematics": {
                 "urdf_path": "/home/zekaijin/lerobot-hilserl-ufactory/simulation/xarm6/xarm6_robotiq.urdf",
                 "target_frame_name": "eef",
-                "end_effector_step_sizes": { "x": 0.005, "y": 0.005, "z": 0.005 }
+                "end_effector_step_sizes": { "x": 0.01, "y": 0.01, "z": 0.01 }
             },
             "reward_classifier": {
                 "pretrained_path": null,
@@ -75,9 +71,9 @@
     },
     "dataset": {
         "repo_id": "DavidKINGSMAN/xarm6_dataset",
-        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/xarm6_pick_cube_test2",
+        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/xarm6_pick_cube_test1",
         "task": "pick_cube",
-        "num_episodes_to_record": 2,
+        "num_episodes_to_record": 20,
         "replay_episode": null,
         "push_to_hub": false
     },
