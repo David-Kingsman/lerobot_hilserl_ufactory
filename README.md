@@ -51,12 +51,13 @@ pip install -e ".[hilserl]"
 PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_teleoperate --robot.type=xarm6_end_effector --robot.ip=192.168.1.235 --teleop.type=gamepad 
 
 # Example for velocity control on gamepad using Xarm6
-PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_teleoperate --robot.type=xarm6_end_effector_hil --robot.ip=192.168.1.235 --teleop.type=gamepad 
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_teleoperate --robot.type=xarm6_end_effector_hil --robot.ip=192.168.1.235 --teleop.type=gamepad
 
-** robot type: xarm_end_effector, xarm6_end_effector, xarm6_end_effector_hil, xarm **
+** robot type: xarm_end_effector, xarm6_end_effector, xarm6_end_effector_hil, xarm ... **
 ** teleop options: spacemouse (6dof), keyboard_ee (6dof), gamepad (3dof) **
 ** add " --display_data=true "   and then you can see the robot state in the console and Rerun **
 ```
+
 ## Check cameras
 
 This script helps you determine the port of the existing cameras.
@@ -367,19 +368,6 @@ The `env.processor.reset.terminate_on_success` parameter allows you to control e
 **Important**: For reward classifier training, set `terminate_on_success: false` to collect sufficient positive examples. For regular HIL-SERL training, keep it as `true` to enable automatic episode termination when the task is completed successfully.
 
 
-**Reward Classifier Configuration**
-
-The reward classifier is configured using `configuration_classifier.py`. Here are the key parameters:
-
-- **model_name**: Base model architecture (e.g., we mainly use `"helper2424/resnet10"`)
-- **model_type**: `"cnn"` or `"transformer"`
-- **num_cameras**: Number of camera inputs
-- **num_classes**: Number of output classes (typically 2 for binary success/failure)
-- **hidden_dim**: Size of hidden representation
-- **dropout_rate**: Regularization parameter
-- **learning_rate**: Learning rate for optimizer
-
-
 ## Training the Classifier
 
 To train the classifier, use the `train.py` script with your configuration and add the reward classifier pretrain:
@@ -388,45 +376,89 @@ To train the classifier, use the `train.py` script with your configuration and a
 lerobot-train --config_path path/to/reward_classifier_train_config.json
 ```
 
-Run `gym_manipulator.py` to test the model.
+**Example workflow**:
 
-```bash
-python -m lerobot.rl.gym_manipulator --config_path path/to/env_config.json
-```
-
-The reward classifier will automatically provide rewards based on the visual input from the robot's cameras.
-
-**Example Workflow for training the reward classifier**
-
-1. **Create the configuration files**:
-   Create the necessary json configuration files for the reward classifier and the environment.
-
-2. **Collect a dataset**:
+1. **Collect a dataset**:
 
    ```bash
   PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config configs/ufactory/xarm6/env_config_hilserl_xarm6_gamepad.json
    ```
 
-3. **Train the classifier**:
+2. **Train the classifier**:
 
    ```bash
    PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_train --config_path configs/ufactory/xarm6/reward_classifier_train_config_xarm6.json
    ```
 
-4. **Test the classifier**:
-   ```bash
-   python -m lerobot.scripts.rl.gym_manipulator --config_path configs/ufactory/lite6/env_config_hilserl_lite6.json
-   ```
+3. **Use in HiLSERL**: Add the trained classifier path to `env.processor.reward_classifier.pretrained_path` in your HiLSERL config.
 
-5. **(Optional) 
-   ```bash
-   lerobot-train --config_path configs/ufactory/lite6/bc_pretrain_lite6.json
-   ```
+### Training BC Pretrained Model (Optional)
 
-6. **Visualize the datasets**:
-   ```bash
-    PYTHONPATH=lerobot/src python3 -m lerobot.scripts.visualize_dataset --repo-id lite6_push_cube_test4 --episode-index 1 --root /home/zekaijin/lerobot-hilserl/datasets/lite6_push_cube_test4
-   ```
+**BC pretraining allows HiLSERL to start from a better initialization** rather than learning RL from scratch. This workflow is similar to how reward classifier is used:
+
+1. **Train a BC model (e.g., ACT) using the same dataset** - This is an independent training step
+2. **Specify the BC pretrained path in HiLSERL configuration** - The learner will automatically load the encoder weights as prior
+
+**Why use BC pretraining?**
+
+- The same dataset can be used for both BC pretraining and reward classifier training
+- BC pretrained encoders provide better visual feature representations
+- HiLSERL training starts from a pretrained encoder rather than from scratch, which can significantly improve training efficiency and convergence speed
+
+**Training BC Model (ACT)**
+
+Train an ACT model using the collected demonstration data:
+
+```bash
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_train --config_path configs/train_config_act_bc.json
+```
+
+Example ACT training configuration (see detailed config in `hilserl_documentation/BC_PRETRAIN_WORKFLOW.md`):
+
+```json
+{
+  "dataset": {
+    "repo_id": "your_username/dataset_name",
+    "root": "/path/to/dataset"
+  },
+  "policy": {
+    "type": "act",
+    "vision_backbone": "resnet18",
+    "input_features": { /* ... */ },
+    "output_features": { /* ... */ }
+  },
+  "batch_size": 8,
+  "steps": 50000,
+  "job_name": "act_bc_pretrain"
+}
+```
+
+After training, record the model path (e.g., `outputs/train/YYYY-MM-DD/HH-MM-SS_act_bc_pretrain/checkpoints/last/pretrained_model`).
+
+**Using BC Pretraining in HiLSERL Configuration**
+
+Add `bc_pretrain` configuration to the `policy` section of your HiLSERL training config:
+
+```json
+{
+  "policy": {
+    "type": "sac",
+    "vision_encoder_name": "helper2424/resnet10",
+    "bc_pretrain": {
+      "pretrained_path": "/path/to/outputs/train/YYYY-MM-DD/HH-MM-SS_act_bc_pretrain/checkpoints/last/pretrained_model",
+      "policy_type": "act"
+    },
+    "freeze_vision_encoder": true,
+    // ... other SAC configuration ...
+  }
+}
+```
+
+**Configuration**: Add `bc_pretrain` with `pretrained_path` and `policy_type` (default: `"act"`) to your HiLSERL policy config. The learner will automatically load the encoder weights when training starts.
+
+**Important**: BC pretraining is an **independent training step** - train ACT first, then specify the path in HiLSERL config. This works exactly like the reward classifier workflow.
+
+For detailed steps and examples, see: [BC Pretraining Workflow Documentation](hilserl_documentation/BC_PRETRAIN_WORKFLOW.md)
 
 ### Training with Actor-Learner
 

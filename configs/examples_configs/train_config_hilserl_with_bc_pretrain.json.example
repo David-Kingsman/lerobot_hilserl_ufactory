@@ -1,0 +1,194 @@
+{
+  "_comment": "HiLSERL训练配置示例 - 使用BC预训练",
+  "_note": "这是一个示例配置文件，展示如何配置BC预训练路径",
+  "_workflow": [
+    "1. 先独立训练ACT模型（BC预训练）",
+    "2. 记录训练好的模型路径",
+    "3. 在此配置文件的policy.bc_pretrained_path中指定路径",
+    "4. 启动learner和actor进行HiLSERL训练"
+  ],
+  
+  "output_dir": null,
+  "job_name": "hilserl_with_bc_pretrain",
+  "resume": false,
+  "seed": 1000,
+  "num_workers": 4,
+  "batch_size": 256,
+  "steps": 100000,
+  "log_freq": 500,
+  "save_checkpoint": true,
+  "save_freq": 20000,
+  "wandb": {
+    "enable": true,
+    "project": "hilserl_with_bc_pretrain",
+    "disable_artifact": true
+  },
+  "dataset": {
+    "repo_id": "your_username/dataset_name",
+    "root": "/path/to/your/dataset"
+  },
+    "policy": {
+        "type": "sac",
+        "n_obs_steps": 1,
+        
+        "_bc_pretrain_comment": "BC预训练配置 - 类似reward_classifier的使用方式",
+        "_bc_pretrain_note": "先独立训练ACT模型，然后在这里指定路径和类型",
+        "bc_pretrain": {
+            "pretrained_path": null,
+            "_pretrained_path_example": "outputs/train/2025-01-15/10-30-00_act_bc_pretrain/checkpoints/last/pretrained_model",
+            "policy_type": "act"
+        },
+    
+    "normalization_mapping": {
+      "VISUAL": "MEAN_STD",
+      "STATE": "MIN_MAX",
+      "ENV": "MIN_MAX",
+      "ACTION": "MIN_MAX"
+    },
+    "input_features": {
+      "observation.images.front": {
+        "type": "VISUAL",
+        "shape": [3, 128, 128]
+      },
+      "observation.images.side": {
+        "type": "VISUAL",
+        "shape": [3, 128, 128]
+      },
+      "observation.state": {
+        "type": "STATE",
+        "shape": [15]
+      }
+    },
+    "device": "cuda",
+    "use_amp": false,
+    "num_discrete_actions": 3,
+    "storage_device": "cuda",
+    "vision_encoder_name": "helper2424/resnet10",
+    "freeze_vision_encoder": true,
+    "image_encoder_hidden_dim": 32,
+    "shared_encoder": true,
+    "online_steps": 1000000,
+    "online_env_seed": 10000,
+    "online_buffer_capacity": 30000,
+    "offline_buffer_capacity": 10000,
+    "online_step_before_learning": 100,
+    "policy_update_freq": 1,
+    "discount": 0.97,
+    "async_prefetch": false,
+    "temperature_init": 0.01,
+    "num_critics": 2,
+    "num_subsample_critics": null,
+    "critic_lr": 0.0003,
+    "actor_lr": 0.0003,
+    "temperature_lr": 0.0003,
+    "critic_target_update_weight": 0.005,
+    "utd_ratio": 2,
+    "state_encoder_hidden_dim": 256,
+    "latent_dim": 256,
+    "target_entropy": null,
+    "use_backup_entropy": true,
+    "grad_clip_norm": 40.0,
+    "critic_network_kwargs": {
+      "hidden_dims": [256, 256],
+      "activate_final": true,
+      "final_activation": null
+    },
+    "actor_network_kwargs": {
+      "hidden_dims": [256, 256],
+      "activate_final": true
+    },
+    "policy_kwargs": {
+      "use_tanh_squash": true,
+      "std_min": -5,
+      "std_max": 2,
+      "init_final": 0.05
+    },
+    "actor_learner_config": {
+      "learner_host": "127.0.0.1",
+      "learner_port": 50051,
+      "policy_parameters_push_frequency": 4
+    },
+    "concurrency": {
+      "actor": "threads",
+      "learner": "threads"
+    }
+  },
+  "env": {
+    "type": "gym_manipulator",
+    "robot": {
+      "type": "so100_follower_end_effector",
+      "port": "/dev/ttyACM0",
+      "cameras": {
+        "front": {
+          "type": "opencv",
+          "index_or_path": 2,
+          "height": 480,
+          "width": 640,
+          "fps": 30
+        },
+        "wrist": {
+          "type": "opencv",
+          "index_or_path": 8,
+          "height": 480,
+          "width": 640,
+          "fps": 30
+        }
+      },
+      "end_effector_bounds": {
+        "min": [0.26, -0.06, 0.25],
+        "max": [0.32, 0.06, 0.35]
+      },
+      "max_gripper_pos": 30
+    },
+    "teleop": {
+      "type": "gamepad",
+      "use_gripper": true
+    },
+    "processor": {
+      "control_mode": "gamepad",
+      "observation": {
+        "display_cameras": false,
+        "add_joint_velocity_to_observation": true,
+        "add_current_to_observation": false,
+        "add_ee_pose_to_observation": true
+      },
+      "image_preprocessing": {
+        "crop_params_dict": {
+          "observation.images.front": [270, 170, 90, 190],
+          "observation.images.wrist": [0, 0, 480, 640]
+        },
+        "resize_size": [128, 128]
+      },
+      "gripper": {
+        "use_gripper": true,
+        "gripper_penalty": -0.02,
+        "gripper_penalty_in_reward": false
+      },
+      "reset": {
+        "fixed_reset_joint_positions": [0.0, -20.0, 20.0, 90.0, 0.0, 30.0],
+        "reset_time_s": 2.5,
+        "control_time_s": 20.0,
+        "terminate_on_success": true
+      },
+      "inverse_kinematics": {
+        "urdf_path": "/path/to/robot.urdf",
+        "target_frame_name": "end_effector",
+        "end_effector_step_sizes": {
+          "x": 0.02,
+          "y": 0.02,
+          "z": 0.02
+        }
+      },
+      "_reward_classifier_comment": "Reward classifier也是先训练，然后在这里指定路径",
+      "reward_classifier": {
+        "pretrained_path": null,
+        "success_threshold": 0.5,
+        "success_reward": 1.0
+      },
+      "max_gripper_pos": 255.0
+    },
+    "name": "real_robot",
+    "fps": 10
+  }
+}
+
