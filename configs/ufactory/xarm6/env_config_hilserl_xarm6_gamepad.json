@@ -13,7 +13,7 @@
             "cameras": {
                 "webcam_1": {
                     "type": "opencv",
-                    "index_or_path": "/dev/video2" ,
+                    "index_or_path": "/dev/video3" ,
                     "height": 480,
                     "width": 640,
                     "fps": 30

@@ -67,7 +67,7 @@
         "storage_device": "cpu",
         "vision_encoder_name": "helper2424/resnet10",
         "bc_pretrain": {
-            "pretrained_path": null,
+            "pretrained_path": "/home/zekaijin/lerobot-hilserl-ufactory/outputs/train/2025-11-16/20-01-15_act_bc_pretrain/checkpoints/last/pretrained_model",
             "policy_type": "act"
         },
         "freeze_vision_encoder": true,
