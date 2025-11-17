@@ -232,7 +232,6 @@ python -m lerobot.scripts.rl.actor \
 
 **BC预训练和HiLSERL的关系**：
 - ✅ **正确理解**：BC预训练是独立的训练步骤，完成后在HiLSERL配置中指定路径，learner启动时自动加载
-- ❌ **错误理解**：BC和HiLSERL同时运行，或者需要手动加载权重
 
 **类似reward classifier**：
 - Reward classifier：先训练 → 在配置中指定路径 → 自动使用
