@@ -410,7 +410,23 @@ lerobot-train --config_path path/to/reward_classifier_train_config.json
 Train an ACT model using the collected demonstration data:
 
 ```bash
-PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_train --config_path configs/train_config_act_bc.json
+cd /home/zekaijin/lerobot-hilserl-ufactory && \
+conda activate lerobot && \
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src \
+python -m lerobot.scripts.lerobot_train \
+  --dataset.repo_id="DavidKINGSMAN/xarm6_dataset" \
+  --dataset.root="/home/zekaijin/lerobot-hilserl-ufactory/datasets/xarm6_pick_cube_test1_cropped_resized" \
+  --policy.type=act \
+  --job_name="act_bc_pretrain" \
+  --wandb.enable=true \
+  --wandb.project="bc_pretrain" \
+  --policy.device=cuda \
+  --batch_size=8 \
+  --num_workers=4 \
+  --steps=50000 \
+  --eval_freq=5000 \
+  --save_freq=10000 \
+  --policy.push_to_hub=false
 ```
 
 Example ACT training configuration (see detailed config in `hilserl_documentation/BC_PRETRAIN_WORKFLOW.md`):
