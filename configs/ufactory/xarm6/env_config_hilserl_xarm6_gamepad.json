@@ -7,24 +7,24 @@
             "use_gripper": true,
             "act_features": "xyz_delta",
             "end_effector_bounds": {
-                "min": [0.394, -0.00008, 0.16],
-                "max": [0.570, 0.144, 0.3]
+                "min": [0.36068, -0.04788, 0.16092],
+                "max": [0.53929, 0.09521, 0.17325]
             },
             "cameras": {
-                "webcam_1": {
-                    "type": "opencv",
-                    "index_or_path": "/dev/video0" ,
-                    "height": 376,
-                    "width": 1344,
-                    "fps": 30
-                },
-                "realsense": {
-                    "type": "intelrealsense",
-                    "serial_number_or_name": "151422061401",
-                    "height": 480,
-                    "width": 640,
-                    "fps": 30
-                }
+                    "webcam_1": {
+                        "type": "opencv",
+                        "index_or_path": "/dev/video0" ,
+                        "height": 376,
+                        "width": 1344,
+                        "fps": 30
+                    },
+                    "realsense": {
+                        "type": "intelrealsense",
+                        "serial_number_or_name": "151422061401",
+                        "height": 480,
+                        "width": 640,
+                        "fps": 30
+                    }
             }
         },
         "teleop": {
@@ -41,8 +41,8 @@
             },        
             "image_preprocessing": {
                 "crop_params_dict": {
-                    "observation.images.webcam_1": [88, 198, 177, 173],
-                    "observation.images.realsense":  [183, 250, 266, 301]
+                    "observation.images.webcam_1": [145, 189, 120, 128],
+                    "observation.images.realsense":  [207, 304, 202, 202]
                 },
                     "resize_size": [128, 128]    
                 },
@@ -52,9 +52,21 @@
                 "gripper_penalty_in_reward": true
             },
             "reset": {
-                "fixed_reset_joint_positions": [0.0541, -0.1762, -1.0179, -0.0559, 1.2485, 0.0785],
-                "reset_time_s": 2.5,
-                "control_time_s": 20.0,
+                "randomized_reset_ee_pose": {
+                    "center_pose": {
+                        "position": [0.359, -0.01104, 0.1055],
+                        "rotation": [176.6, -2.1, 0.8]
+                },
+                "ranges": [
+                    [-0.02, 0.02],  
+                    [-0.04, 0.04],  
+                    [0, 0],  
+                    [0.0, 0.0],    
+                    [0.0, 0.0],     
+                    [0.0, 0.0]      
+                ]},
+                "reset_time_s": 5,
+                "control_time_s": 10.0,
                 "terminate_on_success": false
             },
             "inverse_kinematics": {
@@ -75,14 +87,12 @@
     },
     "dataset": {
         "repo_id": "DavidKINGSMAN/xarm6_dataset",
-        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/xarm6_pick_cube_test3",
+        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/xarm6_pick_cube_test2",
         "task": "pick_cube",
-        "num_episodes_to_record": 2,
+        "num_episodes_to_record": 50,
         "replay_episode": null,
         "push_to_hub": false
     },
     "mode": "record",
     "device": "cpu"
 }
-
-

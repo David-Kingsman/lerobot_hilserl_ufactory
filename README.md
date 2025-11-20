@@ -335,7 +335,7 @@ Use the `crop_dataset_roi.py` script to interactively select regions of interest
 
 ```bash
 PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.crop_dataset_roi \
-  --root  datasets/xarm6_pick_cube_test2
+  --root  datasets/xarm6_pick_cube_test3
 ```
 
 1. For each camera view, the script will display the first frame
