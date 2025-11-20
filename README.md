@@ -44,14 +44,26 @@ To install LeRobot with HIL-SERL, you need to install the `hilserl` extra.
 pip install -e ".[hilserl]"
 ```
 
-## Velocity control and position control teleoperation of Ufactory robot Xarm6, Lite6 and Ufactory 850
+## Velocity control and position control teleoperation supporting Ufactory robot Xarm6, Lite6 and Ufactory 850
 
 ```bash
 # Example for position control on gamepad using Xarm6
-PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_teleoperate --robot.type=xarm6_end_effector --robot.ip=192.168.1.235 --teleop.type=gamepad 
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_teleoperate \
+  --robot.type=xarm6_end_effector \
+  --robot.ip=192.168.1.235 \
+  --robot.act_features=xyz_delta \
+  --robot.use_gripper=true \
+  --teleop.type=gamepad \
+  --teleop.use_gripper=true 
 
 # Example for velocity control on gamepad using Xarm6
-PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_teleoperate --robot.type=xarm6_end_effector_hil --robot.ip=192.168.1.235 --teleop.type=gamepad
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_teleoperate \
+  --robot.type=xarm6_end_effector_hil \
+  --robot.ip=192.168.1.235 \
+  --robot.act_features=xyz_delta \
+  --robot.use_gripper=true \
+  --teleop.type=gamepad \
+  --teleop.use_gripper=true
 
 ** robot type: xarm_end_effector, xarm6_end_effector, xarm6_end_effector_hil, xarm ... **
 ** teleop options: spacemouse (6dof), keyboard_ee (6dof), gamepad (3dof) **
@@ -211,7 +223,11 @@ Bounding the action space will reduce the redundant exploration of the agent and
 
 ```bash
 # gamepad test
-PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_find_joint_limits_gamepad --robot.type=xarm6_end_effector_hil --robot.ip=192.168.1.235 --teleop.type=gamepad --teleop_time_s=30
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_find_joint_limits_gamepad  \
+  --robot.type=xarm6_end_effector_hil  \
+  --robot.ip=192.168.1.235  \
+  --teleop.type=gamepad  \
+  --teleop_time_s=30
 
 # spacemouse test
 PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_find_joint_limits_spacemouse \
@@ -223,8 +239,8 @@ PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot
 # meta quest test
 cd experiments/arm_control_base
 python scripts/find_joint_limits_metaquest.py \
---robot_ip=192.168.1.193 \
---teleop_time_s=30
+  --robot_ip=192.168.1.193 \
+  --teleop_time_s=30
 ```
 
 **Workflow**
@@ -278,13 +294,16 @@ Start the recording process,
 
 ```bash
 # Ufactory lite6 using spacemouse (6dof)
-conda activate lerobot && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config configs/ufactory/lite6/env_config_hilserl_lite6_spacemouse.json
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator \
+  --config configs/ufactory/lite6/env_config_hilserl_lite6_spacemouse.json
 
 # Ufactory lite6 using gamepad (3dof)
-conda activate lerobot && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config configs/ufactory/lite6/env_config_hilserl_lite6_gamepad.json
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator  \
+--config configs/ufactory/lite6/env_config_hilserl_lite6_gamepad.json
 
 # Ufactory xarm6 using gamepad (3dof)
-conda activate lerobot && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config configs/ufactory/xarm6/env_config_hilserl_xarm6_gamepad.json
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator 
+  --config configs/ufactory/xarm6/env_config_hilserl_xarm6_gamepad.json \
 ```
 
 During recording:
@@ -315,7 +334,8 @@ Note: If you already know the crop parameters, you can skip this step and just s
 Use the `crop_dataset_roi.py` script to interactively select regions of interest in your camera images:
 
 ```bash
-PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.crop_dataset_roi --root  datasets/xarm6_pick_cube_test1
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.crop_dataset_roi \
+  --root  datasets/xarm6_pick_cube_test2
 ```
 
 1. For each camera view, the script will display the first frame
@@ -358,7 +378,8 @@ Before training, you need to collect a dataset with labeled examples. The `recor
 To collect a dataset, you need to modify some parameters in the environment configuration based on HILSerlRobotEnvConfig.
 
 ```bash
-PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config_path configs/ufactory/xarm6/reward_classifier_train_config_xarm6.json
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator \
+  --config_path configs/ufactory/xarm6/reward_classifier_train_config_xarm6.json 
 ```
 
 **Key Parameters for Data Collection**
@@ -381,13 +402,15 @@ lerobot-train --config_path path/to/reward_classifier_train_config.json
 1. **Collect a dataset**:
 
    ```bash
-  PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config configs/ufactory/xarm6/env_config_hilserl_xarm6_gamepad.json
+  PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator 
+    --config configs/ufactory/xarm6/env_config_hilserl_xarm6_gamepad.json \
    ```
 
 2. **Train the classifier**:
 
    ```bash
-   PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_train --config_path configs/ufactory/xarm6/reward_classifier_train_config_xarm6.json
+   PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_train \
+    --config_path configs/ufactory/xarm6/reward_classifier_train_config_xarm6.json
    ```
 
 3. **Use in HiLSERL**: Add the trained classifier path to `env.processor.reward_classifier.pretrained_path` in your HiLSERL config.
