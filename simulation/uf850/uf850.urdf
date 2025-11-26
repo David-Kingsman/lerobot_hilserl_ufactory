@@ -21,7 +21,7 @@
     <visual>
       <origin xyz="${origin_xyz}" rpy="${origin_rpy}"/>
       <geometry>
-        <mesh filename="package://xarm_description/meshes/${mesh_filename}.stl"/>
+        <mesh filename="meshes/${mesh_filename}.stl"/>
       </geometry>
       <material name="${material_name}"/>
     </visual>
@@ -32,7 +32,7 @@
     <collision>
       <origin xyz="${origin_xyz}" rpy="${origin_rpy}"/>
       <geometry>
-        <mesh filename="package://xarm_description/meshes/${mesh_filename}.stl"/>
+        <mesh filename="meshes/${mesh_filename}.stl"/>
       </geometry>
     </collision>
   </macro>
@@ -56,14 +56,14 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://xarm_description/meshes/uf850/visual/link_base.stl"/>
+        <mesh filename="meshes/uf850/visual/link_base.stl"/>
       </geometry>
       <material name="White"/>
     </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://xarm_description/meshes/uf850/collision/link_base.stl"/>
+        <mesh filename="meshes/uf850/collision/link_base.stl"/>
       </geometry>
     </collision>
   </link>
@@ -80,14 +80,14 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://xarm_description/meshes/uf850/visual/link1.stl"/>
+        <mesh filename="meshes/uf850/visual/link1.stl"/>
       </geometry>
       <material name="White"/>
     </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://xarm_description/meshes/uf850/collision/link1.stl"/>
+        <mesh filename="meshes/uf850/collision/link1.stl"/>
       </geometry>
     </collision>
   </link>
@@ -114,14 +114,14 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://xarm_description/meshes/uf850/visual/link2.stl"/>
+        <mesh filename="meshes/uf850/visual/link2.stl"/>
       </geometry>
       <material name="White"/>
     </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://xarm_description/meshes/uf850/collision/link2.stl"/>
+        <mesh filename="meshes/uf850/collision/link2.stl"/>
       </geometry>
     </collision>
   </link>
@@ -148,14 +148,14 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://xarm_description/meshes/uf850/visual/link3.stl"/>
+        <mesh filename="meshes/uf850/visual/link3.stl"/>
       </geometry>
       <material name="White"/>
     </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://xarm_description/meshes/uf850/collision/link3.stl"/>
+        <mesh filename="meshes/uf850/collision/link3.stl"/>
       </geometry>
     </collision>
   </link>
@@ -182,14 +182,14 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://xarm_description/meshes/uf850/visual/link4.stl"/>
+        <mesh filename="meshes/uf850/visual/link4.stl"/>
       </geometry>
       <material name="White"/>
     </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://xarm_description/meshes/uf850/collision/link4.stl"/>
+        <mesh filename="meshes/uf850/collision/link4.stl"/>
       </geometry>
     </collision>
   </link>
@@ -216,14 +216,14 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://xarm_description/meshes/uf850/visual/link5.stl"/>
+        <mesh filename="meshes/uf850/visual/link5.stl"/>
       </geometry>
       <material name="White"/>
     </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://xarm_description/meshes/uf850/collision/link5.stl"/>
+        <mesh filename="meshes/uf850/collision/link5.stl"/>
       </geometry>
     </collision>
   </link>
@@ -250,14 +250,14 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://xarm_description/meshes/uf850/visual/link6.stl"/>
+        <mesh filename="meshes/uf850/visual/link6.stl"/>
       </geometry>
       <material name="White"/>
     </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://xarm_description/meshes/uf850/collision/link6.stl"/>
+        <mesh filename="meshes/uf850/collision/link6.stl"/>
       </geometry>
     </collision>
   </link>
