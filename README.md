@@ -65,12 +65,21 @@ PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot
   --teleop.type=gamepad \
   --teleop.use_gripper=true
 
-** robot type: xarm_end_effector, xarm6_end_effector, xarm6_end_effector_hil, xarm ... **
-** teleop options: spacemouse (6dof), keyboard_ee (6dof), gamepad (3dof) **
-** add " --display_data=true "   and then you can see the robot state in the console and Rerun **
+# Example for velocity control on gamepad using UF850
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_teleoperate \
+  --robot.type=uf850_end_effector_hil \
+  --robot.ip=192.168.1.225 \
+  --robot.act_features=xyz_delta \
+  --robot.use_gripper=true \
+  --teleop.type=gamepad \
+  --teleop.use_gripper=true
+
+** robot type (position control & velocity control): xarm_end_effector, xarm6_end_effector, xarm6_end_effector_hil, xarm ... **
+** teleop options: spacemouse (6dof), keyboard_ee (6dof control), gamepad (3dof control) **
+** add " --display_data=true ", and then you can see the robot state in the console and Rerun **
 ```
 
-## Check cameras
+## Check cameras equipments
 
 This script helps you determine the port of the existing cameras.
 
@@ -229,6 +238,12 @@ PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot
   --teleop.type=gamepad  \
   --teleop_time_s=30
 
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_find_joint_limits_gamepad  \
+  --robot.type=uf850_end_effector_hil  \
+  --robot.ip=192.168.1.225  \
+  --teleop.type=gamepad  \
+  --teleop_time_s=30
+
 # spacemouse test
 PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_find_joint_limits_spacemouse \
   --robot.type=lite6_end_effector_hil \
@@ -294,16 +309,13 @@ Start the recording process,
 
 ```bash
 # Ufactory lite6 using spacemouse (6dof)
-PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator \
-  --config configs/ufactory/lite6/env_config_hilserl_lite6_spacemouse.json
-
-# Ufactory lite6 using gamepad (3dof)
-PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator  \
---config configs/ufactory/lite6/env_config_hilserl_lite6_gamepad.json
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config configs/ufactory/lite6/env_config_hilserl_lite6_spacemouse.json
 
 # Ufactory xarm6 using gamepad (3dof)
-PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator 
-  --config configs/ufactory/xarm6/env_config_hilserl_xarm6_gamepad.json \
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config configs/ufactory/xarm6/env_config_hilserl_xarm6_gamepad.json 
+
+# Uf850 using gamepad (3dof)
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator --config configs/ufactory/uf850/env_config_hilserl_uf850_gamepad.json 
 ```
 
 During recording:
@@ -315,6 +327,16 @@ During recording:
 5. You can rerecord an episode by pressing the "rerecord" button
 6. The process automatically continues to the next episode
 7. After recording all episodes, the dataset is pushed to the Hugging Face Hub (optional) and saved locally
+
+Checking datasets：
+
+```
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src
+python -m lerobot.scripts.lerobot_dataset_viz \
+    --root datasets/uf850_pick_cube_test2 \
+    --repo-id uf850_pick_cube_test2 \
+    --episode-index 0
+```
 
 ### Processing the Dataset
 
@@ -334,8 +356,8 @@ Note: If you already know the crop parameters, you can skip this step and just s
 Use the `crop_dataset_roi.py` script to interactively select regions of interest in your camera images:
 
 ```bash
-PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.crop_dataset_roi \
-  --root  datasets/xarm6_pick_cube_test3
+
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.crop_dataset_roi --root  datasets/uf850_pick_cube_test_20251126_175927
 ```
 
 1. For each camera view, the script will display the first frame
@@ -393,29 +415,15 @@ The `env.processor.reset.terminate_on_success` parameter allows you to control e
 
 To train the classifier, use the `train.py` script with your configuration and add the reward classifier pretrain:
 
-```bash
-lerobot-train --config_path path/to/reward_classifier_train_config.json
-```
-
-**Example workflow**:
-
-1. **Collect a dataset**:
-
-   ```bash
-  PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.gym_manipulator 
-    --config configs/ufactory/xarm6/env_config_hilserl_xarm6_gamepad.json \
-   ```
-
-2. **Train the classifier**:
-
-   ```bash
+   ```bash 
    PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_train \
     --config_path configs/ufactory/xarm6/reward_classifier_train_config_xarm6.json
    ```
 
-3. **Use in HiLSERL**: Add the trained classifier path to `env.processor.reward_classifier.pretrained_path` in your HiLSERL config.
+**Use in HiLSERL**: Add the trained classifier path to `env.processor.reward_classifier.pretrained_path` in your HiLSERL config.
 
-### Training with Actor-Learner
+
+## Training with Actor-Learner
 
 The LeRobot system uses a distributed actor-learner architecture for training. This architecture decouples robot interactions from the learning process, allowing them to run concurrently without blocking each other. The actor server handles robot observations and actions, sending interaction data to the learner server. The learner server performs gradient descent and periodically updates the actor's policy weights. You will need to start two processes: a learner and an actor.
 
