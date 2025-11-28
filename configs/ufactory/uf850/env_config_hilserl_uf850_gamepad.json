@@ -10,12 +10,12 @@
                 "max": [0.58452, 0.04799, 0.26815]
             },
             "cameras": {
-                    "realsense_1": {
-                        "type": "intelrealsense",
-                        "serial_number_or_name": "816612061856",
-                        "height": 720,
-                        "width": 1280,
-                        "fps": 30
+                "webcam_1": {
+                    "type": "opencv",
+                    "index_or_path": "/dev/video0" ,
+                    "height": 480,
+                    "width": 640,
+                    "fps": 30
                     },
                     "realsense_2": {
                         "type": "intelrealsense",
@@ -33,7 +33,7 @@
         "processor": {
             "control_mode": "gamepad",
             "observation": {
-                "display_cameras": false,
+                "display_cameras": true,
                 "add_joint_velocity_to_observation": true,
                 "add_current_to_observation": false,
                 "add_ee_pose_to_observation": true
@@ -81,7 +81,7 @@
         "repo_id": "DavidKINGSMAN/uf850_dataset",
         "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/uf850_pick_cube_test",
         "task": "pick_cube",
-        "num_episodes_to_record": 2,
+        "num_episodes_to_record": 50,
         "replay_episode": null,
         "push_to_hub": false
     },

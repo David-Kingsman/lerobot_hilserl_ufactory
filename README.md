@@ -231,27 +231,28 @@ This script helps you find the safe operational bounds for your robot's end-effe
 Bounding the action space will reduce the redundant exploration of the agent and guarantees safety.
 
 ```bash
-# gamepad test
+# gamepad test (velocity control)
 PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_find_joint_limits_gamepad  \
   --robot.type=xarm6_end_effector_hil  \
   --robot.ip=192.168.1.235  \
   --teleop.type=gamepad  \
   --teleop_time_s=30
 
+# gamepad test (velocity control)
 PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_find_joint_limits_gamepad  \
   --robot.type=uf850_end_effector_hil  \
   --robot.ip=192.168.1.225  \
   --teleop.type=gamepad  \
   --teleop_time_s=30
 
-# spacemouse test
+# spacemouse test (velocity control)
 PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_find_joint_limits_spacemouse \
   --robot.type=lite6_end_effector_hil \
   --robot.ip=192.168.1.193 \
   --teleop.type=spacemouse \
   --teleop_time_s=30
 
-# meta quest test
+# meta quest test 
 cd experiments/arm_control_base
 python scripts/find_joint_limits_metaquest.py \
   --robot_ip=192.168.1.193 \
@@ -356,8 +357,8 @@ Note: If you already know the crop parameters, you can skip this step and just s
 Use the `crop_dataset_roi.py` script to interactively select regions of interest in your camera images:
 
 ```bash
-
-PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.crop_dataset_roi --root  datasets/uf850_pick_cube_test_20251126_175927
+# change the root to your own datasets
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.crop_dataset_roi --root datasets/uf850_pick_cube_test_20251127_150138
 ```
 
 1. For each camera view, the script will display the first frame
@@ -417,7 +418,7 @@ To train the classifier, use the `train.py` script with your configuration and a
 
    ```bash 
    PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_train \
-    --config_path configs/ufactory/xarm6/reward_classifier_train_config_xarm6.json
+    --config_path configs/ufactory/uf850/reward_classifier_train_config.json
    ```
 
 **Use in HiLSERL**: Add the trained classifier path to `env.processor.reward_classifier.pretrained_path` in your HiLSERL config.
@@ -442,7 +443,11 @@ The LeRobot system uses a distributed actor-learner architecture for training. T
 First, start the learner server process:
 
 ```bash
+# xarm6
 PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.learner --config_path configs/ufactory/xarm6/train_config_hilserl_xarm6.json
+
+# uf850
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.learner --config_path configs/ufactory/uf850/train_config_hilserl_uf850.json
 ```
 
 The learner:
@@ -457,7 +462,11 @@ The learner:
 In a separate terminal, start the actor process with the same configuration:
 
 ```bash
+# xarm6
 PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.actor --config_path configs/ufactory/xarm6/train_config_hilserl_xarm6.json
+
+# uf850
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.actor --config_path configs/ufactory/uf850/train_config_hilserl_uf850.json
 ```
 
 The actor:
