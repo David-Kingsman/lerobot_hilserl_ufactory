@@ -53,8 +53,9 @@ PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot
   --robot.ip=192.168.1.235 \
   --robot.act_features=xyz_delta \
   --robot.use_gripper=true \
-  --teleop.type=gamepad \
   --teleop.use_gripper=true 
+  --teleop.type=gamepad \
+
 
 # Example for velocity control on gamepad using Xarm6
 PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_teleoperate \
@@ -69,6 +70,10 @@ PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot
 ** teleop options: spacemouse (6dof), keyboard_ee (6dof), gamepad (3dof) **
 ** add " --display_data=true "   and then you can see the robot state in the console and Rerun **
 ```
+
+
+PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.scripts.lerobot_teleoperate   --robot.type=uf850_end_effector_hil   --robot.ip=192.168.1.193   --robot.act_features=xyz_delta   --robot.use_gripper=false   --teleop.type=gamepad   --teleop.use_gripper=false
+
 
 ## Check cameras
 

@@ -7,3 +7,6 @@
 [submodule "experiments/xArm-Python-SDK"]
 	path = experiments/xArm-Python-SDK
 	url = git@github.com:xArm-Developer/xArm-Python-SDK.git
+[submodule "gym-hil"]
+	path = gym-hil
+	url = git@github.com:David-Kingsman/gym-hil.git
