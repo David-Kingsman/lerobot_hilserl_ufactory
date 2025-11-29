@@ -19,8 +19,8 @@
         "disable_artifact": true
     },
     "dataset": {
-        "repo_id": "DavidKINGSMAN/franka_sim_pick_lift_6",
-        "root": "/home/zekaijin/lerobot-hilserl/datasets/franka_sim_pick_lift_6",
+        "repo_id": null,
+        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/franka_sim_pick_lift",
         "use_imagenet_stats": false
     },
     "env": {
@@ -35,13 +35,38 @@
             "gripper": {
                 "use_gripper": true,
                 "gripper_penalty": -0.02,
-                "gripper_penalty_in_reward": false
+                "gripper_penalty_in_reward": true
             },
             "reset": {
                 "fixed_reset_joint_positions": [0.0, 0.195, 0.0, -2.43, 0.0, 2.62, 0.785],
                 "reset_time_s": 2.0,
-                "control_time_s": 15.0,
-                "terminate_on_success": true
+                "control_time_s": 10.0,
+                "terminate_on_success": false
+            },
+            "inverse_kinematics": {
+                "end_effector_step_sizes": {
+                    "x": 0.025,
+                    "y": 0.025,
+                    "z": 0.025
+                }
+            },
+            "observation": {
+                "add_joint_velocity_to_observation": true,
+                "add_current_to_observation": false,
+                "add_ee_pose_to_observation": true,
+                "display_cameras": false
+            },
+            "image_preprocessing": {
+                "crop_params_dict": {
+                    "observation.images.front": [0, 0, 128, 128],
+                    "observation.images.wrist": [0, 0, 128, 128]
+                },
+                "resize_size": [128, 128]
+            },
+            "reward_classifier": {
+                "pretrained_path": "/home/zekaijin/lerobot-hilserl-ufactory/outputs/train/2025-11-28/15-14-35_reward-classifier-simulation-pick-lift/checkpoints/005000/pretrained_model",
+                "success_threshold": 0.5,
+                "success_reward": 1.0
             }
         },
         "features": {
@@ -59,7 +84,7 @@
             },
             "action": {
                 "type": "ACTION",
-                "shape": [3]
+                "shape": [4]
             }
         },
         "features_map": {
@@ -95,40 +120,22 @@
         "output_features": {
             "action": {
                 "type": "ACTION",
-                "shape": [3]
+                "shape": [4]
             }
         },
         "device": "cuda",
         "use_amp": false,
-        "dataset_stats": {
-            "observation.images.front": {
-                "mean": [0.485, 0.456, 0.406],
-                "std": [0.229, 0.224, 0.225]
-            },
-            "observation.images.wrist": {
-                "mean": [0.485, 0.456, 0.406],
-                "std": [0.229, 0.224, 0.225]
-            },
-            "observation.state": {
-                "min": [-0.6897139549255371, -1.1421763896942139, -0.5745007991790771, -2.97829008102417, -0.2710767090320587, 1.3246592283248901, -0.04057434946298599, -0.21261805295944214, -0.4548068344593048, -0.6540042757987976, -0.3644964098930359, -1.1057522296905518, -0.40768879652023315, -0.2220114767551422, 0.0, 0.19176171720027924, -0.3013063669204712, 0.00362197193317115],
-                "max": [0.5107022523880005, 0.5516204237937927, 0.5620884299278259, -1.3330878019332886, 0.32758936285972595, 3.119610548019409, 1.8364211320877075, 0.25358933210372925, 0.36316126585006714, 0.14765967428684235, 0.49947625398635864, 0.144814133644104, 0.2820609211921692, 0.7382049560546875, 255.0, 0.6012658476829529, 0.3005995750427246, 0.5004003643989563]
-            },
-            "action": {
-                "min": [-0.025, -0.025, -0.025],
-                "max": [0.025, 0.025, 0.025]
-            }
-        },
-         "repo_id": "lerobot/pusht",
+        "repo_id": null,
+        "push_to_hub": false,
         "storage_device": "cpu",
         "vision_encoder_name": "helper2424/resnet10",
         "freeze_vision_encoder": true,
         "image_encoder_hidden_dim": 32,
         "shared_encoder": true,
         "online_steps": 1000000,
-        "online_env_seed": 10000,
-        "online_buffer_capacity": 100000,
-        "offline_buffer_capacity": 100000,
-        "online_step_before_learning": 100,
+        "online_buffer_capacity": 30000,
+        "offline_buffer_capacity": 10000,
+        "online_step_before_learning": 20,
         "policy_update_freq": 1,
         "discount": 0.97,
         "temperature_init": 0.01,
@@ -140,11 +147,11 @@
         "critic_target_update_weight": 0.005,
         "utd_ratio": 2,
         "state_encoder_hidden_dim": 256,
-        "latent_dim": 64,
+        "latent_dim": 256,
         "target_entropy": null,
         "use_backup_entropy": true,
-        "grad_clip_norm": 10.0,
-        "num_discrete_actions": 3,
+        "grad_clip_norm": 40.0,
+        "num_discrete_actions": null,
         "critic_network_kwargs": {
             "hidden_dims": [256, 256],
             "activate_final": true,

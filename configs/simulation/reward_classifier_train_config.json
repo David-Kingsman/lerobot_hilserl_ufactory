@@ -1,11 +1,10 @@
 {
     "dataset": {
-        "repo_id": "zekaijin/reward_classifier_data",
-        "root": "/home/zekaijin/lerobot-hilserl/datasets/reward_data"
+        "repo_id": null,
+        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/franka_sim_pick_lift"
     },
     "policy": {
         "type": "reward_classifier",
-        "repo_id": "zekaijin/reward_classifier_model",
         "model_name": "helper2424/resnet10",
         "model_type": "cnn",
         "num_cameras": 2,
@@ -15,8 +14,9 @@
         "learning_rate": 1e-4,
         "device": "cuda",
         "use_amp": true,
+        "push_to_hub": false,
         "input_features": {
-            "observation.images.side": {
+            "observation.images.front": {
                 "type": "VISUAL",
                 "shape": [
                     3,
@@ -24,7 +24,7 @@
                     128
                 ]
             },
-            "observation.images.front": {
+            "observation.images.wrist": {
                 "type": "VISUAL",
                 "shape": [
                     3,
@@ -43,15 +43,17 @@
     "save_checkpoint": true,
     "seed": 2,
     "resume": false,
-    "fps": 10,
-    "number_of_steps_after_success": 10,
     "optimizer": {
         "grad_clip_norm": 10.0
     },
     "wandb": {
         "enable": true,
-        "project": "reward-classifier",
+        "project": "reward-classifier-simulation-pick-lift",
         "disable_artifact": false
     },
-    "job_name": "reward-classifier"
+    "job_name": "reward-classifier-simulation-pick-lift",
+    "rename_map": {
+      "observation.images.front": "observation.images.front", 
+      "observation.images.wrist": "observation.images.wrist"
+    }
 }

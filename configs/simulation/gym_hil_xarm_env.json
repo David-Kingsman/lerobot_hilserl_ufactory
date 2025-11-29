@@ -1,20 +1,20 @@
 {
     "env": {
         "name": "gym_hil",
-        "task": "XarmPickCubeGamepad-v0",
+        "task": "XarmLiftGamepad-v0",
         "fps": 10,
         "features": {
             "observation.images.front": {
                 "type": "VISUAL",
-                "shape": [3, 128, 128]
+                "shape": [3, 84, 84]
             },
             "observation.images.wrist": {
                 "type": "VISUAL",
-                "shape": [3, 128, 128]
+                "shape": [3, 84, 84]
             },
             "observation.state": {
                 "type": "STATE",
-                "shape": [16]
+                "shape": [10]
             },
             "action": {
                 "type": "ACTION",
@@ -37,7 +37,6 @@
                 "gripper_penalty_in_reward": false
             },
             "reset": {
-                "fixed_reset_joint_positions": [-1.5708, -1.5708, 1.5708, -1.5708, -1.5708, 0.0],
                 "reset_time_s": 2.0,
                 "control_time_s": 15.0,
                 "terminate_on_success": true
@@ -50,28 +49,26 @@
                 }
             },
             "observation": {
-                "add_joint_velocity_to_observation": true,
+                "add_joint_velocity_to_observation": false,
                 "add_current_to_observation": false,
-                "add_ee_pose_to_observation": true,
+                "add_ee_pose_to_observation": false,
                 "display_cameras": true
             },
             "image_preprocessing": {
-                "crop_params_dict": {
-                    "observation.images.front": [0, 0, 128, 128],
-                    "observation.images.wrist": [0, 0, 128, 128]
-                },
-                "resize_size": [128, 128]
+                "crop_params_dict": {},
+                "resize_size": [84, 84]
             }
         }
     },
     "dataset": {
-        "repo_id": "DavidKINGSMAN/sim_dataset",
-        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/xarm_sim_pick_lift",
-        "task": "XarmPickCubeGamepad-v0",
+        "repo_id": null,
+        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/xarm_sim_lift",
+        "task": "XarmLift-v0",
         "num_episodes_to_record": 30,
         "replay_episode": 0,
         "push_to_hub": false
     },
-    "mode": null,
+    "mode": "record",
     "device": "cuda"
 }
+
