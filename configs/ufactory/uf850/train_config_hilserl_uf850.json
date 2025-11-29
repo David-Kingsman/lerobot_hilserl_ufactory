@@ -16,7 +16,7 @@
     },
     "dataset": {
         "repo_id": "DavidKINGSMAN/uf850_dataset",
-        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/uf850_pick_cube_test1_cropped_resized",
+        "root": "datasets/uf850_pick_cube_test_20251127_150138_cropped_resized",
         "streaming": false,
         "video_backend": "pyav"
     },
@@ -38,7 +38,7 @@
                     128
                 ]
             },
-            "observation.images.realsense": {
+            "observation.images.realsense_2": {
                 "type": "VISUAL",
                 "shape": [
                     3,
@@ -49,7 +49,7 @@
             "observation.state": {
                 "type": "STATE",
                 "shape": [
-                    12
+                    14
                 ]
             }
         },
@@ -126,23 +126,23 @@
         "type": "gym_manipulator",
         "robot": {
             "type": "uf850_end_effector_hil",
-            "ip": "192.168.1.235",
+            "ip": "192.168.1.225",
             "id": "uf850_main",
             "use_gripper": true,
             "act_features": "xyz_delta",
             "cameras": {
                 "webcam_1": {
                     "type": "opencv",
-                    "index_or_path": "/dev/video3",
+                    "index_or_path": "/dev/video0",
                     "height": 480,
                     "width": 640,
                     "fps": 30
                 },
-                "realsense": {
+                "realsense_2": {
                     "type": "intelrealsense",
                     "serial_number_or_name": "151422061401",
-                    "height": 480,
-                    "width": 640,
+                    "height": 720,
+                    "width": 1280,
                     "fps": 30
                 }
             }
@@ -154,25 +154,37 @@
         "processor": {
             "control_mode": "gamepad",
             "observation": {
-                "display_cameras": false,
+                "display_cameras": true,
                 "add_joint_velocity_to_observation": true,
                 "add_current_to_observation": false,
                 "add_ee_pose_to_observation": true
             },
             "image_preprocessing": {
                 "crop_params_dict": {
-                    "observation.images.webcam_1": [48, 235, 240, 330],
-                    "observation.images.realsense": [33, 50, 303, 465]
+                    "observation.images.webcam_1": [192, 292, 288, 315],
+                    "observation.images.realsense_2":  [212, 556, 229, 252]
                 },
                 "resize_size": [128, 128]
             },
-                "gripper": {
-                    "use_gripper": true,
-                    "gripper_penalty": -0.02,
-                    "gripper_penalty_in_reward": true
-                },
+            "gripper": {
+                "use_gripper": true,
+                "gripper_penalty": -0.02,
+                "gripper_penalty_in_reward": true
+            },
             "reset": {
-                "fixed_reset_joint_positions": [0.0576, -0.1676, -1.3744, -0.0471, 1.5882, 0.0611],
+                "randomized_reset_ee_pose": {
+                    "center_pose": {
+                        "position": [0.4134, -0.0665, 0.0875],
+                        "rotation": [-179.8, -2.4, -91.1]
+                },
+                "ranges": [
+                    [-0.01, 0.01],  
+                    [-0.02, 0.02],  
+                    [0, 0],  
+                    [0.0, 0.0],    
+                    [0.0, 0.0],     
+                    [0.0, 0.0]      
+                ]},
                 "reset_time_s": 2.5,
                 "control_time_s": 10.0,
                 "terminate_on_success": true
@@ -181,13 +193,13 @@
                 "urdf_path": "/home/zekaijin/lerobot-hilserl-ufactory/simulation/uf850/uf850.urdf",
                 "target_frame_name": "link_eef",
                 "end_effector_bounds": {
-                    "min": [0.394, -0.00008, 0.15],
-                    "max": [0.570, 0.144, 0.3]
+                    "min": [0.3992, -0.15147, 0.26095],
+                    "max": [0.58452, 0.04799, 0.26815]
                 },
                 "end_effector_step_sizes": { "x": 0.01, "y": 0.01, "z": 0.01 }
             },
             "reward_classifier": {
-                "pretrained_path": "/home/zekaijin/lerobot-hilserl-ufactory/outputs/train/2025-11-09/13-38-02_reward-classifier/checkpoints/last/pretrained_model",
+                "pretrained_path": "/home/zekaijin/lerobot-hilserl-ufactory/outputs/train/2025-11-27/15-29-55_reward-classifier/checkpoints/last/pretrained_model",
                 "success_threshold": 0.5,
                 "success_reward": 1.0
             },
@@ -205,7 +217,7 @@
                     128
                 ]
             },
-            "observation.images.realsense": {
+            "observation.images.realsense_2": {
                 "type": "VISUAL",
                 "shape": [
                     3,
@@ -216,7 +228,7 @@
             "observation.state": {
                 "type": "STATE",
                 "shape": [
-                    12
+                    14
                 ]
             },
             "action": {
@@ -228,7 +240,7 @@
         },
         "features_map": {
             "observation.images.webcam_1": "observation.images.webcam_1",
-            "observation.images.realsense": "observation.images.realsense",
+            "observation.images.realsense_2": "observation.images.realsense_2",
             "observation.state": "observation.state",
             "action": "action"
         }
