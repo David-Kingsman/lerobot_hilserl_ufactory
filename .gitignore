@@ -10,6 +10,9 @@ videos
 images
 audios
 
-
+# Backup and test files
 backup/
 test/
+lerobot_backup/
+lerobot_sim/
+docs/
