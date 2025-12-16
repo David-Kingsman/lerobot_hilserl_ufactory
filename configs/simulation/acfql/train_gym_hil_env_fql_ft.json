@@ -1,6 +1,6 @@
 {
     "output_dir": null,
-    "job_name": "franka_sim_pick_lift_fql",
+    "job_name": "franka_sim_pick_lift_fql_ft",
     "resume": false,
     "seed": 1000,
     "num_workers": 4,
@@ -11,12 +11,12 @@
     "save_freq": 2000000,
     "wandb": {
         "enable": true,
-        "project": "franka_sim_fql",
+        "project": "franka_sim_fql_ft",
         "disable_artifact": true
     },
     "dataset": {
-        "repo_id": "David_Kingsman/franka_sim_pick_lift_fql",
-        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/franka_sim_pick_lift_acfql_20251201_150",
+        "repo_id": "David_Kingsman/franka_sim_pick_lift_acfql_ft",
+        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/pick_lift/franka_sim_pick_lift_acfql_ft_20251216_015658",
         "use_imagenet_stats": false
     },
     "policy": {
@@ -52,7 +52,7 @@
             "observation.state": {
                 "type": "STATE",
                 "shape": [
-                    18
+                    42
                 ]
             }
         },
@@ -130,7 +130,7 @@
     "env": {
         "type": "gym_manipulator_acfql",
         "name": "gym_hil",
-        "task": "PandaPickCubeGamepad-v0",
+        "task": "PandaPickCubeFtGamepad-v0",
         "fps": 10,
         "robot": null,
         "teleop": null,
@@ -174,7 +174,7 @@
             "observation.state": {
                 "type": "STATE",
                 "shape": [
-                    18
+                    42
                 ]
             },
             "action": {
@@ -192,3 +192,4 @@
         }
     }
 }
+

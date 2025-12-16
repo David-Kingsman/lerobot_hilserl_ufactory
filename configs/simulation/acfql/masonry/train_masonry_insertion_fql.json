@@ -1,22 +1,22 @@
 {
     "output_dir": null,
-    "job_name": "franka_sim_pick_lift_fql",
+    "job_name": "franka_sim_masonry_insertion_fql",
     "resume": false,
     "seed": 1000,
     "num_workers": 4,
     "batch_size": 192,
     "steps": 100000,
     "log_freq": 1,
-    "save_checkpoint": true,
+    "save_checkpoint": false,
     "save_freq": 2000000,
     "wandb": {
         "enable": true,
-        "project": "franka_sim_fql",
+        "project": "franka_sim_masonry_insertion_fql",
         "disable_artifact": true
     },
     "dataset": {
-        "repo_id": "David_Kingsman/franka_sim_pick_lift_fql",
-        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/franka_sim_pick_lift_acfql_20251201_150",
+        "repo_id": null,
+        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/masonry_insertion_acfql_20251211_test2_100",
         "use_imagenet_stats": false
     },
     "policy": {
@@ -74,9 +74,9 @@
         "shared_encoder": false,
         "online_steps": 1000000,
         "online_env_seed": 10000,
-        "online_buffer_capacity": 20000,
+        "online_buffer_capacity": 10000,
         "offline_steps": 4000,
-        "offline_buffer_capacity": 20000,
+        "offline_buffer_capacity": 32000,
         "online_step_before_learning": 4000,
         "policy_update_freq": 1,
         "discount": 0.99,
@@ -130,7 +130,7 @@
     "env": {
         "type": "gym_manipulator_acfql",
         "name": "gym_hil",
-        "task": "PandaPickCubeGamepad-v0",
+        "task": "MasonryBlockInsertionGamepad-v0",
         "fps": 10,
         "robot": null,
         "teleop": null,
@@ -141,17 +141,10 @@
                 "gripper_penalty": -0.02
             },
             "reset": {
-                "fixed_reset_joint_positions": [
-                    0.0,
-                    0.195,
-                    0.0,
-                    -2.43,
-                    0.0,
-                    2.62,
-                    0.785
-                ],
+                "fixed_reset_joint_positions": [0.0, 0.1, 0.0, -2.43, 0.0, 2.62, 0.785],
                 "reset_time_s": 1.0,
-                "control_time_s": 15.0
+                "control_time_s": 20.0,
+                "terminate_on_success": false
             }
         },
         "features": {

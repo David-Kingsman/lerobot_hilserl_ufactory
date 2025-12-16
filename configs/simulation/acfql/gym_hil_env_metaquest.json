@@ -1,7 +1,7 @@
 {
     "env": {
         "name": "gym_hil",
-        "task": "PandaPickCubeGamepad-v0",
+        "task": "PandaPickCubeMetaQuest-v0",
         "fps": 10,
         "features": {
             "observation.images.front": {
@@ -18,7 +18,7 @@
             },
             "action": {
                 "type": "ACTION",
-                "shape": [4]
+                "shape": [7]
             }
         },
         "features_map": {
@@ -30,7 +30,7 @@
         "robot": null,
         "teleop": null,
         "processor": {
-            "control_mode": "gamepad",
+            "control_mode": "meta_quest",
             "gripper": {
                 "use_gripper": true,
                 "gripper_penalty": -0.02
@@ -38,19 +38,19 @@
             "reset": {
                 "fixed_reset_joint_positions": [0.0, 0.195, 0.0, -2.43, 0.0, 2.62, 0.785],
                 "reset_time_s": 1.0,
-                "control_time_s": 20.0
+                "control_time_s": 15.0
             }
         }
     },
     "dataset": {
-        "repo_id": "David_Kingsman/franka_sim_pick_lift_acfql",
-        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/franka_sim_pick_lift_acfql",
-        "task": "PandaPickCubeGamepad-v0",
-        "num_episodes_to_record": 2,
+        "repo_id": "your_name/metaquest_demo",
+        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/metaquest_demo",
+        "task": "PandaPickCubeMetaQuest-v0",
+        "num_episodes_to_record": 50,
         "replay_episode": null,
         "push_to_hub": false
     },
-    "mode": "record",
+    "mode": null,
     "device": "cuda"
 }
 

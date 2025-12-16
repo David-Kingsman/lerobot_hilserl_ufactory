@@ -1,7 +1,7 @@
 {
     "env": {
         "name": "gym_hil",
-        "task": "PandaPickCubeGamepad-v0",
+        "task": "MasonryBlockInsertionGamepad-v0",
         "fps": 10,
         "features": {
             "observation.images.front": {
@@ -16,6 +16,10 @@
                 "type": "STATE",
                 "shape": [18]
             },
+            "observation.environment_state": {
+                "type": "STATE",
+                "shape": [7]
+            },
             "action": {
                 "type": "ACTION",
                 "shape": [4]
@@ -25,6 +29,7 @@
             "observation.images.front": "observation.images.front",
             "observation.images.wrist": "observation.images.wrist",
             "observation.state": "observation.state",
+            "observation.environment_state": "observation.environment_state",
             "action": "action"
         },
         "robot": null,
@@ -36,21 +41,22 @@
                 "gripper_penalty": -0.02
             },
             "reset": {
-                "fixed_reset_joint_positions": [0.0, 0.195, 0.0, -2.43, 0.0, 2.62, 0.785],
+                "fixed_reset_joint_positions": [0.0, 0.1, 0.0, -2.43, 0.0, 2.62, 0.785],
                 "reset_time_s": 1.0,
+                "terminate_on_success": false,
                 "control_time_s": 20.0
             }
         }
     },
     "dataset": {
-        "repo_id": "David_Kingsman/franka_sim_pick_lift_acfql",
-        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/franka_sim_pick_lift_acfql",
-        "task": "PandaPickCubeGamepad-v0",
+        "repo_id": "your_username/masonry_insertion_acfql",
+        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/masonry_insertion_acfql",
+        "task": "MasonryBlockInsertionGamepad-v0",
         "num_episodes_to_record": 2,
         "replay_episode": null,
         "push_to_hub": false
     },
-    "mode": "record",
+    "mode": null,
     "device": "cuda"
 }
 

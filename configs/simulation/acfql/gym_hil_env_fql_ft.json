@@ -1,7 +1,7 @@
 {
     "env": {
         "name": "gym_hil",
-        "task": "PandaPickCubeGamepad-v0",
+        "task": "PandaPickCubeFtGamepad-v0",
         "fps": 10,
         "features": {
             "observation.images.front": {
@@ -14,7 +14,7 @@
             },
             "observation.state": {
                 "type": "STATE",
-                "shape": [18]
+                "shape": [42]
             },
             "action": {
                 "type": "ACTION",
@@ -43,9 +43,9 @@
         }
     },
     "dataset": {
-        "repo_id": "David_Kingsman/franka_sim_pick_lift_acfql",
-        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/franka_sim_pick_lift_acfql",
-        "task": "PandaPickCubeGamepad-v0",
+        "repo_id": "David_Kingsman/franka_sim_pick_lift_acfql_ft",
+        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/franka_sim_pick_lift_acfql_ft",
+        "task": "PandaPickCubeFtGamepad-v0",
         "num_episodes_to_record": 2,
         "replay_episode": null,
         "push_to_hub": false
