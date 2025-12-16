@@ -1,7 +1,0 @@
-[submodule "xArm-Python-SDK"]
-	path = xArm-Python-SDK
-	url = git@github.com:xArm-Developer/xArm-Python-SDK.git
-	
-[submodule "arm_control_base"]
-	path = arm_control_base
-	url = git@github.com:David-Kingsman/arm_control_base.git
