@@ -46,7 +46,7 @@
         "repo_id": "David_Kingsman/franka_sim_pick_lift_acfql_ft",
         "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/franka_sim_pick_lift_acfql_ft",
         "task": "PandaPickCubeFtGamepad-v0",
-        "num_episodes_to_record": 2,
+        "num_episodes_to_record": 50,
         "replay_episode": null,
         "push_to_hub": false
     },

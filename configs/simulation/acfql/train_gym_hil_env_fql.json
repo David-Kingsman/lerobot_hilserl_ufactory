@@ -16,7 +16,7 @@
     },
     "dataset": {
         "repo_id": "David_Kingsman/franka_sim_pick_lift_fql",
-        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/franka_sim_pick_lift_acfql_20251201_150",
+        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/franka_sim_pick_lift_acfql_20251216_111417",
         "use_imagenet_stats": false
     },
     "policy": {

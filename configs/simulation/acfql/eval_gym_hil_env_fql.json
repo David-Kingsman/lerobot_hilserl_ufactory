@@ -1,0 +1,76 @@
+{
+    "dataset": {
+        "repo_id": "David_Kingsman/franka_sim_pick_lift_fql",
+        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/franka_sim_pick_lift_acfql_20251216_111417",
+        "use_imagenet_stats": false
+    },
+    "env": {
+        "type": "gym_manipulator_acfql",
+        "name": "gym_hil",
+        "task": "PandaPickCubeGamepad-v0",
+        "fps": 10,
+        "pretrained_policy_name_or_path": "/home/zekaijin/lerobot-hilserl-ufactory/lerobot/outputs/train/2025-12-16/11-18-35_franka_sim_pick_lift_fql/checkpoints/last/pretrained_model",
+        "processor": {
+            "control_mode": "gamepad",
+            "gripper": {
+                "use_gripper": true,
+                "gripper_penalty": -0.02
+            },
+            "reset": {
+                "fixed_reset_joint_positions": [
+                    0.0,
+                    0.195,
+                    0.0,
+                    -2.43,
+                    0.0,
+                    2.62,
+                    0.785
+                ],
+                "reset_time_s": 1.0,
+                "control_time_s": 15.0
+            }
+        },
+        "features": {
+            "observation.images.front": {
+                "type": "VISUAL",
+                "shape": [
+                    3,
+                    128,
+                    128
+                ]
+            },
+            "observation.images.wrist": {
+                "type": "VISUAL",
+                "shape": [
+                    3,
+                    128,
+                    128
+                ]
+            },
+            "observation.state": {
+                "type": "STATE",
+                "shape": [
+                    18
+                ]
+            },
+            "action": {
+                "type": "ACTION",
+                "shape": [
+                    4
+                ]
+            }
+        },
+        "features_map": {
+            "observation.images.front": "observation.images.front",
+            "observation.images.wrist": "observation.images.wrist",
+            "observation.state": "observation.state",
+            "action": "action"
+        }
+    },
+    "policy": {
+        "type": "acfql",
+        "device": "cuda",
+        "use_amp": false
+    }
+}
+
