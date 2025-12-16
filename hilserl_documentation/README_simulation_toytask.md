@@ -381,7 +381,7 @@ This command will launch the learner to do 4k offline steps, then will wait for 
         --policy.offline_steps=4000 \
         --policy.online_step_before_learning=4000
     ```
-
+    
 This command launch the actor, it will wait for the model paramaters, and then will start getting transitions
   ```bash
   # then start actor without ft
@@ -408,18 +408,6 @@ In case the actor do not start getting transitions, and the learner wait for the
   ```bash
   # pick and lift env
   PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.acfql.gym_manipulator   --config_path configs/simulation/acfql/gym_hil_env_fql.json
-  # masonry insertion env
-  PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.acfql.gym_manipulator   --config_path configs/simulation/acfql/masonry_insertion_gamepad.json
-  ```
-
-## 自动采集数据 pipeline 代替 human demonstration
-  ```bash
-  PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src \
-  python scripts/auto_collect_masonry_data.py \
-  --config configs/simulation/acfql/masonry_insertion_gamepad.json \
-  --num_episodes 1 \
-  --enable_camera_display \
-  --camera_display_freq 1
   ```
 
 ## training PICK AND LIFT ENV pipeline with ft
@@ -430,18 +418,3 @@ In case the actor do not start getting transitions, and the learner wait for the
   PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.acfql.actor     --config_path=../configs/simulation/acfql/train_gym_hil_env_fql_ft.json     --policy.offline_steps=4000
   ```
 
- ## Masonry insertion
-  ```bash
-  # learner
-  PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.acfql.learner     --config_path=../configs/simulation/acfql/train_masonry_insertion_fql_optimized.json     --policy.offline_steps=4000     --policy.online_step_before_learning=4000
-  # actor
-  PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.acfql.actor     --config_path=../configs/simulation/acfql/train_masonry_insertion_fql_optimized.json     --policy.offline_steps=4000
-  ```
-  
-  ### Sparse reward resnet10
-  ```bash
-  # learner
-  PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.acfql.learner     --config_path=../configs/simulation/acfql/train_masonry_insertion_fql_reward_classifier.json     --policy.offline_steps=4000     --policy.online_step_before_learning=4000
-  # actor
-  PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.acfql.actor     --config_path=../configs/simulation/acfql/train_masonry_insertion_fql_reward_classifier.json     --policy.offline_steps=4000
-  ```
