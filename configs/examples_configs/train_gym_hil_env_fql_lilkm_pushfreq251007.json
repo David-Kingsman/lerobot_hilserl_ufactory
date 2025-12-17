@@ -1,6 +1,6 @@
 {
     "output_dir": null,
-    "job_name": "franka_sim_pick_lift_fql",
+    "job_name": "lilkm-franka_sim_pick_lift_debugging",
     "resume": false,
     "seed": 1000,
     "num_workers": 4,
@@ -11,12 +11,11 @@
     "save_freq": 2000000,
     "wandb": {
         "enable": true,
-        "project": "franka_sim_fql",
+        "project": "franka_sim_fql_lkm",
         "disable_artifact": true
     },
     "dataset": {
-        "repo_id": "David_Kingsman/franka_sim_pick_lift_fql",
-        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/franka_sim_pick_lift_acfql_20251217_144817",
+        "repo_id": "jpizarrom/lilkm-franka_sim_pick_lift_debugging",
         "use_imagenet_stats": false
     },
     "policy": {
@@ -66,7 +65,88 @@
         },
         "device": "cuda",
         "use_amp": false,
-        "dataset_stats": null,
+        "dataset_stats": {
+            "observation.images.front": {
+                "mean": [
+                    0.485,
+                    0.456,
+                    0.406
+                ],
+                "std": [
+                    0.229,
+                    0.224,
+                    0.225
+                ]
+            },
+            "observation.images.wrist": {
+                "mean": [
+                    0.485,
+                    0.456,
+                    0.406
+                ],
+                "std": [
+                    0.229,
+                    0.224,
+                    0.225
+                ]
+            },
+            "observation.state": {
+                "min": [
+                    -0.18890867,
+                    -0.13319267,
+                    -0.15566483,
+                    -3.04198435,
+                    -0.05300621,
+                    2.52864378,
+                    0.426834,
+                    -100.0,
+                    -100.0,
+                    -100.0,
+                    -100.0,
+                    -100.0,
+                    -100.0,
+                    -100.0,
+                    0.0,
+                    0.2,
+                    -0.3,
+                    0.0
+                ],
+                "max": [
+                    0.1956124,
+                    0.5096723,
+                    0.05482981,
+                    -2.01792539,
+                    0.04425749,
+                    2.90565838,
+                    1.07170398,
+                    100.0,
+                    100.0,
+                    100.0,
+                    100.0,
+                    100.0,
+                    100.0,
+                    100.0,
+                    255.0,
+                    0.6,
+                    0.3,
+                    0.5
+                ]
+            },
+            "action": {
+                "min": [
+                    -1.0,
+                    -1.0,
+                    -1.0,
+                    0.0
+                ],
+                "max": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    2.0
+                ]
+            }
+        },
         "storage_device": "cpu",
         "vision_encoder_name": "helper2424/resnet10",
         "freeze_vision_encoder": true,
@@ -74,9 +154,9 @@
         "shared_encoder": false,
         "online_steps": 1000000,
         "online_env_seed": 10000,
-        "online_buffer_capacity": 20000,
+        "online_buffer_capacity": 50000,
         "offline_steps": 4000,
-        "offline_buffer_capacity": 20000,
+        "offline_buffer_capacity": 50000,
         "online_step_before_learning": 4000,
         "policy_update_freq": 1,
         "discount": 0.99,
@@ -89,7 +169,7 @@
         "q_agg": "mean",
         "alpha": 3.0,
         "flow_steps": 10,
-        "normalize_q_loss": "q_vals_plus_eps",
+        "normalize_q_loss": true,
         "utd_ratio": 2,
         "latent_dim": 64,
         "grad_clip_norm": 10.0,
@@ -151,7 +231,7 @@
                     0.785
                 ],
                 "reset_time_s": 1.0,
-                "control_time_s": 20.0
+                "control_time_s": 15.0
             }
         },
         "features": {
