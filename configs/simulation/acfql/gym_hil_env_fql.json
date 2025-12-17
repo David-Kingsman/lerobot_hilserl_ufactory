@@ -38,7 +38,8 @@
             "reset": {
                 "fixed_reset_joint_positions": [0.0, 0.195, 0.0, -2.43, 0.0, 2.62, 0.785],
                 "reset_time_s": 1.0,
-                "control_time_s": 20.0
+                "control_time_s": 20.0,
+                "terminate_on_success": false
             }
         }
     },

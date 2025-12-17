@@ -4,7 +4,7 @@
     "resume": false,
     "seed": 1000,
     "num_workers": 4,
-    "batch_size": 192,
+    "batch_size": 256,
     "steps": 100000,
     "log_freq": 1,
     "save_checkpoint": true,
@@ -16,7 +16,7 @@
     },
     "dataset": {
         "repo_id": "David_Kingsman/franka_sim_pick_lift_fql",
-        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/franka_sim_pick_lift_acfql_20251216_135501",
+        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/pick_lift/franka_sim_pick_lift_acfql_20251217_004517",
         "use_imagenet_stats": false
     },
     "policy": {
@@ -151,7 +151,7 @@
                     0.785
                 ],
                 "reset_time_s": 1.0,
-                "control_time_s": 15.0
+                "control_time_s": 20.0
             }
         },
         "features": {
