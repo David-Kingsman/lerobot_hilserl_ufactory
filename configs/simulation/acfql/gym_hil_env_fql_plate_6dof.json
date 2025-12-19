@@ -1,7 +1,7 @@
 {
     "env": {
         "name": "gym_hil",
-        "task": "PandaPickPlateMetaQuest-v0",
+        "task": "PandaPickPlateGamepad6DoF-v0",
         "fps": 10,
         "features": {
             "observation.images.front": {
@@ -30,7 +30,7 @@
         "robot": null,
         "teleop": null,
         "processor": {
-            "control_mode": "meta_quest",
+            "control_mode": "gamepad",
             "gripper": {
                 "use_gripper": true,
                 "gripper_penalty": -0.02
@@ -44,9 +44,9 @@
         }
     },
     "dataset": {
-        "repo_id": "your_name/metaquest_plate_demo",
-        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/metaquest_plate_demo",
-        "task": "PandaPickPlateMetaQuest-v0",
+        "repo_id": "David_Kingsman/franka_sim_pick_plate_acfql_6dof",
+        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/franka_sim_pick_plate_acfql_6dof",
+        "task": "PandaPickPlateGamepad6DoF-v0",
         "num_episodes_to_record": 50,
         "replay_episode": null,
         "push_to_hub": false
