@@ -1,25 +1,26 @@
 {
     "output_dir": null,
-    "job_name": "lilkm-franka_sim_pick_lift_debugging",
+    "job_name": "kuka_sim_pick_plate_fql_6dof",
     "resume": false,
     "seed": 1000,
     "num_workers": 4,
     "batch_size": 256,
-    "steps": 100000,
+    "steps": 300000,
     "log_freq": 1,
     "save_checkpoint": true,
     "save_freq": 50000,
     "wandb": {
         "enable": true,
-        "project": "franka_sim_fqlvla",
+        "project": "kuka_sim_fql_plate_6dof",
         "disable_artifact": true
     },
     "dataset": {
-        "repo_id": "jpizarrom/lilkm-franka_sim_pick_lift_debugging",
+        "repo_id": "David_Kingsman/kuka_sim_pick_plate_acfql_6dof",
+        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/kuka_sim_pick_plate_acfql_6dof_20251219_215311",
         "use_imagenet_stats": false
     },
     "policy": {
-        "type": "acfqlvla",
+        "type": "acfql",
         "use_torch_compile": false,
         "push_to_hub": false,
         "n_obs_steps": 1,
@@ -59,139 +60,55 @@
             "action": {
                 "type": "ACTION",
                 "shape": [
-                    4
+                    7
                 ]
             }
         },
         "device": "cuda",
         "use_amp": false,
-        "dataset_stats": {
-            "observation.images.front": {
-                "mean": [
-                    0.485,
-                    0.456,
-                    0.406
-                ],
-                "std": [
-                    0.229,
-                    0.224,
-                    0.225
-                ]
-            },
-            "observation.images.wrist": {
-                "mean": [
-                    0.485,
-                    0.456,
-                    0.406
-                ],
-                "std": [
-                    0.229,
-                    0.224,
-                    0.225
-                ]
-            },
-            "observation.state": {
-                "min": [
-                    -0.18890867,
-                    -0.13319267,
-                    -0.15566483,
-                    -3.04198435,
-                    -0.05300621,
-                    2.52864378,
-                    0.426834,
-                    -100.0,
-                    -100.0,
-                    -100.0,
-                    -100.0,
-                    -100.0,
-                    -100.0,
-                    -100.0,
-                    0.0,
-                    0.2,
-                    -0.3,
-                    0.0
-                ],
-                "max": [
-                    0.1956124,
-                    0.5096723,
-                    0.05482981,
-                    -2.01792539,
-                    0.04425749,
-                    2.90565838,
-                    1.07170398,
-                    100.0,
-                    100.0,
-                    100.0,
-                    100.0,
-                    100.0,
-                    100.0,
-                    100.0,
-                    255.0,
-                    0.6,
-                    0.3,
-                    0.5
-                ]
-            },
-            "action": {
-                "min": [
-                    -1.0,
-                    -1.0,
-                    -1.0,
-                    0.0
-                ],
-                "max": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    2.0
-                ]
-            }
-        },
-        "storage_device_offline_replay_buffer": "cpu",
-        "storage_device_replay_buffer": "cpu",
+        "dataset_stats": null,
+        "storage_device": "cpu",
         "vision_encoder_name": "helper2424/resnet10",
         "freeze_vision_encoder": true,
         "image_encoder_hidden_dim": 32,
         "shared_encoder": false,
-        "online_steps": 1000000,
+        "online_steps": 2000000,
         "online_env_seed": 10000,
-        "online_buffer_capacity": 50000,
-        "offline_steps": 4000,
-        "offline_buffer_capacity": 50000,
-        "online_step_before_learning": 4000,
+        "online_buffer_capacity": 30000,
+        "offline_steps": 10000,
+        "offline_buffer_capacity": 30000,
+        "online_step_before_learning": 2000,
+        "only_successful_online_step_before_learning": true,
         "policy_update_freq": 1,
         "discount": 0.99,
         "async_prefetch": false,
         "num_critics": 2,
         "num_subsample_critics": null,
         "critic_lr": 0.0003,
-        "actor_lr": 0.0003,
+        "actor_lr": 0.0002,
         "critic_target_update_weight": 0.005,
         "q_agg": "mean",
         "alpha": 300.0,
-        "flow_steps": 10,
-        "normalize_q_loss": null,
+        "flow_steps": 12,
+        "normalize_q_loss": "q_vals_plus_eps",
         "utd_ratio": 2,
-        "latent_dim": 64,
-        "critic_grad_clip_norm": 25.0,
-        "actor_bc_grad_clip_norm": 3.0,
-        "actor_onestep_grad_clip_norm": 25.0,
+        "latent_dim": 128,
+        "grad_clip_norm": 10.0,
         "critic_network_kwargs": {
             "hidden_dims": [
-                256,
-                256,
-                256,
-                256
+                512,
+                512,
+                512,
+                512
             ],
             "activate_final": true,
             "layer_norm": true
         },
         "actor_network_kwargs": {
             "hidden_dims": [
-                256,
-                256,
-                256,
-                256
+                512,
+                512,
+                512
             ],
             "activate_final": true,
             "layer_norm": false
@@ -213,7 +130,7 @@
     "env": {
         "type": "gym_manipulator_acfql",
         "name": "gym_hil",
-        "task": "PandaPickCubeGamepad-v0",
+        "task": "KukaPickPlateGamepad6DoF-v0",
         "fps": 10,
         "robot": null,
         "teleop": null,
@@ -226,15 +143,15 @@
             "reset": {
                 "fixed_reset_joint_positions": [
                     0.0,
-                    0.195,
+                    0.785398,
                     0.0,
-                    -2.43,
+                    -1.5708,
                     0.0,
-                    2.62,
-                    0.785
+                    0.785398,
+                    0.0
                 ],
                 "reset_time_s": 1.0,
-                "control_time_s": 15.0
+                "control_time_s": 20.0
             }
         },
         "features": {
@@ -263,7 +180,7 @@
             "action": {
                 "type": "ACTION",
                 "shape": [
-                    4
+                    7
                 ]
             }
         },
@@ -275,3 +192,4 @@
         }
     }
 }
+

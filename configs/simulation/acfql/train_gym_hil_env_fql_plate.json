@@ -8,7 +8,7 @@
     "steps": 100000,
     "log_freq": 1,
     "save_checkpoint": true,
-    "save_freq": 2000000,
+    "save_freq": 50000,
     "wandb": {
         "enable": true,
         "project": "franka_sim_fql_plate",
@@ -75,8 +75,8 @@
         "online_steps": 1000000,
         "online_env_seed": 10000,
         "online_buffer_capacity": 20000,
-        "offline_steps": 4000,
-        "offline_buffer_capacity": 20000,
+        "offline_steps": 10000,
+        "offline_buffer_capacity": 50000,
         "online_step_before_learning": 4000,
         "policy_update_freq": 1,
         "discount": 0.99,
@@ -91,7 +91,7 @@
         "flow_steps": 10,
         "normalize_q_loss": "q_vals_plus_eps",
         "utd_ratio": 2,
-        "latent_dim": 64,
+        "latent_dim": 128,
         "grad_clip_norm": 10.0,
         "critic_network_kwargs": {
             "hidden_dims": [
