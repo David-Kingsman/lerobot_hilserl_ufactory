@@ -360,10 +360,10 @@ After 80,000 training steps and manual intervention (approximately 1 hour), our 
 ## ACFQL (action chunking flowing Q-learning)
 ### Run tests
    ```bash
-   # 测试 ACFQL processor
+  # 测试 ACFQL processor
   cd /home/zekaijin/lerobot-hilserl-ufactory/lerobot && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src /home/zekaijin/miniconda3/
   envs/lerobot/bin/python -m pytest -sv ./tests/processor/test_acfql_processor.py
-   # 测试 observation processor（单个图像）
+  # 测试 observation processor（单个图像）
   cd /home/zekaijin/lerobot-hilserl-ufactory/lerobot && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src /home/zekaijin/miniconda3/envs/lerobot/bin/python -m pytest -sv ./tests/processor/test_observation_processor.py::test_process_single_image
   # 测试 replay buffer n-steps
   cd /home/zekaijin/lerobot-hilserl-ufactory/lerobot && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src /home/zekaijin/miniconda3/envs/lerobot/bin/python -m pytest -sv ./tests/rl/acfql/test_replay_buffer_n_steps.py
@@ -371,34 +371,35 @@ After 80,000 training steps and manual intervention (approximately 1 hour), our 
   cd /home/zekaijin/lerobot-hilserl-ufactory/lerobot && PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src /home/zekaijin/miniconda3/envs/lerobot/bin/python -m pytest -sv ./tests/processor/test_observation_processor.py
    ```
   
-## 人工采集数据 ac-fql gamepad 
+## 人工采集数据 
   ```bash
-  # pick and lift env
+  # gamepad （3dof)
   PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.acfql.gym_manipulator   --config_path configs/simulation/acfql/gym_hil_env_fql_plate.json
+  # gamepad （6dof) - KUKA
+  python -m lerobot.rl.acfql.gym_manipulator \
+  --config_path configs/simulation/acfql/gym_hil_env_fql_kuka_plate_6dof.json
+
+  # meta quest (6dof)
+  PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.acfql.gym_manipulator   --config_path configs/simulation/acfql/gym_hil_env_fql_metaquest_plate.json
   ```
 
-## train a policy on PandaPickCubeGamepad-v0 sim
+## train a policy
 This command will launch the learner to do 4k offline steps, then will wait for receiving 4k transitions from actor, and will start doing online RL.
    ```bash
    # first start learner 
       cd /home/zekaijin/lerobot-hilserl-ufactory/lerobot && \
       PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src \
       /home/zekaijin/miniconda3/envs/lerobot/bin/python -m lerobot.rl.acfql.learner \
-        --config_path=../configs/simulation/acfql/train_gym_hil_env_fql_plate.json \
-        --policy.offline_steps=4000 \
-        --policy.online_step_before_learning=4000
+        --config_path=../configs/simulation/acfql/train_gym_hil_env_fql_kuka_plate_6dof.json 
     ```
-
 This command launch the actor, it will wait for the model paramaters, and then will start getting transitions
   ```bash
-  # then start actor without ft
+  # then start actor
   cd /home/zekaijin/lerobot-hilserl-ufactory/lerobot && \
   PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src \
   /home/zekaijin/miniconda3/envs/lerobot/bin/python -m lerobot.rl.acfql.actor \
-    --config_path=../configs/simulation/acfql/train_gym_hil_env_fql_plate.json \
-    --policy.offline_steps=4000
+    --config_path=../configs/simulation/acfql/train_gym_hil_env_fql_kuka_plate_6dof.json 
   ```
-
 In case the actor do not start getting transitions, and the learner wait for the actor's transitions. -> resume the actor from the learner checkpoint with offline_steps=0. The actor will start getting transitions right after loading the model from the checkpoint. Once the learner receives enough transitions, it will start online RL, and also will start sending model params to the actor.
    
   ```bash
@@ -406,14 +407,14 @@ In case the actor do not start getting transitions, and the learner wait for the
   cd /home/zekaijin/lerobot-hilserl-ufactory/lerobot && \
   PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src \
   /home/zekaijin/miniconda3/envs/lerobot/bin/python -m lerobot.rl.acfql.learner \
-    --config_path=outputs/train/2025-12-16/11-18-35_franka_sim_pick_lift_fql/checkpoints/last/pretrained_model/train_config.json \
+    --config_path=outputs/train/2025-12-19/22-15-43_kuka_sim_pick_plate_fql_6dof/checkpoints/last/pretrained_model/train_config.json \
     --resume=true
 
   # 如果 Actor 无法开始收集数据（恢复训练）
   cd /home/zekaijin/lerobot-hilserl-ufactory/lerobot && \
   PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src \
   /home/zekaijin/miniconda3/envs/lerobot/bin/python -m lerobot.rl.acfql.actor \
-    --config_path=outputs/train/2025-12-16/11-18-35_franka_sim_pick_lift_fql/checkpoints/last/pretrained_model/train_config.json \
+    --config_path=outputs/train/2025-12-19/22-15-43_kuka_sim_pick_plate_fql_6dof/checkpoints/last/pretrained_model/train_config.json \
     --resume=true \
     --policy.offline_steps=0
   ```

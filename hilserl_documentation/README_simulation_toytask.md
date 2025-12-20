@@ -96,7 +96,7 @@ To run the environment, set mode to null:
 PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src \
 python -m lerobot.rl.gym_manipulator --config_path configs/simulation/gym_hil_env.json
 # meta quest control (6dof)
-PYTHONPATH=lerobot/src python -m lerobot.rl.gym_manipulator     --config_path configs/simulation/acfql/gym_hil_env_metaquest.json
+PYTHONPATH=lerobot/src python -m lerobot.rl.gym_manipulator     --config_path configs/simulation/acfql/pick_and_lift/gym_hil_env_metaquest.json
 ```
 
 ### 3.2 Recording a Dataset
@@ -374,9 +374,9 @@ After 80,000 training steps and manual intervention (approximately 1 hour), our 
 ## 人工采集数据 ac-fql gamepad 
   ```bash
   # pick and lift env without ft
-  PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.acfql.gym_manipulator   --config_path configs/simulation/acfql/gym_hil_env_fql.json
+  PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.acfql.gym_manipulator   --config_path configs/simulation/acfql/pick_and_lift/gym_hil_env_fql.json
   # pick and lift env with ft
-  PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.acfql.gym_manipulator   --config_path configs/simulation/acfql/gym_hil_env_fql_ft.json
+  PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.acfql.gym_manipulator   --config_path configs/simulation/acfql/pick_and_lift/gym_hil_env_fql_ft.json
   ```
 
 ## train a policy on PandaPickCubeGamepad-v0 sim
@@ -386,7 +386,7 @@ This command will launch the learner to do 4k offline steps, then will wait for 
       cd /home/zekaijin/lerobot-hilserl-ufactory/lerobot && \
       PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src \
       /home/zekaijin/miniconda3/envs/lerobot/bin/python -m lerobot.rl.acfql.learner \
-        --config_path=../configs/simulation/acfql/train_gym_hil_env_fql.json \
+        --config_path=../configs/simulation/acfql/pick_and_lift/train_gym_hil_env_fql.json \
         --policy.offline_steps=4000 \
         --policy.online_step_before_learning=4000
     ```
@@ -397,7 +397,7 @@ This command launch the actor, it will wait for the model paramaters, and then w
   cd /home/zekaijin/lerobot-hilserl-ufactory/lerobot && \
   PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src \
   /home/zekaijin/miniconda3/envs/lerobot/bin/python -m lerobot.rl.acfql.actor \
-    --config_path=../configs/simulation/acfql/train_gym_hil_env_fql.json \
+    --config_path=../configs/simulation/acfql/pick_and_lift/train_gym_hil_env_fql.json \
     --policy.offline_steps=4000
   ```
 
@@ -426,7 +426,7 @@ In case the actor do not start getting transitions, and the learner wait for the
   cd /home/zekaijin/lerobot-hilserl-ufactory/lerobot && \
   PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src \
       /home/zekaijin/miniconda3/envs/lerobot/bin/python -m lerobot.rl.acfql.learner \
-        --config_path=../configs/simulation/acfql/train_gym_hil_env_fql_ft.json \
+        --config_path=../configs/simulation/acfql/pick_and_lift/train_gym_hil_env_fql_ft.json \
         --policy.offline_steps=4000 \
         --policy.online_step_before_learning=4000
 
@@ -434,7 +434,7 @@ In case the actor do not start getting transitions, and the learner wait for the
   cd /home/zekaijin/lerobot-hilserl-ufactory/lerobot && \
   PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src \
   /home/zekaijin/miniconda3/envs/lerobot/bin/python -m lerobot.rl.acfql.actor \
-    --config_path=../configs/simulation/acfql/train_gym_hil_env_fql_ft.json \
+    --config_path=../configs/simulation/acfql/pick_and_lift/train_gym_hil_env_fql_ft.json \
     --policy.offline_steps=4000
 
   # 如果 Actor 无法开始收集数据（恢复训练）
