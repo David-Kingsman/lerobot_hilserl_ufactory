@@ -1,0 +1,195 @@
+{
+    "output_dir": null,
+    "job_name": "kuka_sim_window_assembly_fql_6dof",
+    "resume": false,
+    "seed": 1000,
+    "num_workers": 4,
+    "batch_size": 256,
+    "steps": 300000,
+    "log_freq": 1,
+    "save_checkpoint": true,
+    "save_freq": 50000,
+    "wandb": {
+        "enable": true,
+        "project": "kuka_sim_fql_window_assembly_6dof",
+        "disable_artifact": true
+    },
+    "dataset": {
+        "repo_id": "David_Kingsman/kuka_sim_window_assembly_acfql_6dof",
+        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/kuka_sim_window_assembly_acfql_6dof",
+        "use_imagenet_stats": false
+    },
+    "policy": {
+        "type": "acfql",
+        "use_torch_compile": false,
+        "push_to_hub": false,
+        "n_obs_steps": 1,
+        "chunk_size": 10,
+        "n_action_steps": 10,
+        "normalization_mapping": {
+            "VISUAL": "MEAN_STD",
+            "STATE": "MIN_MAX",
+            "ENV": "MIN_MAX",
+            "ACTION": "MIN_MAX"
+        },
+        "input_features": {
+            "observation.images.front": {
+                "type": "VISUAL",
+                "shape": [
+                    3,
+                    128,
+                    128
+                ]
+            },
+            "observation.images.wrist": {
+                "type": "VISUAL",
+                "shape": [
+                    3,
+                    128,
+                    128
+                ]
+            },
+            "observation.state": {
+                "type": "STATE",
+                "shape": [
+                    18
+                ]
+            }
+        },
+        "output_features": {
+            "action": {
+                "type": "ACTION",
+                "shape": [
+                    7
+                ]
+            }
+        },
+        "device": "cuda",
+        "use_amp": false,
+        "dataset_stats": null,
+        "storage_device": "cpu",
+        "vision_encoder_name": "helper2424/resnet10",
+        "freeze_vision_encoder": true,
+        "image_encoder_hidden_dim": 32,
+        "shared_encoder": false,
+        "online_steps": 2000000,
+        "online_env_seed": 10000,
+        "online_buffer_capacity": 30000,
+        "offline_steps": 50000,
+        "offline_buffer_capacity": 30000,
+        "online_step_before_learning": 2000,
+        "only_successful_online_step_before_learning": true,
+        "policy_update_freq": 1,
+        "discount": 0.99,
+        "async_prefetch": false,
+        "num_critics": 2,
+        "num_subsample_critics": null,
+        "critic_lr": 0.0003,
+        "actor_lr": 0.0002,
+        "critic_target_update_weight": 0.005,
+        "q_agg": "mean",
+        "alpha": 300.0,
+        "flow_steps": 12,
+        "normalize_q_loss": "q_vals_plus_eps",
+        "utd_ratio": 2,
+        "latent_dim": 128,
+        "grad_clip_norm": 10.0,
+        "critic_network_kwargs": {
+            "hidden_dims": [
+                512,
+                512,
+                512,
+                512
+            ],
+            "activate_final": true,
+            "layer_norm": true
+        },
+        "actor_network_kwargs": {
+            "hidden_dims": [
+                512,
+                512,
+                512
+            ],
+            "activate_final": true,
+            "layer_norm": false
+        },
+        "policy_kwargs": {
+            "init_final": 1.0
+        },
+        "actor_learner_config": {
+            "learner_host": "127.0.0.1",
+            "learner_port": 50052,
+            "policy_parameters_push_frequency": 25
+        },
+        "concurrency": {
+            "actor": "threads",
+            "learner": "threads"
+        },
+        "repo_id": null
+    },
+    "env": {
+        "type": "gym_manipulator_acfql",
+        "name": "gym_hil",
+        "task": "KukaPickWindowGamepad6DoF-v0",
+        "fps": 10,
+        "robot": null,
+        "teleop": null,
+        "processor": {
+            "control_mode": "gamepad",
+            "gripper": {
+                "use_gripper": true,
+                "gripper_penalty": -0.02
+            },
+            "reset": {
+                "fixed_reset_joint_positions": [
+                    0.0,
+                    0.785398,
+                    0.0,
+                    -1.5708,
+                    0.0,
+                    0.785398,
+                    0.0
+                ],
+                "reset_time_s": 1.0,
+                "control_time_s": 20.0
+            }
+        },
+        "features": {
+            "observation.images.front": {
+                "type": "VISUAL",
+                "shape": [
+                    3,
+                    128,
+                    128
+                ]
+            },
+            "observation.images.wrist": {
+                "type": "VISUAL",
+                "shape": [
+                    3,
+                    128,
+                    128
+                ]
+            },
+            "observation.state": {
+                "type": "STATE",
+                "shape": [
+                    18
+                ]
+            },
+            "action": {
+                "type": "ACTION",
+                "shape": [
+                    7
+                ]
+            }
+        },
+        "features_map": {
+            "observation.images.front": "observation.images.front",
+            "observation.images.wrist": "observation.images.wrist",
+            "observation.state": "observation.state",
+            "action": "action"
+        }
+    }
+}
+

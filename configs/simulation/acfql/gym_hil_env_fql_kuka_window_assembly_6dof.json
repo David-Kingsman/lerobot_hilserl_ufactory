@@ -1,0 +1,57 @@
+{
+    "env": {
+        "name": "gym_hil",
+        "task": "KukaPickWindowGamepad6DoF-v0",
+        "fps": 10,
+        "features": {
+            "observation.images.front": {
+                "type": "VISUAL",
+                "shape": [3, 128, 128]
+            },
+            "observation.images.wrist": {
+                "type": "VISUAL",
+                "shape": [3, 128, 128]
+            },
+            "observation.state": {
+                "type": "STATE",
+                "shape": [18]
+            },
+            "action": {
+                "type": "ACTION",
+                "shape": [7]
+            }
+        },
+        "features_map": {
+            "observation.images.front": "observation.images.front",
+            "observation.images.wrist": "observation.images.wrist",
+            "observation.state": "observation.state",
+            "action": "action"
+        },
+        "robot": null,
+        "teleop": null,
+        "processor": {
+            "control_mode": "gamepad",
+            "gripper": {
+                "use_gripper": true,
+                "gripper_penalty": -0.02
+            },
+            "reset": {
+                "fixed_reset_joint_positions": [0.0, 0.785398, 0.0, -1.5708, 0.0, 0.785398, 0.0],
+                "reset_time_s": 1.0,
+                "control_time_s": 20.0,
+                "terminate_on_success": true
+            }
+        }
+    },
+    "dataset": {
+        "repo_id": "David_Kingsman/kuka_sim_window_assembly_acfql_6dof",
+        "root": "/home/zekaijin/lerobot-hilserl-ufactory/datasets/kuka_sim_window_assembly_acfql_6dof",
+        "task": "KukaPickWindowGamepad6DoF-v0",
+        "num_episodes_to_record": 50,
+        "replay_episode": null,
+        "push_to_hub": false
+    },
+    "mode": null,
+    "device": "cuda"
+}
+
