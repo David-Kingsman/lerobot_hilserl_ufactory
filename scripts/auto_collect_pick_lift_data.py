@@ -88,12 +88,15 @@ class AutomaticPickLiftController:
         if not hasattr(self.base_env, '_data') and hasattr(self.base_env, 'unwrapped'):
             self.base_env = self.base_env.unwrapped
         
-        self.phase = "approach_cube"  # 简化：只有3个阶段 approach_cube, grasp, lift
+        self.phase = "approach_cube"  # 4个阶段：approach_cube, grasp, lift, rotate
         self.grasp_step = 0
         self.initial_cube_z = None  # 记录初始block Z位置，用于判断是否成功举起
         self.env_z_init = None  # 环境的_z_init（reset时记录的初始block高度）
         self.success_detected = False  # 标记是否检测到success
         self.success_hold_steps = 0  # success后保持的步数（模拟人工采集行为）
+        self.rotate_step = 0  # 旋转阶段的步数
+        self.target_yaw = None  # 目标yaw角度（90度旋转）
+        self.initial_yaw = None  # 初始yaw角度
         
         # 验证是否能访问底层环境
         if hasattr(self.base_env, '_data'):
@@ -139,6 +142,9 @@ class AutomaticPickLiftController:
         self.env_z_init = None  # 重置环境的_z_init
         self.success_detected = False  # 重置success检测标志
         self.success_hold_steps = 0  # 重置success保持步数
+        self.rotate_step = 0  # 重置旋转步数
+        self.target_yaw = None  # 重置目标yaw角度
+        self.initial_yaw = None  # 重置初始yaw角度
         
         # 从环境获取_z_init（reset时记录的初始block高度）
         try:
@@ -157,11 +163,12 @@ class AutomaticPickLiftController:
         logger.info(f"  [Controller] 🔄 重置控制器，初始阶段: {self.phase}")
         
     def get_action(self):
-        """根据当前环境状态生成动作 [delta_x, delta_y, delta_z, gripper]
-        简化逻辑：block位置固定，只需移动到上方 -> 下降抓取 -> 举起
+        """根据当前环境状态生成动作 [delta_x, delta_y, delta_z, delta_rx, delta_ry, delta_rz, gripper]
+        简化逻辑：block位置固定，只需移动到上方 -> 下降抓取 -> 举起 -> 旋转90度
         """
         cube_pos = None
         ee_pos = None
+        ee_quat = None
         
         try:
             # 从底层环境获取block位置（使用sensor）
@@ -171,9 +178,10 @@ class AutomaticPickLiftController:
                 except Exception as e:
                     logger.debug(f"Failed to get cube_pos: {e}")
                 
-                # 获取end-effector位置
+                # 获取end-effector位置和姿态
                 try:
                     ee_pos = self.base_env._data.sensor("2f85/pinch_pos").data.copy()
+                    ee_quat = self.base_env._data.sensor("2f85/pinch_quat").data.copy()
                 except Exception as e1:
                     try:
                         if hasattr(self.base_env, '_model'):
@@ -183,6 +191,7 @@ class AutomaticPickLiftController:
                                     site_id = mujoco.mj_name2id(self.base_env._model, mujoco.mjtObj.mjOBJ_SITE, site_name)
                                     if site_id >= 0:
                                         ee_pos = self.base_env._data.site_xpos[site_id].copy()
+                                        ee_quat = self.base_env._data.site_xquat[site_id].copy()
                                         break
                                 except:
                                     continue
@@ -191,6 +200,7 @@ class AutomaticPickLiftController:
                     
                     if ee_pos is None and hasattr(self.base_env, '_ee_site_id') and self.base_env._ee_site_id is not None:
                         ee_pos = self.base_env._data.site_xpos[self.base_env._ee_site_id].copy()
+                        ee_quat = self.base_env._data.site_xquat[self.base_env._ee_site_id].copy()
         except Exception as e:
             if not hasattr(self, '_error_logged'):
                 logger.warning(f"Error getting positions: {e}")
@@ -203,10 +213,14 @@ class AutomaticPickLiftController:
         if ee_pos is None:
             ee_pos = np.array([0.5, 0.0, 0.3])
         
-        # 计算delta动作 [delta_x, delta_y, delta_z, gripper]
-        action = np.zeros(4, dtype=np.float32)
-        action[3] = 0.0  # 关键修复：默认gripper为打开状态（0.0），确保reset后第一帧gripper是打开的
+        if ee_quat is None:
+            ee_quat = np.array([1.0, 0.0, 0.0, 0.0])  # 默认四元数（无旋转）
+        
+        # 计算delta动作 [delta_x, delta_y, delta_z, delta_rx, delta_ry, delta_rz, gripper]
+        action = np.zeros(7, dtype=np.float32)
+        action[6] = 0.0  # 关键修复：默认gripper为打开状态（0.0），确保reset后第一帧gripper是打开的
         step_size = 0.025  # 每步移动2.5cm
+        yaw_step_size = np.deg2rad(5.0)  # 每步旋转5度（约0.087弧度）
         
         # 简化逻辑：只有3个阶段
         # 关键修复：匹配人工数据的分布
@@ -222,7 +236,7 @@ class AutomaticPickLiftController:
             
             # 如果已经在足够高的高度（>= block上方8cm），直接进入grasp阶段，避免不必要的向上移动
             if ee_pos[2] >= min_approach_height:
-                action[3] = 0.0  # 确保gripper保持打开
+                action[6] = 0.0  # 确保gripper保持打开
                 if not hasattr(self, '_approach_wait_steps'):
                     self._approach_wait_steps = 0
                 self._approach_wait_steps += 1
@@ -234,7 +248,7 @@ class AutomaticPickLiftController:
                     logger.info(f"  [Controller] ✅ 已经在足够高度 (ee_z={ee_pos[2]:.3f} >= {min_approach_height:.3f})，直接进入抓取阶段")
             # 如果接近目标高度（block上方10cm ± 2cm），也直接进入grasp阶段
             elif abs(ee_pos[2] - target_z) < 0.02:
-                action[3] = 0.0  # 确保gripper保持打开
+                action[6] = 0.0  # 确保gripper保持打开
                 if not hasattr(self, '_approach_wait_steps'):
                     self._approach_wait_steps = 0
                 self._approach_wait_steps += 1
@@ -251,7 +265,7 @@ class AutomaticPickLiftController:
                 delta_z = np.clip(delta_z, -step_size, step_size)
                 action[2] = delta_z / step_size
                 action[2] = np.clip(action[2], -1.0, 1.0)
-                action[3] = 0.0  # gripper打开
+                action[6] = 0.0  # gripper打开
                 
                 # 到达block上方后，等待几步再进入抓取阶段
                 if abs(ee_pos[2] - target_z) < 0.02:  # 在目标高度±2cm范围内
@@ -294,7 +308,7 @@ class AutomaticPickLiftController:
                 delta_z = np.clip(delta_z, -step_size, step_size)
                 action[2] = delta_z / step_size
                 action[2] = np.clip(action[2], -1.0, 1.0)
-                action[3] = 0.0  # 下降过程中gripper保持打开
+                action[6] = 0.0  # 下降过程中gripper保持打开
                 self.grasp_step += 1
                 
                 # 调试输出：每步都输出，确保能看到下降过程
@@ -308,7 +322,7 @@ class AutomaticPickLiftController:
                 if not hasattr(self, '_grasp_close_wait_start'):
                     # 第一次到达block位置，开始关闭gripper（先设置中间状态1.0）
                     action[2] = 0.0  # 停止下降
-                    action[3] = 1.0  # 关键修复：先设置中间状态(1)，而不是直接跳到2.0
+                    action[6] = 1.0  # 关键修复：先设置中间状态(1)，而不是直接跳到2.0
                     self._grasp_close_wait_start = self.grasp_step
                     self._grasp_close_wait_steps = 2  # 关键修复：进一步减少等待时间（从3步到2步），匹配人工数据episode长度13.3 frames
                     self._gripper_transition_step = 0  # 用于跟踪gripper状态转换
@@ -320,16 +334,16 @@ class AutomaticPickLiftController:
                     if wait_steps < 1:
                         # 第1步：保持中间状态(1)
                         action[2] = 0.0  # 保持停止
-                        action[3] = 1.0  # 中间状态
+                        action[6] = 1.0  # 中间状态
                         logger.info(f"  [Controller] Gripper中间状态(1) ({wait_steps}/{self._grasp_close_wait_steps})")
                     elif wait_steps < self._grasp_close_wait_steps:
                         # 第2步：过渡到关闭状态(2)
                         action[2] = 0.0  # 保持停止
-                        action[3] = 2.0  # 关闭gripper
+                        action[6] = 2.0  # 关闭gripper
                         logger.info(f"  [Controller] Gripper关闭中(2) ({wait_steps}/{self._grasp_close_wait_steps})")
                     else:
                         # gripper已关闭，立即开始lift（不等待）
-                        action[3] = 2.0  # 保持gripper关闭
+                        action[6] = 2.0  # 保持gripper关闭
                         self.phase = "lift"
                         self._lift_log_step = 0
                         # 清理grasp阶段的等待变量
@@ -389,20 +403,20 @@ class AutomaticPickLiftController:
                 if not self.success_detected:
                     self.success_detected = True
                     self.success_hold_steps = 0
-                    logger.info(f"  [Controller] ✅ 接近/达到success条件 (lift={block_lift:.3f}m, dist={dist_to_block:.3f}m)，开始保持阶段")
+                    logger.info(f"  [Controller] ✅ 接近/达到success条件 (lift={block_lift:.3f}m, dist={dist_to_block:.3f}m)，进入旋转阶段")
+                    # 进入旋转阶段
+                    self.phase = "rotate"
+                    self.rotate_step = 0
+                    self.initial_yaw = None
+                    self.target_yaw = None
                 
-                self.success_hold_steps += 1
-                # 关键修复：完全移除保持时间，立即终止（匹配人工数据episode长度13.3 frames）
-                # 人工采集时，一旦达到success条件，episode立即终止（terminate_on_success=True）
-                # 不需要额外的保持时间，这样可以匹配人工数据的短episode长度
-                # 继续向上移动直到环境自动终止（提高delta_z活跃度）
+                # 如果还在lift阶段，继续向上移动
                 target_z = self.initial_cube_z + 0.15
                 delta_z = target_z - ee_pos[2]
-                # 即使接近success，也继续移动（匹配人工数据的活跃度，mean=0.20, std=0.81）
                 delta_z = np.clip(delta_z, -step_size, step_size)
                 action[2] = delta_z / step_size
                 action[2] = np.clip(action[2], -1.0, 1.0)
-                action[3] = 2.0  # 保持gripper关闭
+                action[6] = 2.0  # 保持gripper关闭
             else:
                 # 持续向上移动，直到达到目标高度（block初始位置+15cm）
                 target_z = self.initial_cube_z + 0.15
@@ -412,7 +426,51 @@ class AutomaticPickLiftController:
                 delta_z = np.clip(delta_z, -step_size, step_size)
                 action[2] = delta_z / step_size
                 action[2] = np.clip(action[2], -1.0, 1.0)
-                action[3] = 2.0  # 保持gripper关闭（关键：确保gripper在大部分时间都是关闭的）
+                action[6] = 2.0  # 保持gripper关闭（关键：确保gripper在大部分时间都是关闭的）
+        
+        elif self.phase == "rotate":
+            # 阶段4: 旋转90度（绕Z轴，即yaw旋转）
+            self._lift_log_step = getattr(self, '_lift_log_step', 0) + 1
+            self.rotate_step += 1
+            
+            # 从四元数提取yaw角度
+            from scipy.spatial.transform import Rotation
+            rot = Rotation.from_quat([ee_quat[1], ee_quat[2], ee_quat[3], ee_quat[0]])  # MuJoCo格式转SciPy格式
+            euler = rot.as_euler('xyz')
+            current_yaw = euler[2]  # Z轴旋转（yaw）
+            
+            # 记录初始yaw角度（第一次进入rotate阶段时）
+            if self.initial_yaw is None:
+                self.initial_yaw = current_yaw
+                self.target_yaw = current_yaw + np.deg2rad(90.0)  # 目标：旋转90度
+                logger.info(f"  [Controller] ✅ 开始旋转阶段 (初始yaw={np.rad2deg(self.initial_yaw):.1f}°, 目标yaw={np.rad2deg(self.target_yaw):.1f}°)")
+            
+            # 计算yaw角度差
+            yaw_diff = self.target_yaw - current_yaw
+            
+            # 处理角度环绕（-π到π）
+            if yaw_diff > np.pi:
+                yaw_diff -= 2 * np.pi
+            elif yaw_diff < -np.pi:
+                yaw_diff += 2 * np.pi
+            
+            # 如果还没到达目标角度（容差5度），继续旋转
+            if abs(yaw_diff) > np.deg2rad(5.0):
+                # 计算delta_yaw（归一化到[-1, 1]）
+                delta_yaw = np.clip(yaw_diff, -yaw_step_size, yaw_step_size)
+                action[5] = delta_yaw / yaw_step_size  # delta_rz (yaw)
+                action[5] = np.clip(action[5], -1.0, 1.0)
+                action[6] = 2.0  # 保持gripper关闭
+                
+                logger.debug(f"  [Controller] {self.phase} (step={self.rotate_step}): "
+                           f"旋转中 current_yaw={np.rad2deg(current_yaw):.1f}°, target_yaw={np.rad2deg(self.target_yaw):.1f}°, "
+                           f"yaw_diff={np.rad2deg(yaw_diff):.1f}°, action[5]={action[5]:.3f}")
+            else:
+                # 已到达目标角度，保持当前姿态
+                action[5] = 0.0  # 停止旋转
+                action[6] = 2.0  # 保持gripper关闭
+                logger.info(f"  [Controller] ✅ 旋转完成 (current_yaw={np.rad2deg(current_yaw):.1f}°, target_yaw={np.rad2deg(self.target_yaw):.1f}°)")
+                # 旋转完成后，可以保持一段时间或直接结束（让环境自然终止）
         
         return action.astype(np.float32)
 
@@ -647,7 +705,8 @@ def auto_collect_dataset(
     base_env = EEActionWrapper(
         base_env, 
         ee_action_step_size=ee_step_size, 
-        use_gripper=True
+        use_gripper=True,
+        use_6dof=True  # 启用6-DoF控制以支持旋转
     )
     
     base_env = PassiveViewerWrapper(base_env, show_left_ui=True, show_right_ui=True)
@@ -676,9 +735,10 @@ def auto_collect_dataset(
     # 创建自动控制器
     controller = AutomaticPickLiftController(env)
     
-    # 获取action维度
+    # 获取action维度（现在应该是7维：x, y, z, rx, ry, rz, gripper）
     action_dim = env.action_space.shape[0]
     use_gripper = cfg.env.processor.gripper.use_gripper if cfg.env.processor.gripper else False
+    logger.info(f"Action维度: {action_dim} (预期: 7 for 6-DoF + gripper)")
     
     # 使用与gym_manipulator相同的数据集创建方式
     obs, info = env.reset()
@@ -794,7 +854,7 @@ def auto_collect_dataset(
             
             # 调试：检查reset后第一个action的gripper值
             if episode_step == 0:
-                logger.info(f"  [Debug] Reset后第一个action (控制器输出): {controller_action}, gripper={controller_action[3] if len(controller_action) >= 4 else 'N/A'}, phase={controller.phase}")
+                logger.info(f"  [Debug] Reset后第一个action (控制器输出): {controller_action}, gripper={controller_action[6] if len(controller_action) >= 7 else 'N/A'}, phase={controller.phase}")
             
             # 关键修复：保存执行前的teleop_action（归一化的numpy array格式，与人工采集一致）
             # 人工采集时，InputsControlWrapper在info["teleop_action"]中设置的是归一化的numpy array
@@ -856,10 +916,14 @@ def auto_collect_dataset(
                 action_to_record = action_to_record.squeeze(0).cpu().numpy()  # 移除batch维度，转换为numpy array
             elif isinstance(action_to_record, dict):
                 # 如果是字典格式（不应该出现，但为了兼容性保留），转换为归一化的numpy array
+                # 现在支持7维action：[x, y, z, rx, ry, rz, gripper]
                 action_to_record = np.array([
                     action_to_record.get("delta_x", 0.0) / ee_step_size_value,  # 重新归一化
                     action_to_record.get("delta_y", 0.0) / ee_step_size_value,
                     action_to_record.get("delta_z", 0.0) / ee_step_size_value,
+                    action_to_record.get("delta_rx", 0.0),  # 旋转（弧度）
+                    action_to_record.get("delta_ry", 0.0),
+                    action_to_record.get("delta_rz", 0.0),
                     action_to_record.get("gripper", 0.0)  # 临时值，后面会从observation推断
                 ], dtype=np.float32)
             else:
@@ -871,7 +935,8 @@ def auto_collect_dataset(
             # 0.0表示完全打开，255.0表示完全关闭
             # 将其映射到action的0.0（打开）和2.0（关闭）
             # 注意：与非FT版本保持一致，对所有帧（包括第一帧）都使用相同的推断逻辑
-            if use_gripper and len(action_to_record) >= 4:
+            # 现在action是7维：[x, y, z, rx, ry, rz, gripper]，gripper在索引6
+            if use_gripper and len(action_to_record) >= 7:
                 # 使用执行前的observation（prev_observations）而不是执行后的（observations）
                 # 这样记录的action的gripper值对应的是执行前的状态，符合因果关系
                 if prev_observations is not None:
@@ -884,20 +949,20 @@ def auto_collect_dataset(
                     real_gripper_state = state_obs[14].item() if isinstance(state_obs, torch.Tensor) else state_obs[14]
                     # 关键修复：使用与人工采集完全一致的推断逻辑（gym_manipulator.py:771-776）
                     # 人工采集的推断逻辑：
-                    #   if real_gripper_state <= 1: action_to_record[3] = 0.0
-                    #   elif real_gripper_state >= 200: action_to_record[3] = 2.0
-                    #   else: action_to_record[3] = 1.0
+                    #   if real_gripper_state <= 1: action_to_record[6] = 0.0  # 现在gripper在索引6
+                    #   elif real_gripper_state >= 200: action_to_record[6] = 2.0
+                    #   else: action_to_record[6] = 1.0
                     # 使用完全相同的阈值，确保数据格式一致
                     if real_gripper_state <= 1:  # 接近0，认为是打开
-                        action_to_record[3] = 0.0
+                        action_to_record[6] = 0.0
                     elif real_gripper_state >= 200:  # 接近255，认为是关闭
-                        action_to_record[3] = 2.0
+                        action_to_record[6] = 2.0
                     else:  # 其他值，认为是中性
-                        action_to_record[3] = 1.0
+                        action_to_record[6] = 1.0
             
             # 调试：检查reset后第一个action记录到数据集的值
             if episode_step == 0:
-                logger.info(f"  [Debug] 记录到数据集的action: {action_to_record}, gripper={action_to_record[3] if len(action_to_record) >= 4 else 'N/A'}")
+                logger.info(f"  [Debug] 记录到数据集的action: {action_to_record}, gripper={action_to_record[6] if len(action_to_record) >= 7 else 'N/A'}")
             
             frame = {
                 **observations,

@@ -17,7 +17,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "gym-hil"))
 
 def main():
     # 加载MuJoCo模型 - 使用KUKA pick plate场景
-    xml_path = Path(__file__).parent.parent / "gym-hil" / "gym_hil" / "assets" / "kuka_pick_plate_scene.xml"
+    xml_path = Path(__file__).parent.parent / "gym-hil" / "gym_hil" / "assets" / "kuka_window_assembly_scene.xml"
     
     if not xml_path.exists():
         print(f"❌ 找不到XML文件: {xml_path}")
@@ -26,6 +26,31 @@ def main():
     print(f"📂 加载模型: {xml_path}")
     model = mujoco.MjModel.from_xml_path(str(xml_path))
     data = mujoco.MjData(model)
+    
+    # 重置机械臂到初始位置（home keyframe）
+    try:
+        # 查找home keyframe
+        home_key_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_KEY, "home")
+        if home_key_id >= 0:
+            mujoco.mj_resetDataKeyframe(model, data, home_key_id)
+            print(f"✅ 机械臂已重置到home位置")
+        else:
+            # 如果没有keyframe，手动设置关节位置
+            # KUKA home位置: qpos="0 0.785398 0 -1.5708 0 0.785398 0"
+            if model.nq >= 7:
+                data.qpos[:7] = [0, 0.785398, 0, -1.5708, 0, 0.785398, 0]
+                print(f"✅ 机械臂已设置到初始位置")
+    except Exception as e:
+        print(f"⚠️  设置初始位置时出错: {e}")
+    
+    # 固定机械臂：设置所有关节速度为0，并禁用actuator
+    data.qvel[:] = 0.0  # 所有速度设为0
+    data.ctrl[:] = 0.0   # 所有控制输入设为0
+    
+    # 前向计算一次，确保状态同步
+    mujoco.mj_forward(model, data)
+    
+    print(f"🔒 机械臂已固定（关节速度=0，控制输入=0）")
     
     # 找到所有可用的相机
     available_cameras = {}
@@ -178,6 +203,12 @@ def main():
         is_running = True
         last_print_time = 0
         import time as time_module
+        
+        # 保存机械臂初始位置（用于固定机械臂）
+        initial_arm_qpos = None
+        if model.nq >= 7:
+            initial_arm_qpos = data.qpos[:7].copy()
+            print(f"📌 机械臂初始位置已保存: {initial_arm_qpos}")
         
         def switch_camera(camera_name):
             nonlocal current_camera_name, current_camera_id, camera_pos, camera_quat, camera_mode
@@ -386,6 +417,14 @@ def main():
             
             # 物理仿真步进
             mujoco.mj_step(model, data)
+            
+            # 保持机械臂固定：重置关节位置和速度到初始状态
+            if initial_arm_qpos is not None and model.nq >= 7:
+                data.qpos[:7] = initial_arm_qpos.copy()
+                data.qvel[:7] = 0.0
+                data.ctrl[:] = 0.0
+                # 重新前向计算以更新状态
+                mujoco.mj_forward(model, data)
             
             # 同步查看器
             viewer.sync()
