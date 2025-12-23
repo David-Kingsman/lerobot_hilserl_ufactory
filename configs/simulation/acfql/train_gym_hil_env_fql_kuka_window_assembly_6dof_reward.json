@@ -75,7 +75,7 @@
         "online_steps": 2000000,
         "online_env_seed": 10000,
         "online_buffer_capacity": 30000,
-        "offline_steps": 50000,
+        "offline_steps": 10000,
         "offline_buffer_capacity": 30000,
         "online_step_before_learning": 2000,
         "only_successful_online_step_before_learning": true,
@@ -106,6 +106,7 @@
         },
         "actor_network_kwargs": {
             "hidden_dims": [
+                512,
                 512,
                 512,
                 512
@@ -152,6 +153,11 @@
                 ],
                 "reset_time_s": 1.0,
                 "control_time_s": 20.0
+            },
+            "reward_classifier": {
+                "pretrained_path": "/home/zekaijin/lerobot-hilserl-ufactory/outputs/train/2025-12-22/23-01-24_reward-classifier-simulation-pick-lift/checkpoints/last/pretrained_model",
+                "success_threshold": 0.5,
+                "success_reward": 1.0
             }
         },
         "features": {
