@@ -374,23 +374,24 @@ After 80,000 training steps and manual intervention (approximately 1 hour), our 
 ## 人工采集数据 
   ```bash
   # gamepad （3dof)
-  PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.acfql.gym_manipulator   --config_path configs/simulation/acfql/gym_hil_env_fql_plate.json
+  python -m lerobot.rl.acfql.gym_manipulator \
+  --config_path configs/simulation/acfql/gym_hil_env_fql_plate.json
   # gamepad （6dof) - KUKA
   python -m lerobot.rl.acfql.gym_manipulator \
-  --config_path configs/simulation/acfql/gym_hil_env_fql_kuka_plate_6dof.json
-
+  --config_path configs/simulation/acfql/gym_hil_env_fql_kuka_window_assembly_6dof.json
   # meta quest (6dof)
-  PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src python -m lerobot.rl.acfql.gym_manipulator   --config_path configs/simulation/acfql/gym_hil_env_fql_metaquest_plate.json
+  python -m lerobot.rl.acfql.gym_manipulator \  
+  --config_path configs/simulation/acfql/gym_hil_env_fql_metaquest_plate.json
   ```
 
-## train a policy
+## Train a policy
 This command will launch the learner to do 4k offline steps, then will wait for receiving 4k transitions from actor, and will start doing online RL.
    ```bash
    # first start learner 
       cd /home/zekaijin/lerobot-hilserl-ufactory/lerobot && \
       PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src \
       /home/zekaijin/miniconda3/envs/lerobot/bin/python -m lerobot.rl.acfql.learner \
-        --config_path=../configs/simulation/acfql/train_gym_hil_env_fql_kuka_plate_6dof.json 
+        --config_path=../configs/simulation/acfql/train_gym_hil_env_fql_kuka_window_assembly_6dof_reward.json 
     ```
 This command launch the actor, it will wait for the model paramaters, and then will start getting transitions
   ```bash
@@ -398,7 +399,7 @@ This command launch the actor, it will wait for the model paramaters, and then w
   cd /home/zekaijin/lerobot-hilserl-ufactory/lerobot && \
   PYTHONPATH=/home/zekaijin/lerobot-hilserl-ufactory/lerobot/src \
   /home/zekaijin/miniconda3/envs/lerobot/bin/python -m lerobot.rl.acfql.actor \
-    --config_path=../configs/simulation/acfql/train_gym_hil_env_fql_kuka_plate_6dof.json 
+    --config_path=../configs/simulation/acfql/train_gym_hil_env_fql_kuka_window_assembly_6dof_reward.json 
   ```
 In case the actor do not start getting transitions, and the learner wait for the actor's transitions. -> resume the actor from the learner checkpoint with offline_steps=0. The actor will start getting transitions right after loading the model from the checkpoint. Once the learner receives enough transitions, it will start online RL, and also will start sending model params to the actor.
    
