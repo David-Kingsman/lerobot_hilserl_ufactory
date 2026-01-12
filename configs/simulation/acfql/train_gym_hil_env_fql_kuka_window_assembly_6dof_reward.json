@@ -8,7 +8,7 @@
     "steps": 300000,
     "log_freq": 1,
     "save_checkpoint": true,
-    "save_freq": 50000,
+    "save_freq": 10000,
     "wandb": {
         "enable": true,
         "project": "kuka_sim_fql_window_assembly_6dof_test",
